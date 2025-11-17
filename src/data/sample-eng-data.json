@@ -1,0 +1,284 @@
+[
+  {
+    "id": "!aa_拉",
+    "text": "拉",
+    "pinyin": "laai1",
+    "phoneticKey": "!aa",
+    "score": 82,
+    "source": "eng_index"
+  },
+  {
+    "id": "!aa_喇",
+    "text": "喇",
+    "pinyin": "laa1",
+    "phoneticKey": "!aa",
+    "score": 59,
+    "source": "eng_index"
+  },
+  {
+    "id": "!ab_腹肌",
+    "text": "腹肌",
+    "pinyin": "fuk1 gei1",
+    "phoneticKey": "!ab",
+    "score": 100,
+    "source": "eng_index"
+  },
+  {
+    "id": "!ab_笑到有腹肌",
+    "text": "笑到有腹肌",
+    "pinyin": "siu3 dou3 jau5 fuk1 gei1",
+    "phoneticKey": "!ab",
+    "score": 88,
+    "source": "eng_index"
+  },
+  {
+    "id": "!abandon_荒",
+    "text": "荒",
+    "pinyin": "fong1",
+    "phoneticKey": "!abandon",
+    "score": 75,
+    "source": "eng_index"
+  },
+  {
+    "id": "!abandon_撇",
+    "text": "撇",
+    "pinyin": "pit3",
+    "phoneticKey": "!abandon",
+    "score": 86,
+    "source": "eng_index"
+  },
+  {
+    "id": "!abandon_丟棄",
+    "text": "丟棄",
+    "pinyin": "diu1 hei3",
+    "phoneticKey": "!abandon",
+    "score": 86,
+    "source": "eng_index"
+  },
+  {
+    "id": "!abandon_廢棄",
+    "text": "廢棄",
+    "pinyin": "fai3 hei3",
+    "phoneticKey": "!abandon",
+    "score": 100,
+    "source": "eng_index"
+  },
+  {
+    "id": "!abandon_荒廢",
+    "text": "荒廢",
+    "pinyin": "fong1 fai3",
+    "phoneticKey": "!abandon",
+    "score": 86,
+    "source": "eng_index"
+  },
+  {
+    "id": "!abandon_放棄",
+    "text": "放棄",
+    "pinyin": "fong3 hei3",
+    "phoneticKey": "!abandon",
+    "score": 86,
+    "source": "eng_index"
+  },
+  {
+    "id": "!accept_應允",
+    "text": "應允",
+    "pinyin": "jing1 wan5",
+    "phoneticKey": "!accept",
+    "score": 79,
+    "source": "eng_index"
+  },
+  {
+    "id": "!accept_受",
+    "text": "受",
+    "pinyin": "sau6",
+    "phoneticKey": "!accept",
+    "score": 86,
+    "source": "eng_index"
+  },
+  {
+    "id": "!accept_納",
+    "text": "納",
+    "pinyin": "naap6",
+    "phoneticKey": "!accept",
+    "score": 79,
+    "source": "eng_index"
+  },
+  {
+    "id": "!accept_收",
+    "text": "收",
+    "pinyin": "sau1",
+    "phoneticKey": "!accept",
+    "score": 79,
+    "source": "eng_index"
+  },
+  {
+    "id": "!accept_收受",
+    "text": "收受",
+    "pinyin": "sau1 sau6",
+    "phoneticKey": "!accept",
+    "score": 79,
+    "source": "eng_index"
+  },
+  {
+    "id": "!accept_接納",
+    "text": "接納",
+    "pinyin": "zip3 naap6",
+    "phoneticKey": "!accept",
+    "score": 78,
+    "source": "eng_index"
+  },
+  {
+    "id": "!accept_接受",
+    "text": "接受",
+    "pinyin": "zip3 sau6",
+    "phoneticKey": "!accept",
+    "score": 79,
+    "source": "eng_index"
+  },
+  {
+    "id": "!able_本事",
+    "text": "本事",
+    "pinyin": "bun2 si6",
+    "phoneticKey": "!able",
+    "score": 100,
+    "source": "eng_index"
+  },
+  {
+    "id": "!able_料",
+    "text": "料",
+    "pinyin": "liu2",
+    "phoneticKey": "!able",
+    "score": 100,
+    "source": "eng_index"
+  },
+  {
+    "id": "!able_本領",
+    "text": "本領",
+    "pinyin": "bun2 ling5",
+    "phoneticKey": "!able",
+    "score": 100,
+    "source": "eng_index"
+  },
+  {
+    "id": "!able_才能",
+    "text": "才能",
+    "pinyin": "coi4 nang4",
+    "phoneticKey": "!able",
+    "score": 100,
+    "source": "eng_index"
+  },
+  {
+    "id": "!able_技",
+    "text": "技",
+    "pinyin": "gei6",
+    "phoneticKey": "!able",
+    "score": 100,
+    "source": "eng_index"
+  },
+  {
+    "id": "!able_技能",
+    "text": "技能",
+    "pinyin": "gei6 nang4",
+    "phoneticKey": "!able",
+    "score": 100,
+    "source": "eng_index"
+  },
+  {
+    "id": "!able_能力",
+    "text": "能力",
+    "pinyin": "nang4 lik6",
+    "phoneticKey": "!able",
+    "score": 100,
+    "source": "eng_index"
+  },
+  {
+    "id": "!able_能耐",
+    "text": "能耐",
+    "pinyin": "nang4 noi6",
+    "phoneticKey": "!able",
+    "score": 100,
+    "source": "eng_index"
+  },
+  {
+    "id": "!able_內功",
+    "text": "內功",
+    "pinyin": "noi6 gung1",
+    "phoneticKey": "!able",
+    "score": 100,
+    "source": "eng_index"
+  },
+  {
+    "id": "!about_約",
+    "text": "約",
+    "pinyin": "joek3",
+    "phoneticKey": "!about",
+    "score": 100,
+    "source": "eng_index"
+  },
+  {
+    "id": "!about_左右",
+    "text": "左右",
+    "pinyin": "zo2 jau2",
+    "phoneticKey": "!about",
+    "score": 100,
+    "source": "eng_index"
+  },
+  {
+    "id": "!about_將",
+    "text": "將",
+    "pinyin": "zoeng1",
+    "phoneticKey": "!about",
+    "score": 72,
+    "source": "eng_index"
+  },
+  {
+    "id": "!about_大約",
+    "text": "大約",
+    "pinyin": "daai6 joek3",
+    "phoneticKey": "!about",
+    "score": 100,
+    "source": "eng_index"
+  },
+  {
+    "id": "!about_大概",
+    "text": "大概",
+    "pinyin": "daai6 koi3",
+    "phoneticKey": "!about",
+    "score": 100,
+    "source": "eng_index"
+  },
+  {
+    "id": "!about_關於",
+    "text": "關於",
+    "pinyin": "gwaan1 jyu1",
+    "phoneticKey": "!about",
+    "score": 100,
+    "source": "eng_index"
+  },
+  {
+    "id": "sample_春眠不覺曉",
+    "text": "春眠不覺曉，處處聞啼鳥。夜來風雨聲，花落知多少。",
+    "pinyin": "cyun1 min4 bat1 gok3 hiu2",
+    "rhymeBook": "詞林正韻",
+    "pingze": "平",
+    "rhyme": "iao",
+    "form": "名動",
+    "allusion": ["唐詩"],
+    "mood": ["春", "朝"],
+    "source": "孟浩然 / 春曉",
+    "score": 95
+  },
+  {
+    "id": "sample_獨在異鄉為異客",
+    "text": "獨在異鄉為異客，每逢佳節倍思親。遙知兄弟登高處，遍插茱萸少一人。",
+    "pinyin": "duk6 zoi6 ji6 hoeng1 wai4 ji6 haak3",
+    "rhymeBook": "大宋重修廣韻",
+    "pingze": "仄",
+    "rhyme": "ing",
+    "form": "動名",
+    "allusion": ["佳節"],
+    "mood": ["秋", "思鄉"],
+    "source": "王維 / 九月九日憶山東兄弟",
+    "score": 92
+  }
+]

@@ -1,8 +1,8 @@
 {
-  "name": "interpolate-you",
+  "name": "interpolateyou_helper",
   "version": "1.0.0",
   "private": false,
-  "homepage": "https://ysyyyps.github.io/interpolate-you",
+  "homepage": "./",
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
@@ -18,8 +18,11 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "predeploy": "npm run set-gh-homepage && npm run build",
+    "deploy": "gh-pages -d build",
+    "set-gh-homepage": "npm pkg set homepage=https://lazuli-0w0.github.io/interpolateyou_helper",
+    "set-local-homepage": "npm pkg set homepage=./",
+    "postdeploy": "npm run set-local-homepage"
   },
   "eslintConfig": {
     "extends": [

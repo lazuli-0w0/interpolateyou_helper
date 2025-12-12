@@ -1467,7 +1467,7 @@ function AdvancedSearch({ type, staticData, placeholder }) {
 }
 
 function App() {
-  const [view, setView] = useState('words');
+  const [view, setView] = useState('cipou');
 
   return (
     <div style={{ minHeight: '100vh', background: '#fefee6' }}>

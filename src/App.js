@@ -1487,20 +1487,12 @@ function App() {
           padding: '0 20px',
           flexWrap: 'wrap'
         }}>
-          {/* Logo */}
+          {/* 標題 */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
             gap: '15px'
           }}>
-            <img 
-              src="/logo-header.png" 
-              alt="Interpolate You Logo" 
-              style={{
-                height: '40px',
-                width: 'auto'
-              }}
-            />
             <h1 style={{
               color: 'white',
               margin: 0,
@@ -1511,7 +1503,7 @@ function App() {
             </h1>
           </div>
           
-          {/* 導航按鍵 */}
+          {/* 導航按鍵和 Logo */}
           <div style={{
             display: 'flex',
             gap: '15px',
@@ -1546,6 +1538,17 @@ function App() {
               {type === 'words' ? '📝 詞語搜尋' : type === 'poetry' ? '📜 詩詞搜尋' : '🎵 詞牌搜尋'}
             </button>
           ))}
+          
+          {/* Logo */}
+          <img 
+            src="/logo-header.png" 
+            alt="Interpolate You Logo" 
+            style={{
+              height: '40px',
+              width: 'auto',
+              marginLeft: '15px'
+            }}
+          />
           </div>
         </div>
       </div>

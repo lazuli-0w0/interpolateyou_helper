@@ -193,7 +193,8 @@
   .app-brand-seal { width: 34px; height: 34px; }
   .app-brand strong { font-size: 15px; }
   .app-navigation-mobile-toggle { display: grid; margin-left: auto; }
-  .app-navigation-logo-link { display: none; }
+  .app-navigation-logo-link { display: flex; margin-left: 12px; }
+  .app-navigation-logo { height: 20px; opacity: 0.68; }
   .app-navigation-tabs { display: none; }
   .app-navigation.mobile-menu-open .app-navigation-inner { flex-wrap: wrap; }
   .app-navigation.mobile-menu-open .app-navigation-tabs {

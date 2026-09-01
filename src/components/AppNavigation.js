@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './AppNavigation.css';
 
 // Add another object here to create a new top-level tab with its own feature menu.
@@ -67,19 +67,25 @@ export function AppNavigation({ view, onViewChange, t }) {
     tab.view === view || tab.features?.some(feature => feature.view === view)
   )?.id;
   const openTab = NAV_TABS.find(tab => tab.id === openTabId);
+  const closeMenus = useCallback(() => {
+    setOpenTabId(null);
+    setMobileMenuOpen(false);
+  }, []);
+  const navigateTo = useCallback((nextView) => {
+    closeMenus();
+    onViewChange(nextView);
+  }, [closeMenus, onViewChange]);
+  const toggleMobileMenu = useCallback(() => {
+    setOpenTabId(null);
+    setMobileMenuOpen(current => !current);
+  }, []);
 
   useEffect(() => {
     const closeOnOutsideClick = (event) => {
-      if (!navigationRef.current?.contains(event.target)) {
-        setOpenTabId(null);
-        setMobileMenuOpen(false);
-      }
+      if (!navigationRef.current?.contains(event.target)) closeMenus();
     };
     const closeOnEscape = (event) => {
-      if (event.key === 'Escape') {
-        setOpenTabId(null);
-        setMobileMenuOpen(false);
-      }
+      if (event.key === 'Escape') closeMenus();
     };
 
     document.addEventListener('pointerdown', closeOnOutsideClick);
@@ -88,13 +94,7 @@ export function AppNavigation({ view, onViewChange, t }) {
       document.removeEventListener('pointerdown', closeOnOutsideClick);
       document.removeEventListener('keydown', closeOnEscape);
     };
-  }, []);
-
-  const navigateTo = (nextView) => {
-    setOpenTabId(null);
-    setMobileMenuOpen(false);
-    onViewChange(nextView);
-  };
+  }, [closeMenus]);
 
   return (
     <nav className={`app-navigation ${mobileMenuOpen ? 'mobile-menu-open' : ''}`} aria-label={t('nav.main')} ref={navigationRef}>
@@ -113,10 +113,7 @@ export function AppNavigation({ view, onViewChange, t }) {
           aria-label={t('nav.main')}
           aria-expanded={mobileMenuOpen}
           aria-controls="mobile-navigation-tabs"
-          onClick={() => {
-            setOpenTabId(null);
-            setMobileMenuOpen(current => !current);
-          }}
+          onClick={toggleMobileMenu}
         >
           <span aria-hidden="true">{mobileMenuOpen ? '×' : '☰'}</span>
         </button>
@@ -127,6 +124,7 @@ export function AppNavigation({ view, onViewChange, t }) {
               key={tab.id}
               className={activeTabId === tab.id || openTabId === tab.id ? 'active' : ''}
               type="button"
+              aria-current={activeTabId === tab.id ? 'page' : undefined}
               aria-expanded={tab.features ? openTabId === tab.id : undefined}
               aria-controls={tab.features ? `navigation-menu-${tab.id}` : undefined}
               onClick={() => tab.view
@@ -176,10 +174,7 @@ export function AppNavigation({ view, onViewChange, t }) {
                   href={feature.href}
                   target="_blank"
                   rel="noreferrer"
-                  onClick={() => {
-                    setOpenTabId(null);
-                    setMobileMenuOpen(false);
-                  }}
+                  onClick={closeMenus}
                 >
                   {content}
                 </a>

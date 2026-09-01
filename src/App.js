@@ -53,6 +53,18 @@ const VIEW_CONFIG = {
   }
 };
 
+const PRODUCT_VIEW_BY_ROUTE = {
+  'product-bookmark': 'bookmark',
+  'product-cards': 'cards',
+  'product-reading-notes': 'reading-notes'
+};
+
+const STORAGE_KEYS = {
+  locale: 'interpolateyou:locale',
+  legacyLocale: 'interpolateyou:language',
+  theme: 'interpolateyou:theme'
+};
+
 function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onInitialItemHandled }) {
   const viewConfig = VIEW_CONFIG[type];
   const presentation = {
@@ -907,15 +919,15 @@ function App() {
   const [openingPoem, setOpeningPoem] = useState(null);
   const [theme, setTheme] = useState(() => {
     try {
-      return window.localStorage.getItem('interpolateyou:theme') === 'dark' ? 'dark' : 'light';
+      return window.localStorage.getItem(STORAGE_KEYS.theme) === 'dark' ? 'dark' : 'light';
     } catch (error) {
       return 'light';
     }
   });
   const [locale, setLocale] = useState(() => {
     try {
-      const savedLocale = window.localStorage.getItem('interpolateyou:locale') ||
-        window.localStorage.getItem('interpolateyou:language');
+      const savedLocale = window.localStorage.getItem(STORAGE_KEYS.locale) ||
+        window.localStorage.getItem(STORAGE_KEYS.legacyLocale);
       return normalizeLocale(savedLocale);
     } catch (error) {
       return DEFAULT_LOCALE;
@@ -924,6 +936,7 @@ function App() {
   const [, setConverterReady] = useState(chineseConverter.isLoaded);
   const t = useMemo(() => createTranslator(locale), [locale]);
   const viewConfig = VIEW_CONFIG[view];
+  const product = PRODUCT_VIEW_BY_ROUTE[view];
   const openFeaturedPoem = useCallback((poemEntry) => {
     setOpeningPoem(poemEntry);
     setView('poetry');
@@ -934,7 +947,7 @@ function App() {
     const normalizedLocale = normalizeLocale(nextLocale);
     setLocale(normalizedLocale);
     try {
-      window.localStorage.setItem('interpolateyou:locale', normalizedLocale);
+      window.localStorage.setItem(STORAGE_KEYS.locale, normalizedLocale);
     } catch (error) {
       // The preference still applies for this session when storage is unavailable.
     }
@@ -944,7 +957,7 @@ function App() {
     const normalizedTheme = nextTheme === 'dark' ? 'dark' : 'light';
     setTheme(normalizedTheme);
     try {
-      window.localStorage.setItem('interpolateyou:theme', normalizedTheme);
+      window.localStorage.setItem(STORAGE_KEYS.theme, normalizedTheme);
     } catch (error) {
       // The preference still applies for this session when storage is unavailable.
     }
@@ -991,12 +1004,9 @@ function App() {
         <FoundersWhyPage locale={locale} />
       ) : view === 'forum' ? (
         <ForumPage t={t} />
-      ) : view === 'product-bookmark' || view === 'product-cards' || view === 'product-reading-notes' ? (
-        <ProductPage
-          product={view === 'product-cards' ? 'cards' : view === 'product-reading-notes' ? 'reading-notes' : 'bookmark'}
-          t={t}
-        />
-      ) : (
+      ) : product ? (
+        <ProductPage product={product} t={t} />
+      ) : viewConfig ? (
         <AdvancedSearch
           key={view}
           type={view}
@@ -1006,6 +1016,8 @@ function App() {
           initialSelectedItem={view === 'poetry' ? openingPoem : null}
           onInitialItemHandled={clearOpeningPoem}
         />
+      ) : (
+        <LandingPage onNavigate={setView} onOpenPoem={openFeaturedPoem} locale={locale} t={t} />
       )}
     </div>
   );

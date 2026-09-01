@@ -988,8 +988,11 @@ function App() {
         />
       ) : view === 'founders-why' ? (
         <FoundersWhyPage locale={locale} />
-      ) : view === 'product-bookmark' || view === 'product-cards' ? (
-        <ProductPage product={view === 'product-cards' ? 'cards' : 'bookmark'} t={t} />
+      ) : view === 'product-bookmark' || view === 'product-cards' || view === 'product-reading-notes' ? (
+        <ProductPage
+          product={view === 'product-cards' ? 'cards' : view === 'product-reading-notes' ? 'reading-notes' : 'bookmark'}
+          t={t}
+        />
       ) : (
         <AdvancedSearch
           key={view}

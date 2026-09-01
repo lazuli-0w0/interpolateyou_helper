@@ -25,7 +25,8 @@ const NAV_TABS = [
     features: [
       { href: 'https://patreon.com/interpolateyou', markKey: 'product.patreon.mark', labelKey: 'product.patreon.label', descriptionKey: 'product.patreon.menuDescription' },
       { view: 'product-bookmark', markKey: 'product.bookmark.mark', labelKey: 'product.bookmark.label', descriptionKey: 'product.bookmark.menuDescription' },
-      { view: 'product-cards', markKey: 'product.cards.mark', labelKey: 'product.cards.label', descriptionKey: 'product.cards.menuDescription' }
+      { view: 'product-cards', markKey: 'product.cards.mark', labelKey: 'product.cards.label', descriptionKey: 'product.cards.menuDescription' },
+      { view: 'product-reading-notes', markKey: 'product.readingNotes.mark', labelKey: 'product.readingNotes.label', descriptionKey: 'product.readingNotes.menuDescription' }
     ]
   },
   {
@@ -54,6 +55,7 @@ const NAV_TABS = [
 
 export function AppNavigation({ view, onViewChange, t }) {
   const [openTabId, setOpenTabId] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigationRef = useRef(null);
   const activeTabId = NAV_TABS.find(tab =>
     tab.view === view || tab.features?.some(feature => feature.view === view)
@@ -62,10 +64,16 @@ export function AppNavigation({ view, onViewChange, t }) {
 
   useEffect(() => {
     const closeOnOutsideClick = (event) => {
-      if (!navigationRef.current?.contains(event.target)) setOpenTabId(null);
+      if (!navigationRef.current?.contains(event.target)) {
+        setOpenTabId(null);
+        setMobileMenuOpen(false);
+      }
     };
     const closeOnEscape = (event) => {
-      if (event.key === 'Escape') setOpenTabId(null);
+      if (event.key === 'Escape') {
+        setOpenTabId(null);
+        setMobileMenuOpen(false);
+      }
     };
 
     document.addEventListener('pointerdown', closeOnOutsideClick);
@@ -78,11 +86,12 @@ export function AppNavigation({ view, onViewChange, t }) {
 
   const navigateTo = (nextView) => {
     setOpenTabId(null);
+    setMobileMenuOpen(false);
     onViewChange(nextView);
   };
 
   return (
-    <nav className="app-navigation" aria-label={t('nav.main')} ref={navigationRef}>
+    <nav className={`app-navigation ${mobileMenuOpen ? 'mobile-menu-open' : ''}`} aria-label={t('nav.main')} ref={navigationRef}>
       <div className="app-navigation-inner">
         <button className={`app-brand ${view === 'home' ? 'active' : ''}`} onClick={() => navigateTo('home')}>
           <span className="app-brand-seal">您</span>
@@ -92,7 +101,21 @@ export function AppNavigation({ view, onViewChange, t }) {
           </span>
         </button>
 
-        <div className="app-navigation-tabs">
+        <button
+          className="app-navigation-mobile-toggle"
+          type="button"
+          aria-label={t('nav.main')}
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-navigation-tabs"
+          onClick={() => {
+            setOpenTabId(null);
+            setMobileMenuOpen(current => !current);
+          }}
+        >
+          <span aria-hidden="true">{mobileMenuOpen ? '×' : '☰'}</span>
+        </button>
+
+        <div className="app-navigation-tabs" id="mobile-navigation-tabs">
           {NAV_TABS.map(tab => (
             <button
               key={tab.id}
@@ -147,7 +170,10 @@ export function AppNavigation({ view, onViewChange, t }) {
                   href={feature.href}
                   target="_blank"
                   rel="noreferrer"
-                  onClick={() => setOpenTabId(null)}
+                  onClick={() => {
+                    setOpenTabId(null);
+                    setMobileMenuOpen(false);
+                  }}
                 >
                   {content}
                 </a>

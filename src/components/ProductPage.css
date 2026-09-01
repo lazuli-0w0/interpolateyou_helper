@@ -157,10 +157,69 @@
 }
 .product-purchase-actions a span { margin-left: 5px; }
 
+.product-document-page { padding-top: 48px; }
+.product-document-shell {
+  position: relative;
+  z-index: 1;
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(239, 232, 216, 0.2);
+  border-radius: 4px 28px 4px 4px;
+  background: rgba(14, 25, 22, 0.78);
+  box-shadow: 0 34px 80px rgba(0, 0, 0, 0.28);
+}
+.product-document-header {
+  display: flex;
+  padding: 26px 30px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  border-bottom: 1px solid rgba(239, 232, 216, 0.16);
+}
+.product-document-header .product-page-eyebrow { margin: 0 0 8px; }
+.product-document-header h1 {
+  margin: 0;
+  color: #f4efe4;
+  font-family: 'Noto Serif TC', 'Songti TC', 'STSong', serif;
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 500;
+}
+.product-document-header a {
+  flex: none;
+  padding: 10px 14px;
+  color: #e9dfcb;
+  border: 1px solid rgba(239, 232, 216, 0.24);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  transition: color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+.product-document-header a:hover { color: #17211e; background: #efe8d8; transform: translateY(-2px); }
+.product-document-header a span { margin-left: 5px; }
+.product-document-viewer {
+  display: block;
+  width: 100%;
+  height: min(78vh, 1020px);
+  min-height: 620px;
+  border: 0;
+  background: #f7f4ed;
+}
+
+.theme-light .product-document-shell { background: rgba(255, 253, 247, 0.92); border-color: #d8cdbb; }
+.theme-light .product-document-header { border-color: #ded3c1; }
+.theme-light .product-document-header h1 { color: #26312d; }
+.theme-light .product-document-header a { color: #50655b; border-color: #b8ad9b; }
+.theme-light .product-document-header a:hover { color: #f8f3e7; background: #334a40; }
+
 @media (max-width: 620px) {
   .product-page { padding: 48px 16px 72px; }
   .product-page-placeholder { min-height: 300px; padding: 30px 24px; grid-template-columns: 1fr; align-content: center; }
   .product-page-mark { width: 54px; height: 54px; }
+  .product-document-header { padding: 22px; align-items: flex-start; flex-direction: column; }
+  .product-document-viewer { height: 72vh; min-height: 500px; }
 }
 
 @media (max-width: 840px) {

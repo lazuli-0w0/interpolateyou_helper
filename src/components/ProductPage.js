@@ -1,6 +1,8 @@
 import React from 'react';
 import './ProductPage.css';
 
+const READING_NOTES_PDF = encodeURI('/輕文釋註—短寓其一.pdf');
+
 function PlayingCardsProduct({ t }) {
   return (
     <main className="product-page product-detail-page">
@@ -43,8 +45,41 @@ function PlayingCardsProduct({ t }) {
   );
 }
 
+function ReadingNotesProduct({ t }) {
+  return (
+    <main className="product-page product-document-page">
+      <div className="product-page-orb product-page-orb-one" aria-hidden="true" />
+      <div className="product-page-orb product-page-orb-two" aria-hidden="true" />
+
+      <section className="product-document-shell" aria-labelledby="reading-notes-title">
+        <header className="product-document-header">
+          <div>
+            <p className="product-page-eyebrow">{t('product.readingNotes.eyebrow')}</p>
+            <h1 id="reading-notes-title">{t('product.readingNotes.title')}</h1>
+          </div>
+          <a href={READING_NOTES_PDF} target="_blank" rel="noreferrer">
+            {t('product.readingNotes.openOriginal')} <span aria-hidden="true">↗</span>
+          </a>
+        </header>
+
+        <object
+          className="product-document-viewer"
+          data={READING_NOTES_PDF}
+          type="application/pdf"
+          aria-label={t('product.readingNotes.viewerLabel')}
+        >
+          <p>
+            {t('product.readingNotes.viewerFallback')} <a href={READING_NOTES_PDF}>{t('product.readingNotes.openOriginal')}</a>
+          </p>
+        </object>
+      </section>
+    </main>
+  );
+}
+
 export function ProductPage({ product, t }) {
   if (product === 'cards') return <PlayingCardsProduct t={t} />;
+  if (product === 'reading-notes') return <ReadingNotesProduct t={t} />;
 
   const keyPrefix = 'product.bookmark';
 

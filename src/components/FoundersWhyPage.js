@@ -7,7 +7,7 @@ const SECTIONS = [
     number: '01',
     label: '距離',
     paragraphs: [
-      '不論是曾經風靡一時的儒家學說《論語》《大學》等，或是《詩經》唐詩宋詞元曲，',
+      '不論是曾經風靡一時的儒家學說《詩經》《論語》《大學》等，或是唐詩宋詞元曲，',
       '大家可以一句話「封建糟粕」來否定，可是我認為其中蘊含很多道理。'
     ],
     quote: '所謂道理，正正便是前人走過的「道路」整合的「理論」。'
@@ -40,7 +40,7 @@ export function FoundersWhyPage({ locale }) {
 
       <article className="founders-why-inner">
         <header className="founders-why-hero">
-          <p className="founders-why-eyebrow">FONDATORE · {localize('創辦人的話')}</p>
+          <p className="founders-why-eyebrow">IL MOTIVO DEL FONDATORE · {localize('創辦人的話')}</p>
           <h1>
             <span>FOUNDER’S</span>
             <span>WHY</span>

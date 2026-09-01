@@ -17,19 +17,38 @@ const NAV_TABS = [
     ]
   },
   {
+    id: 'products',
+    labelKey: 'nav.products',
+    eyebrowKey: 'nav.products.eyebrow',
+    titleKey: 'nav.products.title',
+    descriptionKey: 'nav.products.description',
+    features: [
+      { href: 'https://patreon.com/interpolateyou', markKey: 'product.patreon.mark', labelKey: 'product.patreon.label', descriptionKey: 'product.patreon.menuDescription' },
+      { view: 'product-bookmark', markKey: 'product.bookmark.mark', labelKey: 'product.bookmark.label', descriptionKey: 'product.bookmark.menuDescription' },
+      { view: 'product-cards', markKey: 'product.cards.mark', labelKey: 'product.cards.label', descriptionKey: 'product.cards.menuDescription' }
+    ]
+  },
+  {
     id: 'settings',
     labelKey: 'nav.settings',
     eyebrowKey: 'nav.settings.eyebrow',
     titleKey: 'nav.settings.title',
     descriptionKey: 'nav.settings.description',
     features: [
-      { view: 'settings-language', markKey: 'settings.feature.mark', labelKey: 'settings.feature.label', descriptionKey: 'settings.feature.description' }
+      { view: 'settings-language', markKey: 'settings.feature.mark', labelKey: 'settings.feature.label', descriptionKey: 'settings.feature.description' },
+      { view: 'settings-appearance', markKey: 'settings.appearance.mark', labelKey: 'settings.appearance.label', descriptionKey: 'settings.appearance.featureDescription' }
     ]
   },
   {
     id: 'founders-why',
     labelKey: 'nav.foundersWhy',
-    view: 'founders-why'
+    eyebrowKey: 'nav.foundersWhy.eyebrow',
+    titleKey: 'nav.foundersWhy.title',
+    descriptionKey: 'nav.foundersWhy.description',
+    features: [
+      { view: 'founders-why', markKey: 'nav.foundersWhy.mark', labelKey: 'nav.foundersWhy', descriptionKey: 'nav.foundersWhy.menuDescription' },
+      { href: 'https://linktr.ee/interpolateyou', markKey: 'nav.linktree.mark', labelKey: 'nav.linktree.label', descriptionKey: 'nav.linktree.description' }
+    ]
   }
 ];
 
@@ -66,7 +85,7 @@ export function AppNavigation({ view, onViewChange, t }) {
     <nav className="app-navigation" aria-label={t('nav.main')} ref={navigationRef}>
       <div className="app-navigation-inner">
         <button className={`app-brand ${view === 'home' ? 'active' : ''}`} onClick={() => navigateTo('home')}>
-          <span className="app-brand-seal">{t('tool.poetry.mark')}</span>
+          <span className="app-brand-seal">您</span>
           <span>
             <strong>{t('brand.name')}</strong>
             <small>INTERPOLATE YOU</small>
@@ -110,16 +129,34 @@ export function AppNavigation({ view, onViewChange, t }) {
             <span>{t(openTab.descriptionKey)}</span>
           </div>
           <div className="app-navigation-feature-grid">
-            {openTab.features.map(feature => (
-              <button key={feature.view} type="button" onClick={() => navigateTo(feature.view)}>
-                <span className="app-navigation-feature-mark" aria-hidden="true">{t(feature.markKey)}</span>
-                <span className="app-navigation-feature-copy">
-                  <strong>{t(feature.labelKey)}</strong>
-                  <small>{t(feature.descriptionKey)}</small>
-                </span>
-                <span className="app-navigation-feature-arrow" aria-hidden="true">↗</span>
-              </button>
-            ))}
+            {openTab.features.map(feature => {
+              const content = (
+                <>
+                  <span className="app-navigation-feature-mark" aria-hidden="true">{t(feature.markKey)}</span>
+                  <span className="app-navigation-feature-copy">
+                    <strong>{t(feature.labelKey)}</strong>
+                    <small>{t(feature.descriptionKey)}</small>
+                  </span>
+                  <span className="app-navigation-feature-arrow" aria-hidden="true">↗</span>
+                </>
+              );
+
+              return feature.href ? (
+                <a
+                  key={feature.href}
+                  href={feature.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => setOpenTabId(null)}
+                >
+                  {content}
+                </a>
+              ) : (
+                <button key={feature.view} type="button" onClick={() => navigateTo(feature.view)}>
+                  {content}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}

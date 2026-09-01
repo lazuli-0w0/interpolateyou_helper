@@ -1,5 +1,8 @@
+.env*
 data-sources/
+api/node_modules/
+node_modules/
+.pnpm-store/
 build/
-src/**/*.test.js
-server.log
-npm_output.log
+.git/
+.DS_Store

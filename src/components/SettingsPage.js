@@ -2,7 +2,31 @@ import React from 'react';
 import { LOCALE_OPTIONS } from '../i18n.js';
 import './SettingsPage.css';
 
-export function SettingsPage({ locale, onLocaleChange, t }) {
+const THEME_OPTIONS = [
+  {
+    value: 'light',
+    mark: '曦',
+    labelKey: 'settings.theme.light.label',
+    secondaryLabelKey: 'settings.theme.light.secondaryLabel',
+    descriptionKey: 'settings.theme.light.description'
+  },
+  {
+    value: 'dark',
+    mark: '晦',
+    labelKey: 'settings.theme.dark.label',
+    secondaryLabelKey: 'settings.theme.dark.secondaryLabel',
+    descriptionKey: 'settings.theme.dark.description'
+  }
+];
+
+export function SettingsPage({ section = 'language', locale, onLocaleChange, theme, onThemeChange, t }) {
+  const isAppearance = section === 'appearance';
+  const options = isAppearance ? THEME_OPTIONS : LOCALE_OPTIONS;
+  const selectedValue = isAppearance ? theme : locale;
+  const updateValue = isAppearance ? onThemeChange : onLocaleChange;
+  const settingPrefix = isAppearance ? 'settings.appearance' : 'settings.language';
+  const markKey = isAppearance ? 'settings.appearance.mark' : 'settings.feature.mark';
+
   return (
     <main className="settings-page">
       <div className="settings-page-orb settings-page-orb-one" aria-hidden="true" />
@@ -15,19 +39,19 @@ export function SettingsPage({ locale, onLocaleChange, t }) {
           <span>{t('settings.page.intro')}</span>
         </header>
 
-        <section className="settings-card" aria-labelledby="language-setting-title">
+        <section className="settings-card" aria-labelledby={`${section}-setting-title`}>
           <div className="settings-card-heading">
-            <span className="settings-card-mark" aria-hidden="true">{t('settings.feature.mark')}</span>
+            <span className="settings-card-mark" aria-hidden="true">{t(markKey)}</span>
             <div>
-              <p>{t('settings.language.eyebrow')}</p>
-              <h2 id="language-setting-title">{t('settings.language.title')}</h2>
-              <span>{t('settings.language.description')}</span>
+              <p>{t(`${settingPrefix}.eyebrow`)}</p>
+              <h2 id={`${section}-setting-title`}>{t(`${settingPrefix}.title`)}</h2>
+              <span>{t(`${settingPrefix}.description`)}</span>
             </div>
           </div>
 
-          <ul className="settings-language-list" role="radiogroup" aria-label={t('settings.language.groupLabel')}>
-            {LOCALE_OPTIONS.map(option => {
-              const selected = locale === option.value;
+          <ul className="settings-option-list" role="radiogroup" aria-label={t(`${settingPrefix}.groupLabel`)}>
+            {options.map(option => {
+              const selected = selectedValue === option.value;
               return (
                 <li key={option.value}>
                   <button
@@ -35,15 +59,15 @@ export function SettingsPage({ locale, onLocaleChange, t }) {
                     type="button"
                     role="radio"
                     aria-checked={selected}
-                    onClick={() => onLocaleChange(option.value)}
+                    onClick={() => updateValue(option.value)}
                   >
-                    <span className="settings-language-mark" aria-hidden="true">{option.mark}</span>
-                    <span className="settings-language-copy">
-                      <strong>{option.label}</strong>
-                      <small>{option.secondaryLabel}</small>
+                    <span className="settings-option-mark" aria-hidden="true">{option.mark}</span>
+                    <span className="settings-option-copy">
+                      <strong>{option.labelKey ? t(option.labelKey) : option.label}</strong>
+                      <small>{option.secondaryLabelKey ? t(option.secondaryLabelKey) : option.secondaryLabel}</small>
                       <span>{t(option.descriptionKey)}</span>
                     </span>
-                    <span className="settings-language-check" aria-hidden="true">{selected ? '✓' : ''}</span>
+                    <span className="settings-option-check" aria-hidden="true">{selected ? '✓' : ''}</span>
                   </button>
                 </li>
               );

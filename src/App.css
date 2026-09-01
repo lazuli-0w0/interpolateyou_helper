@@ -305,6 +305,71 @@
 }
 .search-empty-state h3 { color: #334039; font-family: 'Noto Serif TC', 'Songti TC', serif; font-weight: 500; }
 
+.theme-dark .search-workspace {
+  color: #e3ddd2;
+  border-color: #3c4944;
+  background: #17211e;
+  box-shadow: 0 34px 80px rgba(0, 0, 0, 0.46);
+}
+.theme-dark .search-controls-panel { border-color: #394640; }
+.theme-dark .search-input {
+  color: #ece6db;
+  border-color: #46534d !important;
+  background: #1e2a26;
+}
+.theme-dark .search-input::placeholder { color: #849189; }
+.theme-dark .search-input:focus { background: #24322d; }
+.theme-dark .search-submit-button {
+  color: #18211e !important;
+  border-color: #c8d3cc !important;
+  background: #c8d3cc !important;
+}
+.theme-dark .search-status,
+.theme-dark .search-progress-label { color: #9ca7a1 !important; }
+.theme-dark .search-progress-track { background: #34413b !important; }
+.theme-dark .rhyme-filter,
+.theme-dark .result-card,
+.theme-dark .search-empty-state {
+  border-color: #3c4944 !important;
+  background: #1d2925 !important;
+}
+.theme-dark .rhyme-filter-title { color: #b7c0bb !important; }
+.theme-dark .rhyme-filter-option {
+  color: #bfc8c3 !important;
+  border-color: #4a5751 !important;
+  background: #24312c !important;
+}
+.theme-dark .rhyme-filter-option:hover { background: #2b3933 !important; }
+.theme-dark .rhyme-filter-clear { color: #d39b88 !important; }
+.theme-dark .rhyme-filter-summary { color: #929d97 !important; }
+.theme-dark .search-alert,
+.theme-dark .search-limit-notice {
+  color: #decdb0 !important;
+  border-color: #725e43 !important;
+  background: #302c24 !important;
+}
+.theme-dark .result-card { box-shadow: 0 5px 18px rgba(0, 0, 0, 0.2) !important; }
+.theme-dark .result-card:hover { box-shadow: 0 12px 26px rgba(0, 0, 0, 0.32) !important; }
+.theme-dark .result-card-title { color: #eee8dc !important; }
+.theme-dark .result-card-meta { color: #9ba59f !important; }
+.theme-dark .result-card-preview { color: #bac3be !important; }
+.theme-dark .result-card-preview strong { color: #dce2de; }
+.theme-dark .result-card-preview span { color: #8f9a94 !important; }
+.theme-dark .pronunciation,
+.theme-dark .result-tag {
+  color: #d6c4b9 !important;
+  border-color: #5a5149 !important;
+  background: #302c28 !important;
+}
+.theme-dark .pronunciation.mandarin { color: #bdd2d7 !important; background: #223238; }
+.theme-dark .pronunciation.qieyun { color: #d4bdc7 !important; background: #332830; }
+.theme-dark .result-pagination-count,
+.theme-dark .result-pagination-meta,
+.theme-dark .result-complete { color: #929d97 !important; }
+.theme-dark .pagination-button.secondary { color: #bdc8c2 !important; border-color: #4c5a53 !important; }
+.theme-dark .search-empty-state { color: #a8b2ac !important; }
+.theme-dark .search-empty-state h3 { color: #e2ddd2; }
+
 @media (max-width: 720px) {
   .search-page { padding: 36px 14px 60px; }
   .search-page-header { margin-bottom: 22px; align-items: center; }

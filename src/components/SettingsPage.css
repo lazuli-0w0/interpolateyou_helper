@@ -76,14 +76,14 @@
 .settings-card-heading h2 { margin: 0; font-family: 'Noto Serif TC', 'Songti TC', serif; font-size: 23px; font-weight: 500; }
 .settings-card-heading div > span { display: block; margin-top: 6px; color: #777a73; font-size: 12px; }
 
-.settings-language-list {
+.settings-option-list {
   display: grid;
   margin: 22px 0 0;
   padding: 0;
   gap: 10px;
   list-style: none;
 }
-.settings-language-list button {
+.settings-option-list button {
   display: grid;
   width: 100%;
   padding: 17px 18px;
@@ -98,9 +98,9 @@
   text-align: left;
   transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
 }
-.settings-language-list button:hover { border-color: #8b5e63; background: #fff; transform: translateY(-1px); }
-.settings-language-list button.selected { border-color: #8b5e63; background: #f0e6e3; box-shadow: inset 3px 0 0 #8b5e63; }
-.settings-language-mark {
+.settings-option-list button:hover { border-color: #8b5e63; background: #fff; transform: translateY(-1px); }
+.settings-option-list button.selected { border-color: #8b5e63; background: #f0e6e3; box-shadow: inset 3px 0 0 #8b5e63; }
+.settings-option-mark {
   display: grid;
   width: 42px;
   height: 42px;
@@ -111,14 +111,14 @@
   font-family: 'Noto Serif TC', 'Songti TC', serif;
   font-size: 14px;
 }
-.settings-language-copy { min-width: 0; }
-.settings-language-copy strong,
-.settings-language-copy small,
-.settings-language-copy > span { display: block; }
-.settings-language-copy strong { font-size: 14px; }
-.settings-language-copy small { margin-top: 3px; color: #8d8e87; font-size: 10px; letter-spacing: 0.05em; }
-.settings-language-copy > span { margin-top: 7px; color: #6f746e; font-size: 11px; }
-.settings-language-check {
+.settings-option-copy { min-width: 0; }
+.settings-option-copy strong,
+.settings-option-copy small,
+.settings-option-copy > span { display: block; }
+.settings-option-copy strong { font-size: 14px; }
+.settings-option-copy small { margin-top: 3px; color: #8d8e87; font-size: 10px; letter-spacing: 0.05em; }
+.settings-option-copy > span { margin-top: 7px; color: #6f746e; font-size: 11px; }
+.settings-option-check {
   display: grid;
   width: 25px;
   height: 25px;
@@ -129,10 +129,37 @@
   background: transparent;
   font-size: 12px;
 }
-.settings-language-list button.selected .settings-language-check { border-color: #8b5e63; background: #8b5e63; }
+.settings-option-list button.selected .settings-option-check { border-color: #8b5e63; background: #8b5e63; }
+
+.theme-dark .settings-card {
+  color: #e7e1d5;
+  border-color: #3c4944;
+  background: #17211e;
+  box-shadow: 0 34px 80px rgba(0, 0, 0, 0.46);
+}
+.theme-dark .settings-card-heading { border-color: #394640; }
+.theme-dark .settings-card-mark { color: #17211e; background: #c7d5cc; }
+.theme-dark .settings-card-heading p { color: #91a098; }
+.theme-dark .settings-card-heading div > span { color: #aab5af; }
+.theme-dark .settings-option-list button {
+  color: #e4ded3;
+  border-color: #3d4944;
+  background: #1d2925;
+}
+.theme-dark .settings-option-list button:hover { border-color: #b77d69; background: #24322d; }
+.theme-dark .settings-option-list button.selected {
+  border-color: #b77d69;
+  background: #332827;
+  box-shadow: inset 3px 0 0 #b77d69;
+}
+.theme-dark .settings-option-mark { color: #d7c2b8; border-color: #69534f; }
+.theme-dark .settings-option-copy small { color: #98a29d; }
+.theme-dark .settings-option-copy > span { color: #b2bbb6; }
+.theme-dark .settings-option-check { border-color: #66716b; }
+.theme-dark .settings-option-list button.selected .settings-option-check { border-color: #a86f62; background: #a86f62; }
 
 @media (max-width: 720px) {
   .settings-page { padding: 36px 14px 60px; }
   .settings-card { padding: 18px; border-radius: 3px 22px 3px 3px; }
-  .settings-language-copy > span { line-height: 1.5; }
+  .settings-option-copy > span { line-height: 1.5; }
 }

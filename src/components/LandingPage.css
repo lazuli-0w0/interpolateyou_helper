@@ -74,7 +74,7 @@
 .landing-menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 18px; }
 .landing-menu-card { position: relative; display: flex; min-height: 148px; padding: 20px; overflow: hidden; text-align: left; color: #eff2ee; border: 1px solid rgba(255, 255, 255, 0.11); border-radius: 14px; background: rgba(255, 255, 255, 0.055); cursor: pointer; transition: transform 180ms ease, background 180ms ease, border-color 180ms ease; }
 .landing-menu-card:hover { transform: translateY(-4px); background: rgba(255, 255, 255, 0.095); border-color: rgba(255, 255, 255, 0.2); }
-.landing-menu-icon { display: grid; place-items: center; flex: 0 0 38px; width: 38px; height: 38px; border-radius: 10px; color: #15201c; background: #b9cfc1; font-family: serif; font-size: 17px; }
+.landing-menu-icon { display: grid; place-items: center; flex: 0 0 38px; width: 38px; height: 38px; border-radius: 50%; color: #15201c; background: #b9cfc1; font-family: serif; font-size: 17px; }
 .landing-menu-card.blue .landing-menu-icon { background: #a9c6d5; }
 .landing-menu-card.amber .landing-menu-icon { background: #dbc099; }
 .landing-menu-card.rose .landing-menu-icon { background: #d6aca7; }
@@ -82,6 +82,23 @@
 .landing-menu-copy strong { font-family: serif; font-size: 17px; font-weight: 600; }
 .landing-menu-copy small { color: #9eaca5; font-size: 12px; line-height: 1.6; }
 .landing-menu-arrow { position: absolute; right: 16px; top: 16px; color: #788a81; }
+
+.theme-dark .featured-poem {
+  color: #ddd8cd;
+  border: 1px solid #394640;
+  background: #17211e;
+  box-shadow: 0 34px 80px rgba(0, 0, 0, 0.5);
+}
+.theme-dark .featured-poem::after { border-color: rgba(183, 125, 105, 0.2); }
+.theme-dark .featured-poem-topline,
+.theme-dark .featured-poem-footer { color: #929f98; border-color: #38453f; }
+.theme-dark .featured-poem-mark { color: #d69c89; border-color: #815e55; }
+.theme-dark .featured-poem h2 { color: #f0eadf; }
+.theme-dark .featured-poem-author { color: #a5aea8; }
+.theme-dark .featured-poem-entry-button { color: #c9d1cc; border-color: #4c5a53; }
+.theme-dark .featured-poem-entry-button:hover,
+.theme-dark .featured-poem-refresh:hover { background: #26332e; }
+.theme-dark .featured-poem-refresh { color: #bdc7c1; border-color: #4c5a53; }
 
 @media (max-width: 1100px) {
   .landing-hero { grid-template-columns: minmax(0, 1fr) minmax(350px, 0.82fr); gap: 40px; }

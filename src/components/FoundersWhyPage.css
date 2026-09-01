@@ -182,6 +182,14 @@
   letter-spacing: 0.08em;
 }
 
+.theme-dark .founders-why-section-content blockquote {
+  color: #e1dbcf;
+  border: 1px solid #3c4944;
+  background: #17211e;
+}
+.theme-dark .founders-why-section-content blockquote::after { color: rgba(215, 197, 183, 0.045); }
+.theme-dark .founders-why-purpose { border-color: #3c4944; background: #17211e; }
+
 @media (max-width: 720px) {
   .founders-why-page { padding: 48px 18px 76px; }
   .founders-why-hero { min-height: 360px; padding-bottom: 48px; }

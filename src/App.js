@@ -4,6 +4,7 @@ import { LandingPage } from './components/LandingPage.js';
 import { ResultModal } from './components/ResultModal.js';
 import { SettingsPage } from './components/SettingsPage.js';
 import { FoundersWhyPage } from './components/FoundersWhyPage.js';
+import { ProductPage } from './components/ProductPage.js';
 import { chineseConverter } from './utils/ChineseConverter.js';
 import { createTranslator, DEFAULT_LOCALE, getDocumentLanguage, normalizeLocale } from './i18n.js';
 import {
@@ -512,7 +513,7 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
         {/* 结果统计 */}
         <div className="search-status" aria-live="polite">
           {loadError ? t('search.statusUnavailable') : query ? t('search.statusQuery', { query, count: results.length }) :
-           dataLoaded ? t('search.statusLoaded', { total: allData.length, count: results.length }) :
+           dataLoaded ? t(type === 'poetry' ? 'search.statusPreloaded' : 'search.statusLoaded', { total: allData.length, count: results.length }) :
            t('search.statusLoading')}
         </div>
       </div>
@@ -854,6 +855,8 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
       <ResultModal
         selectedItem={selectedItem}
         type={type}
+        locale={locale}
+        t={t}
         convertText={convertText}
         onClose={() => setSelectedItem(null)}
         onLoadNovelChapter={loadNovelChapter}
@@ -901,6 +904,13 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
 function App() {
   const [view, setView] = useState('home');
   const [openingPoem, setOpeningPoem] = useState(null);
+  const [theme, setTheme] = useState(() => {
+    try {
+      return window.localStorage.getItem('interpolateyou:theme') === 'dark' ? 'dark' : 'light';
+    } catch (error) {
+      return 'light';
+    }
+  });
   const [locale, setLocale] = useState(() => {
     try {
       const savedLocale = window.localStorage.getItem('interpolateyou:locale') ||
@@ -929,24 +939,57 @@ function App() {
     }
   }, []);
 
+  const updateTheme = useCallback((nextTheme) => {
+    const normalizedTheme = nextTheme === 'dark' ? 'dark' : 'light';
+    setTheme(normalizedTheme);
+    try {
+      window.localStorage.setItem('interpolateyou:theme', normalizedTheme);
+    } catch (error) {
+      // The preference still applies for this session when storage is unavailable.
+    }
+  }, []);
+
   useEffect(() => {
     document.documentElement.lang = getDocumentLanguage(locale);
   }, [locale]);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+  }, [theme]);
 
   useEffect(() => {
     chineseConverter.loadDictionaries().then(() => setConverterReady(chineseConverter.isLoaded));
   }, []);
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell theme-${theme}`}>
       <AppNavigation view={view} onViewChange={setView} t={t} />
 
       {view === 'home' ? (
         <LandingPage onNavigate={setView} onOpenPoem={openFeaturedPoem} locale={locale} t={t} />
       ) : view === 'settings-language' ? (
-        <SettingsPage locale={locale} onLocaleChange={updateLocale} t={t} />
+        <SettingsPage
+          section="language"
+          locale={locale}
+          onLocaleChange={updateLocale}
+          theme={theme}
+          onThemeChange={updateTheme}
+          t={t}
+        />
+      ) : view === 'settings-appearance' ? (
+        <SettingsPage
+          section="appearance"
+          locale={locale}
+          onLocaleChange={updateLocale}
+          theme={theme}
+          onThemeChange={updateTheme}
+          t={t}
+        />
       ) : view === 'founders-why' ? (
         <FoundersWhyPage locale={locale} />
+      ) : view === 'product-bookmark' || view === 'product-cards' ? (
+        <ProductPage product={view === 'product-cards' ? 'cards' : 'bookmark'} t={t} />
       ) : (
         <AdvancedSearch
           key={view}

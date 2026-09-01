@@ -14,6 +14,8 @@ export class DataManager {
   constructor() {
     this.wordsData = null;
     this.wordsDataPromise = null;
+    this.characterPronunciations = null;
+    this.characterPronunciationsPromise = null;
     this.poetryData = null;
     this.novelsData = null;
     this.literatureManifest = null;
@@ -26,6 +28,28 @@ export class DataManager {
     this.jianFanMap = new Map(); // 簡體→繁體
     this.conversionLoaded = false;
     this.conversionPromise = null;
+  }
+
+  async loadCharacterPronunciations() {
+    if (this.characterPronunciations) return this.characterPronunciations;
+    if (!this.characterPronunciationsPromise) {
+      this.characterPronunciationsPromise = fetch('/data/character-pronunciations.json')
+        .then(response => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return response.json();
+        })
+        .then(pronunciations => {
+          this.characterPronunciations = pronunciations;
+          return pronunciations;
+        })
+        .catch(error => {
+          this.characterPronunciationsPromise = null;
+          console.warn('⚠️ 載入詩詞拼音索引失敗:', error.message);
+          return {};
+        });
+    }
+
+    return this.characterPronunciationsPromise;
   }
 
   // 載入繁簡轉換字典

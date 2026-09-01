@@ -1,4 +1,4 @@
-import { formatQieyunForWord } from './pronunciation';
+import { formatQieyunForWord, getPrimaryPronunciation } from './pronunciation';
 
 describe('pronunciation helpers', () => {
   test('formats one Qieyun fanqie per character in word order', () => {
@@ -11,5 +11,10 @@ describe('pronunciation helpers', () => {
 
   test('does not present an incomplete reconstruction as a full word reading', () => {
     expect(formatQieyunForWord('國家', { 國: '古或切' })).toBe('');
+  });
+
+  test('uses the primary listed reading for compact poetry annotations', () => {
+    expect(getPrimaryPronunciation('jyu5／jyu6／jyu3')).toBe('jyu5');
+    expect(getPrimaryPronunciation('yǔ/yù')).toBe('yǔ');
   });
 });

@@ -1,4 +1,4 @@
-const POETRY_ENDINGS = '，。！？；';
+const POETRY_ENDINGS = '。';
 const PROSE_ENDINGS = '。！？；';
 const CLOSING_MARKS = '」』】）》’”';
 
@@ -16,8 +16,11 @@ export function splitReadingParagraphs(content, kind = 'prose') {
     'g'
   );
 
-  return text
-    .split(/\n+/)
+  const sourceParagraphs = kind === 'poetry'
+    ? [text.replace(/\s*\n+\s*/g, '')]
+    : text.split(/\n+/);
+
+  return sourceParagraphs
     .map(paragraph => (paragraph.match(sentencePattern) || [paragraph])
       .map(sentence => sentence.trim())
       .filter(Boolean))

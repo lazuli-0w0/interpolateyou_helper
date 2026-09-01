@@ -1,16 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { dataManager } from '../services/DataManager.js';
+import { getPrimaryPronunciation } from '../utils/pronunciation.js';
+import { supportsLiveTranslation, translateEntryLive } from '../services/liveTranslation.js';
 import { getPreferredMeanings, getSecondaryMeanings } from '../utils/search.js';
 import { splitReadingParagraphs } from '../utils/readingFormat.js';
+import { SelectionAssistant } from './SelectionAssistant.js';
 import './ResultModal.css';
 
-function ReadingFormatTabs({ mode, onChange, convertText }) {
+function ReadingFormatTabs({ mode, onChange, t }) {
   return (
     <div className="reading-format-toolbar">
-      <span className="reading-format-label">{convertText('閱讀排版')}</span>
-      <div className="reading-format-tabs" role="tablist" aria-label={convertText('正文排版')}>
+      <span className="reading-format-label">{t('entry.readingLayout')}</span>
+      <div className="reading-format-tabs" role="tablist" aria-label={t('entry.readingLayout')}>
         {[
-          ['original', '原文'],
-          ['readable', '易讀']
+          ['original', 'entry.original'],
+          ['readable', 'entry.readable']
         ].map(([value, label]) => (
           <button
             key={value}
@@ -20,7 +24,7 @@ function ReadingFormatTabs({ mode, onChange, convertText }) {
             className={mode === value ? 'active' : ''}
             onClick={() => onChange(value)}
           >
-            {convertText(label)}
+            {t(label)}
           </button>
         ))}
       </div>
@@ -28,8 +32,71 @@ function ReadingFormatTabs({ mode, onChange, convertText }) {
   );
 }
 
-function ReadingText({ content, kind, mode, convertText }) {
+function PronunciationTabs({ mode, onChange, t, convertText, loading }) {
+  return (
+    <div className="pronunciation-toolbar">
+      <span className="reading-format-label">{t('entry.pronunciation')}</span>
+      <div className="pronunciation-tabs" role="tablist" aria-label={t('entry.pronunciation')}>
+        {[
+          ['none', 'entry.hidden'],
+          ['jyutping', '粵拼'],
+          ['mandarin', '普拼']
+        ].map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            role="tab"
+            aria-selected={mode === value}
+            className={mode === value ? 'active' : ''}
+            onClick={() => onChange(value)}
+          >
+            {label.startsWith('entry.') ? t(label) : convertText(label)}
+          </button>
+        ))}
+      </div>
+      {loading && <span className="pronunciation-loading" aria-live="polite">{t('entry.loading')}</span>}
+    </div>
+  );
+}
+
+function PronouncedPoetryLine({ line, pronunciationMode, pronunciations }) {
+  const readingKey = pronunciationMode === 'jyutping' ? 'j' : 'p';
+
+  return Array.from(line).map((character, index) => {
+    const reading = getPrimaryPronunciation(pronunciations[character]?.[readingKey]);
+    if (!reading) return <span key={`${index}-${character}`}>{character}</span>;
+
+    return (
+      <ruby className="poetry-ruby" key={`${index}-${character}`}>
+        {character}<rt>{reading}</rt>
+      </ruby>
+    );
+  });
+}
+
+function ReadingText({ content, kind, mode, convertText, pronunciationMode = 'none', pronunciations = {} }) {
   const convertedContent = convertText(content || '');
+
+  if (kind === 'poetry' && pronunciationMode !== 'none') {
+    const lines = mode === 'readable'
+      ? splitReadingParagraphs(convertedContent, kind).flatMap(paragraph => paragraph)
+      : convertedContent.split(/\n+/).filter(Boolean);
+
+    return (
+      <div className={`pronounced-poetry-text ${mode}`}>
+        {lines.map((line, index) => (
+          <div className="pronounced-poetry-line" key={`${index}-${line}`}>
+            <PronouncedPoetryLine
+              line={line}
+              pronunciationMode={pronunciationMode}
+              pronunciations={pronunciations}
+            />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   if (mode === 'original') return convertedContent;
 
   const paragraphs = splitReadingParagraphs(convertedContent, kind);
@@ -58,19 +125,106 @@ function ReadingText({ content, kind, mode, convertText }) {
   );
 }
 
+function getEntryTranslationSource(item, type) {
+  const entryType = item.type || type;
+  const parts = [item.title || item.name || item.text];
+
+  if (entryType === 'word') {
+    parts.push(...(item.cantoneseMeanings || []), ...(item.meanings || []));
+  } else if (entryType === 'cipou') {
+    parts.push(...(item.variants || []).flatMap(variant => [variant.introduction, variant.example, variant.description]));
+  } else {
+    parts.push(item.intro, item.content);
+  }
+
+  return parts.filter(Boolean).join('\n\n');
+}
+
+function LiveTranslation({ source, locale, t }) {
+  const [translation, setTranslation] = useState('');
+  const [status, setStatus] = useState('idle');
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!supportsLiveTranslation(locale) || !source) return undefined;
+
+    setStatus('loading');
+    setTranslation('');
+    translateEntryLive(source, locale)
+      .then(result => {
+        if (!cancelled) {
+          setTranslation(result);
+          setStatus('ready');
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setStatus('error');
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [source, locale]);
+
+  if (!supportsLiveTranslation(locale)) return null;
+
+  return (
+    <section className="live-translation" aria-live="polite">
+      <div className="live-translation-heading">
+        <span>{t('translation.live')}</span>
+        <small>{t('translation.note')}</small>
+      </div>
+      {status === 'loading' && <p className="live-translation-status">{t('translation.loading')}</p>}
+      {status === 'ready' && <p className="live-translation-copy">{translation}</p>}
+      {status === 'error' && <p className="live-translation-error">{t('translation.unavailable')}</p>}
+    </section>
+  );
+}
+
 export function ResultModal({
   selectedItem,
   type,
+  locale,
+  t,
   convertText,
   onClose,
-  onLoadNovelChapter
+  onBack,
+  onLoadNovelChapter,
+  onSaveReadingNote
 }) {
+  const contentRef = useRef(null);
   const [readingMode, setReadingMode] = useState('original');
+  const [pronunciationMode, setPronunciationMode] = useState('none');
+  const [pronunciations, setPronunciations] = useState({});
+  const [pronunciationsLoading, setPronunciationsLoading] = useState(false);
   const selectedItemKey = selectedItem?.id || selectedItem?.title || null;
+  const isPoetry = selectedItem?.type === 'poetry' || type === 'poetry';
+  const translationSource = selectedItem ? getEntryTranslationSource(selectedItem, type) : '';
 
   useEffect(() => {
     setReadingMode('original');
+    setPronunciationMode('none');
   }, [selectedItemKey]);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!isPoetry || pronunciationMode === 'none') {
+      setPronunciationsLoading(false);
+      return undefined;
+    }
+
+    setPronunciationsLoading(true);
+    dataManager.loadCharacterPronunciations().then(data => {
+      if (!cancelled) {
+        setPronunciations(data);
+        setPronunciationsLoading(false);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isPoetry, pronunciationMode]);
 
   if (!selectedItem) return null;
 
@@ -122,14 +276,21 @@ export function ResultModal({
               ✕
             </button>
 
-            <div className="result-modal-content">
+            <div className="result-modal-content" ref={contentRef}>
               {(selectedItem.type === 'poetry' || type === 'poetry') && (
                 <div className="result-modal-section poetry-detail">
                   <h2 style={{ color: '#6890ff', marginBottom: '15px' }}>{convertText(selectedItem.title)}</h2>
                   <p style={{ color: '#7f8c8d', marginBottom: '15px' }}>
                     {[selectedItem.dynasty, selectedItem.author, selectedItem.work].filter(Boolean).map(convertText).join(' · ')}
                   </p>
-                  <ReadingFormatTabs mode={readingMode} onChange={setReadingMode} convertText={convertText} />
+                  <ReadingFormatTabs mode={readingMode} onChange={setReadingMode} t={t} />
+                  <PronunciationTabs
+                    mode={pronunciationMode}
+                    onChange={setPronunciationMode}
+                    t={t}
+                    convertText={convertText}
+                    loading={pronunciationsLoading}
+                  />
                   <div className="poetry-body" style={{
                     background: '#f8f9fa',
                     padding: '20px',
@@ -138,7 +299,14 @@ export function ResultModal({
                     fontSize: '16px',
                     textAlign: 'center'
                   }}>
-                    <ReadingText content={selectedItem.content} kind="poetry" mode={readingMode} convertText={convertText} />
+                    <ReadingText
+                      content={selectedItem.content}
+                      kind="poetry"
+                      mode={readingMode}
+                      convertText={convertText}
+                      pronunciationMode={pronunciationMode}
+                      pronunciations={pronunciations}
+                    />
                   </div>
                   <p style={{ marginTop: '16px', fontSize: '12px', color: '#888' }}>
                     {convertText('資料來源')}：<a href="https://github.com/chinese-poetry/chinese-poetry" target="_blank" rel="noreferrer" style={{ color: '#3f80ff' }}>chinese-poetry</a>
@@ -152,7 +320,7 @@ export function ResultModal({
                   <p style={{ color: '#7f8c8d' }}>{[selectedItem.dynasty, selectedItem.author, selectedItem.category].filter(Boolean).map(convertText).join(' · ')}</p>
                   {selectedItem.intro && (
                     <>
-                      <ReadingFormatTabs mode={readingMode} onChange={setReadingMode} convertText={convertText} />
+                      <ReadingFormatTabs mode={readingMode} onChange={setReadingMode} t={t} />
                       <div className="novel-intro" style={{ background: '#fffaf2', padding: '14px', borderRadius: '8px', lineHeight: 1.7, color: '#555' }}>
                         <ReadingText content={selectedItem.intro} kind="prose" mode={readingMode} convertText={convertText} />
                       </div>
@@ -174,10 +342,13 @@ export function ResultModal({
 
               {selectedItem.type === 'novel-chapter' && (
                 <div className="result-modal-section novel-detail novel-reader">
+                  <button className="novel-reader-back" type="button" onClick={onBack}>
+                    <span aria-hidden="true">←</span> {t('entry.back')}
+                  </button>
                   <div style={{ color: '#8a5a2b', fontWeight: 'bold', marginBottom: '8px' }}>{convertText(selectedItem.work)}</div>
                   <h2 style={{ color: '#5f4528', marginBottom: '8px' }}>{convertText(selectedItem.title)}</h2>
                   <p style={{ color: '#7f8c8d' }}>{[selectedItem.dynasty, selectedItem.author, selectedItem.category].filter(Boolean).map(convertText).join(' · ')}</p>
-                  <ReadingFormatTabs mode={readingMode} onChange={setReadingMode} convertText={convertText} />
+                  <ReadingFormatTabs mode={readingMode} onChange={setReadingMode} t={t} />
                   <article className="novel-reading-paper" style={{ background: '#fffaf2', padding: '22px', borderRadius: '8px', lineHeight: 2, fontSize: '17px', color: '#332a20', whiteSpace: 'pre-wrap', textAlign: 'left' }}>
                     <ReadingText content={selectedItem.content} kind="prose" mode={readingMode} convertText={convertText} />
                   </article>
@@ -278,25 +449,25 @@ export function ResultModal({
                       margin: '10px 0',
                       border: variant.isMain ? '2px solid #fff500' : '1px solid #e0e0e0'
                     }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                        <h4 style={{ color: '#111100', margin: 0 }}>
-                          {convertText(variant.author)} {variant.isMain && <span style={{ color: '#ff6600' }}>★ {convertText('主譜')}</span>}
+                      <div className="cipou-variant-heading">
+                        <h4 className="cipou-variant-author">
+                          {convertText(variant.author)} {variant.isMain && <span className="cipou-main-badge">★ {convertText('主譜')}</span>}
                         </h4>
-                        <span style={{ fontSize: '14px', color: '#666' }}>
+                        <span className="cipou-variant-size">
                           {variant.size}{convertText('字')}
                         </span>
                       </div>
 
-                      <p style={{ color: '#666', marginBottom: '10px', fontSize: '14px' }}>
+                      <p className="cipou-variant-intro">
                         {convertText(variant.introduction)}
                       </p>
 
                       {/* 平仄譜 */}
                       <div style={{ marginBottom: '15px' }}>
-                        <strong style={{ color: '#111100' }}>{convertText('平仄譜')}：</strong>
+                        <strong className="cipou-section-label">{convertText('平仄譜')}：</strong>
 
                         {/* 圖例說明 */}
-                        <div style={{ fontSize: '12px', color: '#666', margin: '5px 0' }}>
+                        <div className="cipou-legend">
                           <span style={{ color: '#2196F3' }}>■ {convertText('平聲')}</span>{' '}
                           <span style={{ color: '#FF5722' }}>■ {convertText('仄聲')}</span>{' '}
                           <span style={{ color: '#9C27B0' }}>■ {convertText('中(原聲為平)')}</span>{' '}
@@ -330,7 +501,7 @@ export function ResultModal({
 
                       {/* 原譜例詞 */}
                       <div style={{ marginBottom: '15px' }}>
-                        <strong style={{ color: '#111100' }}>{convertText('原譜例詞')}：</strong>
+                        <strong className="cipou-section-label">{convertText('原譜例詞')}：</strong>
                         <div className="cipou-example" style={{
                           background: '#f8f9fa',
                           padding: '15px',
@@ -350,8 +521,8 @@ export function ResultModal({
                       {/* 說明 */}
                       {variant.description && (
                         <div>
-                          <strong style={{ color: '#111100' }}>{convertText('說明')}：</strong>
-                          <p style={{ color: '#666', fontSize: '14px', marginTop: '5px' }}>
+                          <strong className="cipou-section-label">{convertText('說明')}：</strong>
+                          <p className="cipou-description">
                             {convertText(variant.description)}
                           </p>
                         </div>
@@ -360,13 +531,21 @@ export function ResultModal({
                   ))}
 
                   {selectedItem.score && (
-                    <p style={{ marginTop: '15px', color: '#666' }}>
+                    <p className="cipou-score">
                       <strong>{convertText('搜尋評分')}：</strong> {selectedItem.score}{convertText('分')}
                     </p>
                   )}
                 </div>
               )}
+              <LiveTranslation source={translationSource} locale={locale} t={t} />
             </div>
+            <SelectionAssistant
+              scopeRef={contentRef}
+              t={t}
+              convertText={convertText}
+              source={selectedItem}
+              onSaveReadingNote={onSaveReadingNote}
+            />
           </div>
         </div>
       )}

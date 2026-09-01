@@ -22,9 +22,37 @@
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
 }
 
-.landing-orb { position: absolute; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 50%; }
-.landing-orb-one { width: 420px; height: 420px; right: -180px; top: -150px; }
-.landing-orb-two { width: 260px; height: 260px; left: -120px; bottom: 10%; }
+.landing-orb {
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+}
+.landing-orb-one {
+  width: 420px;
+  height: 420px;
+  right: -180px;
+  top: -150px;
+  animation: landing-orb-drift-one 15s ease-in-out infinite alternate;
+}
+.landing-orb-two {
+  width: 260px;
+  height: 260px;
+  left: -120px;
+  bottom: 10%;
+  animation: landing-orb-drift-two 12s ease-in-out -4s infinite alternate;
+}
+
+@keyframes landing-orb-drift-one {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(-34px, 28px, 0) scale(1.06); }
+}
+
+@keyframes landing-orb-drift-two {
+  from { transform: translate3d(0, 0, 0) scale(1.04); }
+  to { transform: translate3d(30px, -22px, 0) scale(0.96); }
+}
 
 .landing-hero,
 .landing-menu { position: relative; z-index: 1; width: min(1120px, 100%); margin: 0 auto; }
@@ -43,7 +71,24 @@
 .landing-secondary span { margin-left: 14px; }
 
 .featured-poem { position: relative; overflow: hidden; color: #2a302d; background: var(--paper); border-radius: 4px 28px 4px 4px; box-shadow: 0 34px 80px rgba(0, 0, 0, 0.34); }
-.featured-poem::after { content: ''; position: absolute; width: 140px; height: 140px; right: -50px; bottom: 36px; border: 1px solid rgba(113, 61, 38, 0.13); border-radius: 50%; }
+.featured-poem::after {
+  content: '';
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  right: -50px;
+  bottom: 36px;
+  border: 1px solid rgba(113, 61, 38, 0.13);
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+  animation: featured-poem-orb-drift 9s ease-in-out infinite alternate;
+}
+
+@keyframes featured-poem-orb-drift {
+  from { transform: translate3d(0, 10px, 0) scale(0.94); }
+  to { transform: translate3d(-22px, -18px, 0) scale(1.08); }
+}
 .featured-poem-topline { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid #ded5c5; color: #777267; font-size: 11px; font-weight: 700; letter-spacing: 0.16em; }
 .featured-poem-mark { display: grid; place-items: center; width: 30px; height: 30px; color: #8d4b3d; border: 1px solid #b78a77; border-radius: 50%; font-family: serif; font-size: 15px; }
 .featured-poem-open { position: relative; z-index: 1; display: block; width: 100%; padding: 0; color: inherit; border: 0; background: transparent; cursor: pointer; text-align: left; }
@@ -74,7 +119,7 @@
 .landing-menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 18px; }
 .landing-menu-card { position: relative; display: flex; min-height: 148px; padding: 20px; overflow: hidden; text-align: left; color: #eff2ee; border: 1px solid rgba(255, 255, 255, 0.11); border-radius: 14px; background: rgba(255, 255, 255, 0.055); cursor: pointer; transition: transform 180ms ease, background 180ms ease, border-color 180ms ease; }
 .landing-menu-card:hover { transform: translateY(-4px); background: rgba(255, 255, 255, 0.095); border-color: rgba(255, 255, 255, 0.2); }
-.landing-menu-icon { display: grid; place-items: center; flex: 0 0 38px; width: 38px; height: 38px; border-radius: 10px; color: #15201c; background: #b9cfc1; font-family: serif; font-size: 17px; }
+.landing-menu-icon { display: grid; place-items: center; flex: 0 0 38px; width: 38px; height: 38px; border-radius: 50%; color: #15201c; background: #b9cfc1; font-family: serif; font-size: 17px; }
 .landing-menu-card.blue .landing-menu-icon { background: #a9c6d5; }
 .landing-menu-card.amber .landing-menu-icon { background: #dbc099; }
 .landing-menu-card.rose .landing-menu-icon { background: #d6aca7; }
@@ -82,6 +127,23 @@
 .landing-menu-copy strong { font-family: serif; font-size: 17px; font-weight: 600; }
 .landing-menu-copy small { color: #9eaca5; font-size: 12px; line-height: 1.6; }
 .landing-menu-arrow { position: absolute; right: 16px; top: 16px; color: #788a81; }
+
+.theme-dark .featured-poem {
+  color: #ddd8cd;
+  border: 1px solid #394640;
+  background: #17211e;
+  box-shadow: 0 34px 80px rgba(0, 0, 0, 0.5);
+}
+.theme-dark .featured-poem::after { border-color: rgba(183, 125, 105, 0.2); }
+.theme-dark .featured-poem-topline,
+.theme-dark .featured-poem-footer { color: #929f98; border-color: #38453f; }
+.theme-dark .featured-poem-mark { color: #d69c89; border-color: #815e55; }
+.theme-dark .featured-poem h2 { color: #f0eadf; }
+.theme-dark .featured-poem-author { color: #a5aea8; }
+.theme-dark .featured-poem-entry-button { color: #c9d1cc; border-color: #4c5a53; }
+.theme-dark .featured-poem-entry-button:hover,
+.theme-dark .featured-poem-refresh:hover { background: #26332e; }
+.theme-dark .featured-poem-refresh { color: #bdc7c1; border-color: #4c5a53; }
 
 @media (max-width: 1100px) {
   .landing-hero { grid-template-columns: minmax(0, 1fr) minmax(350px, 0.82fr); gap: 40px; }
@@ -106,4 +168,9 @@
   .landing-menu-heading { align-items: flex-start; flex-direction: column; gap: 7px; }
   .landing-menu-grid { grid-template-columns: 1fr; }
   .landing-menu-card { min-height: 112px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-orb,
+  .featured-poem::after { animation: none; }
 }

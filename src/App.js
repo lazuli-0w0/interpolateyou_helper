@@ -1,9 +1,13 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { AppNavigation } from './components/AppNavigation.js';
 import { LandingPage } from './components/LandingPage.js';
 import { ResultModal } from './components/ResultModal.js';
 import { SettingsPage } from './components/SettingsPage.js';
 import { FoundersWhyPage } from './components/FoundersWhyPage.js';
+import { ProductPage } from './components/ProductPage.js';
+import { ForumPage } from './components/ForumPage.js';
+import { ReadingHistoryPage } from './components/ReadingHistoryPage.js';
+import { ReadingNotesPage } from './components/ReadingNotesPage.js';
 import { chineseConverter } from './utils/ChineseConverter.js';
 import { createTranslator, DEFAULT_LOCALE, getDocumentLanguage, normalizeLocale } from './i18n.js';
 import {
@@ -14,6 +18,13 @@ import {
   mergeUniqueResults
 } from './utils/search.js';
 import { dataManager } from './services/DataManager.js';
+import {
+  addReadingHistoryEntry,
+  clearStoredReadingHistory,
+  loadReadingHistory,
+  saveReadingHistory
+} from './services/readingHistory.js';
+import { addReadingNote, loadReadingNotes, saveReadingNotes } from './services/readingNotes.js';
 import './App.css';
 
 const VIEW_CONFIG = {
@@ -51,7 +62,160 @@ const VIEW_CONFIG = {
   }
 };
 
-function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onInitialItemHandled }) {
+const PRODUCT_VIEW_BY_ROUTE = {
+  'product-bookmark': 'bookmark',
+  'product-cards': 'cards',
+  'product-reading-notes': 'reading-notes'
+};
+
+const VIEW_BY_ENTRY_TYPE = {
+  word: 'words',
+  poetry: 'poetry',
+  'novel-book': 'novels',
+  'novel-chapter': 'novels',
+  cipou: 'cipou'
+};
+
+async function resolveSavedEntry(snapshot) {
+  if (!snapshot) return null;
+
+  if (snapshot.literatureId != null) {
+    const [record] = await dataManager.loadLiteratureRecords([snapshot.literatureId]);
+    return dataManager.loadLiteratureBody(record || snapshot);
+  }
+
+  if (snapshot.type === 'poetry') {
+    if (snapshot.content) return snapshot;
+    const matches = await dataManager.searchPoetryData(snapshot.title || snapshot.text || '', 0, 200);
+    const exactMatch = matches.results.find(item => (
+      item.title === snapshot.title && (!snapshot.author || item.author === snapshot.author)
+    ));
+    return dataManager.loadLiteratureBody(exactMatch || matches.results[0] || snapshot);
+  }
+
+  if (snapshot.type === 'novel-chapter') {
+    const matches = await dataManager.searchNovelData(snapshot.title || '', 0, 200);
+    const exactMatch = matches.results.find(item => (
+      item.type === 'novel-chapter' && item.title === snapshot.title &&
+      (!snapshot.author || item.author === snapshot.author)
+    ));
+    return dataManager.loadLiteratureBody(exactMatch || snapshot);
+  }
+
+  if (snapshot.type === 'novel-book') {
+    const books = await dataManager.loadNovelsData();
+    return books.find(book => (
+      String(book.id) === String(snapshot.id) || book.title === snapshot.title
+    )) || snapshot;
+  }
+
+  if (snapshot.type === 'word') {
+    const words = await dataManager.loadWordsData();
+    return words.find(word => (
+      String(word.id) === String(snapshot.id) || word.text === (snapshot.text || snapshot.title)
+    )) || snapshot;
+  }
+
+  if (snapshot.type === 'cipou') {
+    const patterns = await dataManager.loadCipouData();
+    return patterns.find(pattern => (
+      String(pattern.id) === String(snapshot.id) || pattern.name === (snapshot.name || snapshot.title)
+    )) || snapshot;
+  }
+
+  return snapshot;
+}
+
+const STORAGE_KEYS = {
+  locale: 'interpolateyou:locale',
+  legacyLocale: 'interpolateyou:language',
+  theme: 'interpolateyou:theme'
+};
+
+export function getSearchResultTitle(item, type) {
+  if (item?.type === 'word' || type === 'words') return item?.text || '';
+  if (item?.type === 'cipou' || type === 'cipou') return item?.name || item?.title || '';
+  return item?.title || item?.name || item?.text || '';
+}
+
+function collectFacetValues(items, valueSelector) {
+  const counts = new Map();
+
+  items.forEach(item => {
+    const values = valueSelector(item);
+    (Array.isArray(values) ? values : [values]).forEach(value => {
+      const normalized = typeof value === 'string' ? value.trim() : '';
+      if (!normalized || normalized === '未知') return;
+      counts.set(normalized, (counts.get(normalized) || 0) + 1);
+    });
+  });
+
+  return Array.from(counts.entries())
+    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0], 'zh-Hant'))
+    .map(([value]) => value);
+}
+
+function collectCommonPoetryTerms(items, limit = 60) {
+  const counts = new Map();
+
+  items.forEach(item => {
+    const termsInWork = new Set();
+    const passages = String(item?.content || item?.preview || '').match(/[\u3400-\u9fff]+/g) || [];
+
+    passages.forEach(passage => {
+      for (let index = 0; index < passage.length - 1; index += 1) {
+        termsInWork.add(passage.slice(index, index + 2));
+      }
+    });
+
+    termsInWork.forEach(term => counts.set(term, (counts.get(term) || 0) + 1));
+  });
+
+  return Array.from(counts.entries())
+    .filter(([, count]) => count > 1)
+    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0], 'zh-Hant'))
+    .slice(0, limit)
+    .map(([term]) => term);
+}
+
+export function getSearchBrowseGroups(type, data) {
+  if (!Array.isArray(data) || data.length === 0) return [];
+
+  if (type === 'words') return [];
+
+  const authorValues = collectFacetValues(data, item => (
+    type === 'cipou'
+      ? (item.variants || []).map(variant => variant.author)
+      : item.author
+  ));
+  const dynastyValues = type === 'cipou' ? [] : collectFacetValues(data, item => item.dynasty);
+  const commonPoetryTerms = type === 'poetry' ? collectCommonPoetryTerms(data) : [];
+
+  return [
+    authorValues.length ? { id: 'author', labelKey: 'search.browseAuthor', values: authorValues } : null,
+    dynastyValues.length ? { id: 'dynasty', labelKey: 'search.browseDynasty', values: dynastyValues } : null,
+    commonPoetryTerms.length ? { id: 'common', labelKey: 'search.browseCommon', values: commonPoetryTerms } : null
+  ].filter(Boolean);
+}
+
+export function matchesCipouSearch(item, searchVariants) {
+  const normalizedVariants = searchVariants.map(value => String(value).trim().toLowerCase());
+  return matchesSearchName(item, searchVariants) || (item.variants || []).some(variant => {
+    const author = String(variant.author || '').toLowerCase();
+    return normalizedVariants.some(value => value && author.includes(value));
+  });
+}
+
+function AdvancedSearch({
+  type,
+  staticData,
+  locale,
+  t,
+  initialSelectedItem,
+  onInitialItemHandled,
+  onEntryOpened,
+  onSaveReadingNote
+}) {
   const viewConfig = VIEW_CONFIG[type];
   const presentation = {
     eyebrow: t(viewConfig.eyebrowKey),
@@ -66,10 +230,15 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [selectedItem, setSelectedItem] = useState(initialSelectedItem || null);
+  const [previousNovelItem, setPreviousNovelItem] = useState(null);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [loadError, setLoadError] = useState('');
   const [displayCount, setDisplayCount] = useState(20); // 當前顯示的項目數量
+  const [resultView, setResultView] = useState('detailed');
+  const [browseCategory, setBrowseCategory] = useState('author');
+  const [selectedBrowseValues, setSelectedBrowseValues] = useState({});
   const [selectedRhymePatterns, setSelectedRhymePatterns] = useState(new Set()); // 詞牌韻格篩選
+  const loadMoreSentinelRef = useRef(null);
 
   // 詩詞動態載入相關狀態
   const [poetryOverLimit, setPoetryOverLimit] = useState(false); // 是否超過1000項
@@ -81,8 +250,11 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
   const rhymePatterns = ['平韻格', '仄韻格', '通韻格', '換韻格', '未分類'];
 
   useEffect(() => {
-    if (initialSelectedItem) onInitialItemHandled();
-  }, [initialSelectedItem, onInitialItemHandled]);
+    if (initialSelectedItem) {
+      onEntryOpened(initialSelectedItem, type);
+      onInitialItemHandled();
+    }
+  }, [initialSelectedItem, onEntryOpened, onInitialItemHandled, type]);
 
   // 加载数据
   useEffect(() => {
@@ -155,11 +327,15 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
   // AI搜索函数
   const handleAdvancedSearch = useCallback(async (searchQuery = query, additionalLoad = 0) => {
     let baseData = allData;
+    const browseSelections = Object.entries(selectedBrowseValues)
+      .map(([category, values]) => ({ category, values: Array.from(values) }))
+      .filter(selection => selection.values.length > 0);
+    const hasBrowseSelections = browseSelections.length > 0;
 
     // 先應用篩選
     baseData = applyFilters(baseData);
 
-    if (!searchQuery.trim()) {
+    if (!searchQuery.trim() && !hasBrowseSelections) {
       setResults(baseData); // 無搜索時顯示所有篩選後的數據
       return;
     }
@@ -170,7 +346,41 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
     try {
       let searchResults = [];
 
-      if (type === 'poetry' || type === 'novels') {
+      if ((type === 'poetry' || type === 'novels') && hasBrowseSelections) {
+        const searchLiterature = type === 'novels'
+          ? dataManager.searchNovelData.bind(dataManager)
+          : dataManager.searchPoetryData.bind(dataManager);
+        const authorValues = browseSelections.find(selection => selection.category === 'author')?.values || [];
+        const dynastyValues = browseSelections.find(selection => selection.category === 'dynasty')?.values || [];
+        const commonValues = browseSelections.find(selection => selection.category === 'common')?.values || [];
+        const queryGroups = [];
+
+        if (searchQuery.trim()) queryGroups.push([searchQuery.trim()]);
+        if (commonValues.length) queryGroups.push(commonValues);
+        if (!queryGroups.length && authorValues.length) queryGroups.push(authorValues);
+        if (!queryGroups.length && dynastyValues.length) queryGroups.push(dynastyValues);
+
+        setProgress(30);
+        const groupResults = await Promise.all(queryGroups.map(async terms => {
+          const searches = await Promise.all(terms.map(term => searchLiterature(term, 0, 5000)));
+          return searches.reduce((combined, result) => mergeUniqueResults(combined, result.results), []);
+        }));
+        const resultKey = item => String(item.literatureId ?? item.id);
+        searchResults = groupResults[0] || [];
+
+        groupResults.slice(1).forEach(group => {
+          const allowed = new Set(group.map(resultKey));
+          searchResults = searchResults.filter(item => allowed.has(resultKey(item)));
+        });
+        if (authorValues.length) {
+          searchResults = searchResults.filter(item => authorValues.includes(item.author));
+        }
+        if (dynastyValues.length) {
+          searchResults = searchResults.filter(item => dynastyValues.includes(item.dynasty));
+        }
+        setPoetryOverLimit(false);
+        setHasMorePoetry(false);
+      } else if (type === 'poetry' || type === 'novels') {
         // 詩詞與小說均使用分片文學索引。
         const currentResultsCount = additionalLoad > 0 ? results.length : 0;
         const maxLoad = currentResultsCount + (additionalLoad || 1000);
@@ -203,8 +413,21 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
                 getWordSearchRank(left, searchVariants, searchQuery);
               return rankDifference || (right.score || 0) - (left.score || 0);
             });
+        } else if (type === 'cipou') {
+          searchResults = searchQuery.trim()
+            ? baseData.filter(item => matchesCipouSearch(item, searchVariants))
+            : baseData;
         } else {
           searchResults = baseData.filter(item => matchesSearchName(item, searchVariants));
+        }
+      }
+
+      if (type === 'cipou' && hasBrowseSelections) {
+        const authorValues = browseSelections.find(selection => selection.category === 'author')?.values || [];
+        if (authorValues.length) {
+          searchResults = searchResults.filter(item => (
+            item.variants || []
+          ).some(variant => authorValues.includes(variant.author)));
         }
       }
 
@@ -217,13 +440,17 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
       setLoading(false);
       setProgress(100);
     }
-  }, [allData, applyFilters, query, results, type]);
+  }, [allData, applyFilters, query, results, selectedBrowseValues, type]);
 
   // 僅用於篩選條件改變的搜索函數
 
 
   // 顯示項目計算
   const currentItems = results.slice(0, displayCount); // 顯示從開頭到當前顯示數量的項目
+  const browseGroups = useMemo(() => getSearchBrowseGroups(type, allData), [allData, type]);
+  const activeBrowseGroup = browseGroups.find(group => group.id === browseCategory) || browseGroups[0];
+  const selectedBrowseCount = Object.values(selectedBrowseValues)
+    .reduce((count, values) => count + values.size, 0);
 
   // 轉換文本的輔助函數
   const convertText = (text) => {
@@ -232,15 +459,29 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
     return chineseConverter.convertText(text, script);
   };
 
-  // 顯示更多項目
-  const loadMoreItems = () => {
-    setDisplayCount(prev => Math.min(prev + itemsPerPage, results.length));
-  };
+  useEffect(() => {
+    const sentinel = loadMoreSentinelRef.current;
+    if (!sentinel || displayCount >= results.length || typeof IntersectionObserver === 'undefined') return undefined;
 
-  // 顯示全部項目
-  const showAllItems = () => {
-    setDisplayCount(results.length);
-  };
+    const observer = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return;
+      setDisplayCount(current => Math.min(current + itemsPerPage, results.length));
+    }, { rootMargin: '280px 0px' });
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [displayCount, results.length]);
+
+  const handleBrowseToggle = useCallback((value, category) => {
+    setSelectedBrowseValues(previous => {
+      const next = { ...previous };
+      const categoryValues = new Set(next[category] || []);
+      if (categoryValues.has(value)) categoryValues.delete(value);
+      else categoryValues.add(value);
+      next[category] = categoryValues;
+      return next;
+    });
+  }, []);
 
   // 載入更多詩詞 (1000項或全部)
   const loadMorePoetry = async (loadAll = false) => {
@@ -289,7 +530,7 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
         setResults(filteredData);
       } else if (type === 'cipou') {
         const searchVariants = dataManager.generateSearchVariants(query.toLowerCase());
-        setResults(filteredData.filter(item => matchesSearchName(item, searchVariants)));
+        setResults(filteredData.filter(item => matchesCipouSearch(item, searchVariants)));
       }
     }
   }, [selectedRhymePatterns, allData, dataLoaded, query, applyFilters, type]);
@@ -309,27 +550,44 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
 
   // 加载项目详情 (按需加载)
   const loadItemDetails = useCallback(async (item) => {
+    setPreviousNovelItem(null);
     if (item.type === 'poetry' || item.type === 'novel-chapter') {
       setLoading(true);
       try {
-        setSelectedItem(await dataManager.loadLiteratureBody(item));
+        const loadedItem = await dataManager.loadLiteratureBody(item);
+        setSelectedItem(loadedItem);
+        onEntryOpened(loadedItem, type);
       } finally {
         setLoading(false);
       }
       return;
     }
     setSelectedItem(item);
-  }, []);
+    onEntryOpened(item, type);
+  }, [onEntryOpened, type]);
 
   const loadNovelChapter = useCallback(async (chapterId) => {
+    setPreviousNovelItem(selectedItem?.type === 'novel-book' ? selectedItem : null);
     setLoading(true);
     try {
       const [chapter] = await dataManager.loadLiteratureRecords([chapterId]);
-      setSelectedItem(await dataManager.loadLiteratureBody(chapter));
+      const loadedChapter = await dataManager.loadLiteratureBody(chapter);
+      setSelectedItem(loadedChapter);
+      onEntryOpened(loadedChapter, type);
     } finally {
       setLoading(false);
     }
+  }, [onEntryOpened, selectedItem, type]);
+
+  const closeSelectedItem = useCallback(() => {
+    setSelectedItem(null);
+    setPreviousNovelItem(null);
   }, []);
+
+  const returnFromNovelChapter = useCallback(() => {
+    setSelectedItem(previousNovelItem);
+    setPreviousNovelItem(null);
+  }, [previousNovelItem]);
 
   return (
     <main className={`search-page search-page-${type}`}>
@@ -355,7 +613,10 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={presentation.placeholder}
-            onKeyPress={(e) => e.key === 'Enter' && handleAdvancedSearch(query)}
+            onKeyDown={(e) => {
+              if (e.key !== 'Enter') return;
+              handleAdvancedSearch(query);
+            }}
             disabled={loading}
             style={{
               flex: 1,
@@ -512,10 +773,83 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
         {/* 结果统计 */}
         <div className="search-status" aria-live="polite">
           {loadError ? t('search.statusUnavailable') : query ? t('search.statusQuery', { query, count: results.length }) :
-           dataLoaded ? t('search.statusLoaded', { total: allData.length, count: results.length }) :
+           selectedBrowseCount ? t('search.statusFiltered', { count: results.length }) :
+           dataLoaded ? t(type === 'poetry' ? 'search.statusPreloaded' : 'search.statusLoaded', { total: allData.length, count: results.length }) :
            t('search.statusLoading')}
         </div>
+
+        <div className="result-view-options" role="group" aria-label={t('search.viewMode')}>
+          <button
+            type="button"
+            className={resultView === 'detailed' ? 'active' : ''}
+            aria-pressed={resultView === 'detailed'}
+            onClick={() => setResultView('detailed')}
+          >
+            {t('search.viewDetailed')}
+          </button>
+          <button
+            type="button"
+            className={resultView === 'titles' ? 'active' : ''}
+            aria-pressed={resultView === 'titles'}
+            onClick={() => setResultView('titles')}
+          >
+            {t('search.viewTitles')}
+          </button>
+        </div>
       </div>
+
+      {activeBrowseGroup && (
+        <section className="search-browse search-browse-panel" aria-labelledby={`search-browse-title-${type}`}>
+          <div className="search-browse-heading">
+            <div>
+              <strong id={`search-browse-title-${type}`}>{t('search.browseTitle')}</strong>
+              <span>{t('search.browseDescription')}</span>
+            </div>
+            <span>{t('search.browseCount', { count: activeBrowseGroup.values.length })}</span>
+          </div>
+          <div className="search-browse-tabs-row">
+            <div className="search-browse-tabs" role="tablist" aria-label={t('search.browseTitle')}>
+              {browseGroups.map(group => (
+                <button
+                  type="button"
+                  role="tab"
+                  key={group.id}
+                  aria-selected={activeBrowseGroup.id === group.id}
+                  className={activeBrowseGroup.id === group.id ? 'active' : ''}
+                  onClick={() => setBrowseCategory(group.id)}
+                >
+                  {t(group.labelKey)}
+                </button>
+              ))}
+            </div>
+            {selectedBrowseCount > 0 && (
+              <div className="search-browse-selection-summary">
+                <span>{t('search.browseSelected', { count: selectedBrowseCount })}</span>
+                <button type="button" onClick={() => setSelectedBrowseValues({})}>
+                  {t('search.clear')}
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="search-browse-values" role="tabpanel" aria-label={t(activeBrowseGroup.labelKey)}>
+            {activeBrowseGroup.values.map(value => {
+              const isSelected = selectedBrowseValues[activeBrowseGroup.id]?.has(value) || false;
+              return (
+                <button
+                  type="button"
+                  key={`${activeBrowseGroup.id}-${value}`}
+                  className={isSelected ? 'active' : ''}
+                  aria-pressed={isSelected}
+                  aria-label={t('search.browseValue', { category: t(activeBrowseGroup.labelKey), value: convertText(value) })}
+                  onClick={() => handleBrowseToggle(value, activeBrowseGroup.id)}
+                >
+                  {convertText(value)}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {loadError && (
         <div role="alert" className="search-alert" style={{ background: '#fff3cd', border: '1px solid #e2b93b', color: '#6f5600', padding: '14px 16px', borderRadius: '8px', marginBottom: '16px' }}>
@@ -604,6 +938,34 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
       )}
 
       {/* 结果列表 - 20个一页 */}
+      {resultView === 'titles' ? (
+        <ol className="result-title-list">
+          {currentItems.map((item, index) => {
+            const title = convertText(getSearchResultTitle(item, type));
+            const author = (item.type === 'poetry' || type === 'poetry') && item.author
+              ? convertText(item.author)
+              : '';
+            const accessibleTitle = author ? `${title} · ${author}` : title;
+            return (
+              <li key={`title-${item.type || type}-${item.id}-${index}`}>
+                <button
+                  type="button"
+                  className="result-title-button"
+                  onClick={() => loadItemDetails(item)}
+                  aria-label={t('search.openTitle', { title: accessibleTitle })}
+                >
+                  <span className="result-title-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                  <span className="result-title-main">
+                    <strong>{title}</strong>
+                    {author && <small>{author}</small>}
+                  </span>
+                  <span className="result-title-arrow" aria-hidden="true">↗</span>
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+      ) : (
       <div className="result-list">
         {currentItems.map((item, index) => (
           <div
@@ -742,99 +1104,27 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
           </div>
         ))}
       </div>
+      )}
 
 
 
-      {/* 顯示更多按鍵 */}
+      {/* 捲動至列表底部時自動顯示下一批 */}
       {displayCount < results.length && (
-        <div className="result-pagination" style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: '30px 0'
-        }}>
-          <div className="result-pagination-count" style={{
-            color: '#666',
-            marginBottom: '15px',
-            fontSize: '14px'
-          }}>
+        <div
+          ref={loadMoreSentinelRef}
+          className="result-pagination result-pagination-auto"
+          role="status"
+          aria-live="polite"
+        >
+          <div className="result-pagination-count">
             {convertText(`顯示 ${displayCount} / ${results.length} 個結果`)}
           </div>
-
-          <div className="result-pagination-actions" style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <button
-              className="pagination-button"
-              onClick={loadMoreItems}
-              style={{
-                padding: '12px 24px',
-                border: '2px solid #3faaff',
-                background: '#fff',
-                color: '#3faaff',
-                borderRadius: '25px',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                fontSize: '16px',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = '#3faaff';
-                e.target.style.color = 'white';
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = '#fff';
-                e.target.style.color = '#3faaff';
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-              }}
-            >
-              📄 {convertText('顯示更多')} ({Math.min(itemsPerPage, results.length - displayCount)} {convertText('項')})
-            </button>
-
-            {results.length - displayCount > itemsPerPage && (
-              <button
-                className="pagination-button secondary"
-                onClick={showAllItems}
-                style={{
-                  padding: '12px 24px',
-                  border: '2px solid #4caf50',
-                  background: '#fff',
-                  color: '#4caf50',
-                  borderRadius: '25px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                  fontSize: '16px',
-                  transition: 'all 0.3s ease',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.background = '#4caf50';
-                  e.target.style.color = 'white';
-                  e.target.style.transform = 'translateY(-2px)';
-                  e.target.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = '#fff';
-                  e.target.style.color = '#4caf50';
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-                }}
-              >
-                📋 {convertText('顯示全部')} ({results.length - displayCount} {convertText('項')})
-              </button>
-            )}
-          </div>
-
-          <div className="result-pagination-meta" style={{
-            color: '#999',
-            marginTop: '15px',
-            fontSize: '12px',
-            textAlign: 'center'
-          }}>
-            {convertText('每次載入')} {itemsPerPage} {convertText('項')} | {convertText('剩餘')} {results.length - displayCount} {convertText('項')}
+          <div className="result-pagination-meta">
+            <span className="result-pagination-spinner" aria-hidden="true" />
+            {t('search.autoLoadMore', {
+              count: Math.min(itemsPerPage, results.length - displayCount),
+              remaining: results.length - displayCount
+            })}
           </div>
         </div>
       )}
@@ -854,9 +1144,13 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
       <ResultModal
         selectedItem={selectedItem}
         type={type}
+        locale={locale}
+        t={t}
         convertText={convertText}
-        onClose={() => setSelectedItem(null)}
+        onClose={closeSelectedItem}
+        onBack={returnFromNovelChapter}
         onLoadNovelChapter={loadNovelChapter}
+        onSaveReadingNote={onSaveReadingNote}
       />
 
       {/* 詩詞模式專用提示 */}
@@ -900,11 +1194,20 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
 
 function App() {
   const [view, setView] = useState('home');
-  const [openingPoem, setOpeningPoem] = useState(null);
+  const [openingEntry, setOpeningEntry] = useState(null);
+  const [readingHistory, setReadingHistory] = useState(loadReadingHistory);
+  const [readingNotes, setReadingNotes] = useState(loadReadingNotes);
+  const [theme, setTheme] = useState(() => {
+    try {
+      return window.localStorage.getItem(STORAGE_KEYS.theme) === 'dark' ? 'dark' : 'light';
+    } catch (error) {
+      return 'light';
+    }
+  });
   const [locale, setLocale] = useState(() => {
     try {
-      const savedLocale = window.localStorage.getItem('interpolateyou:locale') ||
-        window.localStorage.getItem('interpolateyou:language');
+      const savedLocale = window.localStorage.getItem(STORAGE_KEYS.locale) ||
+        window.localStorage.getItem(STORAGE_KEYS.legacyLocale);
       return normalizeLocale(savedLocale);
     } catch (error) {
       return DEFAULT_LOCALE;
@@ -913,17 +1216,65 @@ function App() {
   const [, setConverterReady] = useState(chineseConverter.isLoaded);
   const t = useMemo(() => createTranslator(locale), [locale]);
   const viewConfig = VIEW_CONFIG[view];
+  const product = PRODUCT_VIEW_BY_ROUTE[view];
+  const recordReading = useCallback((item, fallbackView) => {
+    setReadingHistory(currentHistory => {
+      const nextHistory = addReadingHistoryEntry(currentHistory, item, fallbackView);
+      saveReadingHistory(nextHistory);
+      return nextHistory;
+    });
+  }, []);
   const openFeaturedPoem = useCallback((poemEntry) => {
-    setOpeningPoem(poemEntry);
+    setOpeningEntry({ view: 'poetry', item: poemEntry });
     setView('poetry');
   }, []);
-  const clearOpeningPoem = useCallback(() => setOpeningPoem(null), []);
+  const clearOpeningEntry = useCallback(() => setOpeningEntry(null), []);
+  const clearReadingHistory = useCallback(() => {
+    setReadingHistory([]);
+    clearStoredReadingHistory();
+  }, []);
+  const saveReadingNote = useCallback(draft => {
+    setReadingNotes(currentNotes => {
+      const nextNotes = addReadingNote(currentNotes, draft);
+      saveReadingNotes(nextNotes);
+      return nextNotes;
+    });
+  }, []);
+  const deleteReadingNote = useCallback(noteId => {
+    setReadingNotes(currentNotes => {
+      const nextNotes = currentNotes.filter(note => note.id !== noteId);
+      saveReadingNotes(nextNotes);
+      return nextNotes;
+    });
+  }, []);
+  const openStoredEntry = useCallback(async (snapshot, targetView) => {
+    const item = await resolveSavedEntry(snapshot);
+    if (!item || !targetView) return;
+    setOpeningEntry({ view: targetView, item });
+    setView(targetView);
+  }, []);
+  const openHistoryEntry = useCallback(entry => (
+    openStoredEntry(entry.item, entry.view)
+  ), [openStoredEntry]);
+  const openReadingNote = useCallback(note => (
+    openStoredEntry(note.source, VIEW_BY_ENTRY_TYPE[note.source?.type])
+  ), [openStoredEntry]);
 
   const updateLocale = useCallback((nextLocale) => {
     const normalizedLocale = normalizeLocale(nextLocale);
     setLocale(normalizedLocale);
     try {
-      window.localStorage.setItem('interpolateyou:locale', normalizedLocale);
+      window.localStorage.setItem(STORAGE_KEYS.locale, normalizedLocale);
+    } catch (error) {
+      // The preference still applies for this session when storage is unavailable.
+    }
+  }, []);
+
+  const updateTheme = useCallback((nextTheme) => {
+    const normalizedTheme = nextTheme === 'dark' ? 'dark' : 'light';
+    setTheme(normalizedTheme);
+    try {
+      window.localStorage.setItem(STORAGE_KEYS.theme, normalizedTheme);
     } catch (error) {
       // The preference still applies for this session when storage is unavailable.
     }
@@ -934,29 +1285,74 @@ function App() {
   }, [locale]);
 
   useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+  }, [theme]);
+
+  useEffect(() => {
     chineseConverter.loadDictionaries().then(() => setConverterReady(chineseConverter.isLoaded));
   }, []);
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell theme-${theme}`}>
       <AppNavigation view={view} onViewChange={setView} t={t} />
 
       {view === 'home' ? (
         <LandingPage onNavigate={setView} onOpenPoem={openFeaturedPoem} locale={locale} t={t} />
       ) : view === 'settings-language' ? (
-        <SettingsPage locale={locale} onLocaleChange={updateLocale} t={t} />
+        <SettingsPage
+          section="language"
+          locale={locale}
+          onLocaleChange={updateLocale}
+          theme={theme}
+          onThemeChange={updateTheme}
+          t={t}
+        />
+      ) : view === 'settings-appearance' ? (
+        <SettingsPage
+          section="appearance"
+          locale={locale}
+          onLocaleChange={updateLocale}
+          theme={theme}
+          onThemeChange={updateTheme}
+          t={t}
+        />
       ) : view === 'founders-why' ? (
         <FoundersWhyPage locale={locale} />
-      ) : (
+      ) : view === 'forum' ? (
+        <ForumPage t={t} />
+      ) : view === 'reading-history' ? (
+        <ReadingHistoryPage
+          history={readingHistory}
+          locale={locale}
+          t={t}
+          onOpen={openHistoryEntry}
+          onClear={clearReadingHistory}
+        />
+      ) : view === 'reading-notes' ? (
+        <ReadingNotesPage
+          notes={readingNotes}
+          locale={locale}
+          t={t}
+          onOpen={openReadingNote}
+          onDelete={deleteReadingNote}
+        />
+      ) : product ? (
+        <ProductPage product={product} t={t} />
+      ) : viewConfig ? (
         <AdvancedSearch
           key={view}
           type={view}
           staticData={viewConfig.getStaticData()}
           locale={locale}
           t={t}
-          initialSelectedItem={view === 'poetry' ? openingPoem : null}
-          onInitialItemHandled={clearOpeningPoem}
+          initialSelectedItem={openingEntry?.view === view ? openingEntry.item : null}
+          onInitialItemHandled={clearOpeningEntry}
+          onEntryOpened={recordReading}
+          onSaveReadingNote={saveReadingNote}
         />
+      ) : (
+        <LandingPage onNavigate={setView} onOpenPoem={openFeaturedPoem} locale={locale} t={t} />
       )}
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './AppNavigation.css';
 
 // Add another object here to create a new top-level tab with its own feature menu.
@@ -17,36 +17,86 @@ const NAV_TABS = [
     ]
   },
   {
+    id: 'products',
+    labelKey: 'nav.products',
+    eyebrowKey: 'nav.products.eyebrow',
+    titleKey: 'nav.products.title',
+    descriptionKey: 'nav.products.description',
+    features: [
+      { href: 'https://patreon.com/interpolateyou', markKey: 'product.patreon.mark', labelKey: 'product.patreon.label', descriptionKey: 'product.patreon.menuDescription' },
+      { href: 'https://www.instagram.com/shadow_lazuli', markKey: 'product.videoDiary.mark', labelKey: 'product.videoDiary.label', descriptionKey: 'product.videoDiary.menuDescription' },
+      { view: 'product-bookmark', markKey: 'product.bookmark.mark', labelKey: 'product.bookmark.label', descriptionKey: 'product.bookmark.menuDescription' },
+      { view: 'product-cards', markKey: 'product.cards.mark', labelKey: 'product.cards.label', descriptionKey: 'product.cards.menuDescription' },
+      { view: 'product-reading-notes', markKey: 'product.readingNotes.mark', labelKey: 'product.readingNotes.label', descriptionKey: 'product.readingNotes.menuDescription' }
+    ]
+  },
+  {
+    id: 'forum',
+    view: 'forum',
+    labelKey: 'nav.forum'
+  },
+  {
+    id: 'records',
+    labelKey: 'nav.records',
+    eyebrowKey: 'nav.records.eyebrow',
+    titleKey: 'nav.records.title',
+    descriptionKey: 'nav.records.description',
+    features: [
+      { view: 'reading-notes', markKey: 'notes.mark', labelKey: 'notes.title', descriptionKey: 'notes.menuDescription' },
+      { view: 'reading-history', markKey: 'history.mark', labelKey: 'history.title', descriptionKey: 'history.menuDescription' }
+    ]
+  },
+  {
     id: 'settings',
     labelKey: 'nav.settings',
     eyebrowKey: 'nav.settings.eyebrow',
     titleKey: 'nav.settings.title',
     descriptionKey: 'nav.settings.description',
     features: [
-      { view: 'settings-language', markKey: 'settings.feature.mark', labelKey: 'settings.feature.label', descriptionKey: 'settings.feature.description' }
+      { view: 'settings-language', markKey: 'settings.feature.mark', labelKey: 'settings.feature.label', descriptionKey: 'settings.feature.description' },
+      { view: 'settings-appearance', markKey: 'settings.appearance.mark', labelKey: 'settings.appearance.label', descriptionKey: 'settings.appearance.featureDescription' }
     ]
   },
   {
     id: 'founders-why',
     labelKey: 'nav.foundersWhy',
-    view: 'founders-why'
+    eyebrowKey: 'nav.foundersWhy.eyebrow',
+    titleKey: 'nav.foundersWhy.title',
+    descriptionKey: 'nav.foundersWhy.description',
+    features: [
+      { view: 'founders-why', markKey: 'nav.foundersWhy.mark', labelKey: 'nav.foundersWhy', descriptionKey: 'nav.foundersWhy.menuDescription' },
+      { href: 'https://linktr.ee/interpolateyou', markKey: 'nav.linktree.mark', labelKey: 'nav.linktree.label', descriptionKey: 'nav.linktree.description' }
+    ]
   }
 ];
 
 export function AppNavigation({ view, onViewChange, t }) {
   const [openTabId, setOpenTabId] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigationRef = useRef(null);
   const activeTabId = NAV_TABS.find(tab =>
     tab.view === view || tab.features?.some(feature => feature.view === view)
   )?.id;
   const openTab = NAV_TABS.find(tab => tab.id === openTabId);
+  const closeMenus = useCallback(() => {
+    setOpenTabId(null);
+    setMobileMenuOpen(false);
+  }, []);
+  const navigateTo = useCallback((nextView) => {
+    closeMenus();
+    onViewChange(nextView);
+  }, [closeMenus, onViewChange]);
+  const toggleMobileMenu = useCallback(() => {
+    setOpenTabId(null);
+    setMobileMenuOpen(current => !current);
+  }, []);
 
   useEffect(() => {
     const closeOnOutsideClick = (event) => {
-      if (!navigationRef.current?.contains(event.target)) setOpenTabId(null);
+      if (!navigationRef.current?.contains(event.target)) closeMenus();
     };
     const closeOnEscape = (event) => {
-      if (event.key === 'Escape') setOpenTabId(null);
+      if (event.key === 'Escape') closeMenus();
     };
 
     document.addEventListener('pointerdown', closeOnOutsideClick);
@@ -55,30 +105,37 @@ export function AppNavigation({ view, onViewChange, t }) {
       document.removeEventListener('pointerdown', closeOnOutsideClick);
       document.removeEventListener('keydown', closeOnEscape);
     };
-  }, []);
-
-  const navigateTo = (nextView) => {
-    setOpenTabId(null);
-    onViewChange(nextView);
-  };
+  }, [closeMenus]);
 
   return (
-    <nav className="app-navigation" aria-label={t('nav.main')} ref={navigationRef}>
+    <nav className={`app-navigation ${mobileMenuOpen ? 'mobile-menu-open' : ''}`} aria-label={t('nav.main')} ref={navigationRef}>
       <div className="app-navigation-inner">
         <button className={`app-brand ${view === 'home' ? 'active' : ''}`} onClick={() => navigateTo('home')}>
-          <span className="app-brand-seal">{t('tool.poetry.mark')}</span>
+          <span className="app-brand-seal">您</span>
           <span>
             <strong>{t('brand.name')}</strong>
             <small>INTERPOLATE YOU</small>
           </span>
         </button>
 
-        <div className="app-navigation-tabs">
+        <button
+          className="app-navigation-mobile-toggle"
+          type="button"
+          aria-label={t('nav.main')}
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-navigation-tabs"
+          onClick={toggleMobileMenu}
+        >
+          <span aria-hidden="true">{mobileMenuOpen ? '×' : '☰'}</span>
+        </button>
+
+        <div className="app-navigation-tabs" id="mobile-navigation-tabs">
           {NAV_TABS.map(tab => (
             <button
               key={tab.id}
               className={activeTabId === tab.id || openTabId === tab.id ? 'active' : ''}
               type="button"
+              aria-current={activeTabId === tab.id ? 'page' : undefined}
               aria-expanded={tab.features ? openTabId === tab.id : undefined}
               aria-controls={tab.features ? `navigation-menu-${tab.id}` : undefined}
               onClick={() => tab.view
@@ -110,16 +167,34 @@ export function AppNavigation({ view, onViewChange, t }) {
             <span>{t(openTab.descriptionKey)}</span>
           </div>
           <div className="app-navigation-feature-grid">
-            {openTab.features.map(feature => (
-              <button key={feature.view} type="button" onClick={() => navigateTo(feature.view)}>
-                <span className="app-navigation-feature-mark" aria-hidden="true">{t(feature.markKey)}</span>
-                <span className="app-navigation-feature-copy">
-                  <strong>{t(feature.labelKey)}</strong>
-                  <small>{t(feature.descriptionKey)}</small>
-                </span>
-                <span className="app-navigation-feature-arrow" aria-hidden="true">↗</span>
-              </button>
-            ))}
+            {openTab.features.map(feature => {
+              const content = (
+                <>
+                  <span className="app-navigation-feature-mark" aria-hidden="true">{t(feature.markKey)}</span>
+                  <span className="app-navigation-feature-copy">
+                    <strong>{t(feature.labelKey)}</strong>
+                    <small>{t(feature.descriptionKey)}</small>
+                  </span>
+                  <span className="app-navigation-feature-arrow" aria-hidden="true">↗</span>
+                </>
+              );
+
+              return feature.href ? (
+                <a
+                  key={feature.href}
+                  href={feature.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={closeMenus}
+                >
+                  {content}
+                </a>
+              ) : (
+                <button key={feature.view} type="button" onClick={() => navigateTo(feature.view)}>
+                  {content}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}

@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 const searchRouter = require('./routes/search');
+const vernacularRouter = require('./routes/vernacular');
 const dataLoader = require('./data-loader');
 
 const app = express();
@@ -21,6 +22,8 @@ app.use('/api/search', (req, res, next) => {
   req.appData = app.locals.data;
   next();
 }, searchRouter);
+
+app.use('/api/translate/vernacular', vernacularRouter);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 

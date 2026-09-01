@@ -71,7 +71,7 @@
 
 .reading-format-tabs {
   display: inline-grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   padding: 3px;
   border: 1px solid #d4c8b7;
   border-radius: 999px;
@@ -100,6 +100,52 @@
 .reading-format-tabs button:focus-visible {
   outline: 2px solid #7f9c8f;
   outline-offset: 2px;
+}
+
+.pronunciation-toolbar {
+  display: flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.pronunciation-toolbar > .reading-format-label { margin-right: auto; }
+
+.pronunciation-tabs {
+  display: inline-grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 3px;
+  border: 1px solid #d4c8b7;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.pronunciation-tabs button {
+  min-width: 58px;
+  padding: 6px 11px;
+  color: #6e726d;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+}
+
+.pronunciation-tabs button.active {
+  color: #f8f3e7;
+  background: #785c57;
+}
+
+.pronunciation-tabs button:focus-visible {
+  outline: 2px solid #9c7770;
+  outline-offset: 2px;
+}
+
+.pronunciation-loading {
+  color: #8b8c85;
+  font-size: 11px;
 }
 
 .poetry-body,
@@ -145,6 +191,36 @@
   content: '·';
 }
 
+.pronounced-poetry-text {
+  display: grid;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  gap: 0.65em;
+  text-align: left;
+}
+
+.pronounced-poetry-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  column-gap: 0.02em;
+  row-gap: 0.9em;
+  line-height: 2.55;
+}
+
+.poetry-ruby { ruby-position: over; }
+
+.poetry-ruby rt {
+  color: #8b5d58;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 0.48em;
+  font-weight: 600;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
 .novel-intro { border-radius: 13px !important; }
 .novel-chapter-list { gap: 7px !important; }
 .novel-chapter-button {
@@ -156,6 +232,35 @@
   transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
 }
 .novel-chapter-button:hover { transform: translateX(3px); border-color: #997558 !important; background: #fff !important; }
+
+.novel-reader-back {
+  display: inline-flex;
+  min-height: 38px;
+  margin: 0 0 24px;
+  padding: 8px 14px;
+  align-items: center;
+  gap: 8px;
+  color: #5c685f;
+  border: 1px solid #d2c7b7;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.46);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
+}
+
+.novel-reader-back:hover {
+  transform: translateX(-3px);
+  border-color: #8d6d56;
+  background: #fff;
+}
+
+.novel-reader-back:focus-visible {
+  outline: 2px solid #7f9c8f;
+  outline-offset: 2px;
+}
 
 .novel-reading-paper {
   padding: 30px !important;
@@ -185,6 +290,93 @@
 }
 
 .formatted-prose-sentence + .formatted-prose-sentence { margin-top: 0.45em; }
+
+.vernacular-translation { text-align: left; }
+
+.vernacular-translation-heading {
+  display: flex;
+  margin-bottom: 18px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #4d5d55;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.vernacular-translation-heading small {
+  padding: 5px 9px;
+  color: #805c52;
+  border: 1px solid #c9aaa0;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.vernacular-translation-status { margin: 0 !important; color: #747b76 !important; }
+.vernacular-translation-pairs {
+  overflow: hidden;
+  border: 1px solid #ddd3c3;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.44);
+}
+
+.vernacular-translation-pair { padding: 16px 18px; }
+.vernacular-translation-pair + .vernacular-translation-pair { border-top: 1px solid #ddd3c3; }
+.vernacular-translation-source,
+.vernacular-translation-copy {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+.vernacular-translation-copy { margin-top: 10px; color: #303a35; }
+.vernacular-translation-source { color: #6d746f; }
+.vernacular-translation-source small,
+.vernacular-translation-copy small {
+  padding-top: 0.25em;
+  color: #8b655b;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.vernacular-translation-source p,
+.vernacular-translation-copy p { margin: 0 !important; line-height: 1.85; white-space: pre-wrap; }
+.vernacular-translation-error p { margin: 0 0 12px; color: #8b5d58 !important; }
+.vernacular-translation-error button {
+  padding: 7px 12px;
+  color: #f8f3e7;
+  border: 0;
+  border-radius: 999px;
+  background: #785c57;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+}
+
+.live-translation {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid #d5c9ba;
+  border-radius: 13px;
+  background: rgba(232, 223, 207, 0.5);
+}
+
+.live-translation-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  color: #4e5e56;
+  font-weight: 700;
+}
+
+.live-translation-heading small { color: #7c8079; font-size: 11px; font-weight: 500; }
+.live-translation-status { margin: 14px 0 0; color: #7a807b !important; }
+.live-translation-copy { margin: 14px 0 0; color: #333d38 !important; line-height: 1.85; white-space: pre-wrap; }
+.live-translation-error { margin: 14px 0 0; color: #8b5d58 !important; }
 
 .modal-pronunciations {
   gap: 8px !important;
@@ -220,8 +412,99 @@
   background: rgba(255, 255, 255, 0.4) !important;
 }
 .cipou-variant.main { border-color: #b9936e !important; background: #f2e8d7 !important; }
+.cipou-variant-heading {
+  display: flex;
+  margin-bottom: 10px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+}
+.cipou-variant-author { margin: 0; color: #2c302d; font-size: 17px; }
+.cipou-main-badge { color: #9f552f; }
+.cipou-variant-size { flex: 0 0 auto; color: #777970; font-size: 13px; }
+.cipou-variant-intro { margin: 0 0 14px; color: #676d68; font-size: 14px; line-height: 1.65; }
+.cipou-section-label { color: #303632; }
+.cipou-legend { margin: 7px 0 9px; color: #6f746f; font-size: 12px; line-height: 1.8; }
+.cipou-description { margin: 7px 0 0; color: #656c67; font-size: 14px; line-height: 1.75; }
+.cipou-score { margin-top: 16px !important; color: #686e69 !important; }
 .tone-pattern { padding: 13px !important; border-radius: 9px !important; }
 .cipou-example { padding: 18px !important; border-radius: 9px !important; font-family: 'Noto Serif TC', 'Songti TC', serif; }
+
+.theme-dark .result-modal-panel {
+  color: #e0dbd1;
+  border-color: #48554f;
+  background: #17211e !important;
+  scrollbar-color: #59665f transparent;
+}
+.theme-dark .result-modal-close {
+  color: #c4cdc8 !important;
+  border-color: #4c5952 !important;
+  background: #202c28 !important;
+}
+.theme-dark .result-modal-close:hover { background: #293631 !important; }
+.theme-dark .result-modal-content h2 { color: #eee8dc !important; }
+.theme-dark .result-modal-content h3 { color: #dbe2dd !important; }
+.theme-dark .result-modal-content > div > p { color: #a5afa9 !important; }
+.theme-dark .result-modal-content a { color: #a9c8b9 !important; }
+.theme-dark .reading-format-toolbar,
+.theme-dark .modal-pronunciations { border-color: #394640; }
+.theme-dark .reading-format-label { color: #aab4ae; }
+.theme-dark .reading-format-tabs { border-color: #4a5750; background: #202c28; }
+.theme-dark .reading-format-tabs button { color: #aab5af; }
+.theme-dark .reading-format-tabs button.active { color: #17211e; background: #c6d3cb; }
+.theme-dark .pronunciation-tabs { border-color: #4a5750; background: #202c28; }
+.theme-dark .pronunciation-tabs button { color: #aab5af; }
+.theme-dark .pronunciation-tabs button.active { color: #17211e; background: #d2b7b0; }
+.theme-dark .pronunciation-loading { color: #8f9a94; }
+.theme-dark .poetry-ruby rt { color: #e0aaa0; }
+.theme-dark .poetry-body,
+.theme-dark .novel-intro,
+.theme-dark .novel-reading-paper,
+.theme-dark .tone-pattern,
+.theme-dark .cipou-example,
+.theme-dark .meaning-block,
+.theme-dark .cipou-variant {
+  color: #d8d4ca !important;
+  border-color: #3d4944 !important;
+  background: #1d2925 !important;
+}
+.theme-dark .formatted-poetry-line::before { color: #6e7d75; }
+.theme-dark .formatted-prose-sentence { border-color: rgba(192, 210, 200, 0.16); }
+.theme-dark .live-translation { border-color: #46534c; background: #182521; }
+.theme-dark .live-translation-heading { color: #d2ddd7; }
+.theme-dark .live-translation-heading small, .theme-dark .live-translation-status { color: #a0aca5 !important; }
+.theme-dark .live-translation-copy { color: #e3dfd5 !important; }
+.theme-dark .live-translation-error { color: #e5aba0 !important; }
+.theme-dark .novel-chapter-button {
+  color: #c8d1cc !important;
+  border-color: #3e4b45 !important;
+  background: #1e2b26 !important;
+}
+.theme-dark .novel-chapter-button:hover { border-color: #9f7860 !important; background: #26342e !important; }
+.theme-dark .novel-reader-back { color: #d2d9d4; border-color: #4a5750; background: #202c28; }
+.theme-dark .novel-reader-back:hover { border-color: #9f7860; background: #293731; }
+.theme-dark .vernacular-translation-heading { color: #cbd5cf; }
+.theme-dark .vernacular-translation-heading small { color: #e0b7aa; border-color: #805e56; }
+.theme-dark .vernacular-translation-pairs { border-color: #46534d; background: rgba(24, 34, 30, 0.62); }
+.theme-dark .vernacular-translation-pair + .vernacular-translation-pair { border-color: #46534d; }
+.theme-dark .vernacular-translation-source { color: #aeb9b3; }
+.theme-dark .vernacular-translation-copy { color: #e1ddd3; }
+.theme-dark .vernacular-translation-source small,
+.theme-dark .vernacular-translation-copy small { color: #e0b7aa; }
+.theme-dark .modal-pronunciations > span { color: #bdc8c2; background: #25312c; }
+.theme-dark .modal-pronunciations span span { color: #a9cabb !important; }
+.theme-dark .meaning-block ol { color: #bdc6c1 !important; }
+.theme-dark .cipou-variant.main { border-color: #9b8163 !important; background: #24231f !important; }
+.theme-dark .cipou-variant-author { color: #f0eadf; }
+.theme-dark .cipou-main-badge { color: #f0a277; }
+.theme-dark .cipou-variant-size { color: #aab4ae; }
+.theme-dark .cipou-variant-intro { color: #c1c9c4; }
+.theme-dark .cipou-section-label { color: #eee7dc; }
+.theme-dark .cipou-legend { color: #aeb8b2; }
+.theme-dark .cipou-description,
+.theme-dark .cipou-score { color: #bdc6c1 !important; }
+.theme-dark .cipou-detail .tone-pattern,
+.theme-dark .cipou-detail .cipou-example { color: #dce3de !important; background: #121b18 !important; }
 
 @media (max-width: 620px) {
   .result-modal-backdrop { padding: 10px; align-items: flex-end !important; }
@@ -234,6 +517,8 @@
   .result-modal-content h2 { font-size: 30px; }
   .reading-format-toolbar { align-items: flex-start; }
   .reading-format-tabs button { min-width: 56px; padding-inline: 10px; }
+  .pronunciation-toolbar { align-items: flex-start; flex-wrap: wrap; }
+  .pronunciation-tabs button { min-width: 52px; padding-inline: 8px; }
   .poetry-body,
   .novel-reading-paper { padding: 20px !important; }
 }

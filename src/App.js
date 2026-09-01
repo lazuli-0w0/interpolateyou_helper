@@ -15,7 +15,7 @@ import './App.css';
 
 const VIEW_CONFIG = {
   words: {
-    eyebrow: 'LEXICON · 音義與典籍',
+    eyebrow: 'Linguistica del lessico · 音義與典籍',
     title: '詞語搜尋',
     description: '從字形、粵拼與普拼，循著聲音找到詞義。',
     mark: '字',
@@ -23,7 +23,7 @@ const VIEW_CONFIG = {
     getStaticData: () => dataManager.getStaticWords()
   },
   poetry: {
-    eyebrow: 'POETRY · 歷代詩文',
+    eyebrow: 'Poesia del lessico · 歷代詩文',
     title: '詩詞搜尋',
     description: '以題名、作者或一句詩，翻開歷代中文作品。',
     mark: '詩',
@@ -31,7 +31,7 @@ const VIEW_CONFIG = {
     getStaticData: () => dataManager.getStaticPoetry()
   },
   novels: {
-    eyebrow: 'FICTION · 古典章回',
+    eyebrow: 'Finzione del lessico · 古典章回',
     title: '小說閱讀',
     description: '從書名、人物與正文，進入古典小說的長卷。',
     mark: '卷',
@@ -39,7 +39,7 @@ const VIEW_CONFIG = {
     getStaticData: () => []
   },
   cipou: {
-    eyebrow: 'PROSODY · 詞牌格律',
+    eyebrow: 'Prosa del lessico · 詞牌格律',
     title: '詞牌搜尋',
     description: '查看詞牌變體、平仄格式與歷代例詞。',
     mark: '韻',

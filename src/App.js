@@ -1,8 +1,11 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { AppNavigation } from './components/AppNavigation.js';
 import { LandingPage } from './components/LandingPage.js';
 import { ResultModal } from './components/ResultModal.js';
+import { SettingsPage } from './components/SettingsPage.js';
+import { FoundersWhyPage } from './components/FoundersWhyPage.js';
 import { chineseConverter } from './utils/ChineseConverter.js';
+import { createTranslator, DEFAULT_LOCALE, getDocumentLanguage, normalizeLocale } from './i18n.js';
 import {
   getPreferredMeanings,
   getWordSearchRank,
@@ -15,41 +18,48 @@ import './App.css';
 
 const VIEW_CONFIG = {
   words: {
-    eyebrow: 'Linguistica del lessico · 音義與典籍',
-    title: '詞語搜尋',
-    description: '從字形、粵拼與普拼，循著聲音找到詞義。',
-    mark: '字',
-    placeholder: '輸入詞語、繁簡體字或粵拼...',
+    eyebrowKey: 'tool.words.eyebrow',
+    titleKey: 'tool.words.title',
+    descriptionKey: 'tool.words.description',
+    markKey: 'tool.words.mark',
+    placeholderKey: 'tool.words.placeholder',
     getStaticData: () => dataManager.getStaticWords()
   },
   poetry: {
-    eyebrow: 'Poesia del lessico · 歷代詩文',
-    title: '詩詞搜尋',
-    description: '以題名、作者或一句詩，翻開歷代中文作品。',
-    mark: '詩',
-    placeholder: '搜尋詩詞...',
+    eyebrowKey: 'tool.poetry.eyebrow',
+    titleKey: 'tool.poetry.title',
+    descriptionKey: 'tool.poetry.description',
+    markKey: 'tool.poetry.mark',
+    placeholderKey: 'tool.poetry.placeholder',
     getStaticData: () => dataManager.getStaticPoetry()
   },
   novels: {
-    eyebrow: 'Finzione del lessico · 古典章回',
-    title: '小說閱讀',
-    description: '從書名、人物與正文，進入古典小說的長卷。',
-    mark: '卷',
-    placeholder: '搜尋書名、作者、章回或正文...',
+    eyebrowKey: 'tool.novels.eyebrow',
+    titleKey: 'tool.novels.title',
+    descriptionKey: 'tool.novels.description',
+    markKey: 'tool.novels.mark',
+    placeholderKey: 'tool.novels.placeholder',
     getStaticData: () => []
   },
   cipou: {
-    eyebrow: 'Prosa del lessico · 詞牌格律',
-    title: '詞牌搜尋',
-    description: '查看詞牌變體、平仄格式與歷代例詞。',
-    mark: '韻',
-    placeholder: '搜尋詞牌...',
+    eyebrowKey: 'tool.cipou.eyebrow',
+    titleKey: 'tool.cipou.title',
+    descriptionKey: 'tool.cipou.description',
+    markKey: 'tool.cipou.mark',
+    placeholderKey: 'tool.cipou.placeholder',
     getStaticData: () => dataManager.getStaticCipou()
   }
 };
 
-function AdvancedSearch({ type, staticData, placeholder, initialSelectedItem, onInitialItemHandled }) {
-  const presentation = VIEW_CONFIG[type];
+function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onInitialItemHandled }) {
+  const viewConfig = VIEW_CONFIG[type];
+  const presentation = {
+    eyebrow: t(viewConfig.eyebrowKey),
+    title: t(viewConfig.titleKey),
+    description: t(viewConfig.descriptionKey),
+    mark: t(viewConfig.markKey),
+    placeholder: t(viewConfig.placeholderKey)
+  };
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [allData, setAllData] = useState([]);
@@ -58,7 +68,6 @@ function AdvancedSearch({ type, staticData, placeholder, initialSelectedItem, on
   const [selectedItem, setSelectedItem] = useState(initialSelectedItem || null);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [loadError, setLoadError] = useState('');
-  const [language, setLanguage] = useState('traditional'); // 'traditional' 或 'simplified'
   const [displayCount, setDisplayCount] = useState(20); // 當前顯示的項目數量
   const [selectedRhymePatterns, setSelectedRhymePatterns] = useState(new Set()); // 詞牌韻格篩選
 
@@ -219,12 +228,8 @@ function AdvancedSearch({ type, staticData, placeholder, initialSelectedItem, on
   // 轉換文本的輔助函數
   const convertText = (text) => {
     if (!text || !chineseConverter.isLoaded) return text;
-    return chineseConverter.convertText(text, language);
-  };
-
-  // 切換語言
-  const toggleLanguage = () => {
-    setLanguage(prev => prev === 'traditional' ? 'simplified' : 'traditional');
+    const script = locale === 'zh-Hans' ? 'simplified' : 'traditional';
+    return chineseConverter.convertText(text, script);
   };
 
   // 顯示更多項目
@@ -349,7 +354,7 @@ function AdvancedSearch({ type, staticData, placeholder, initialSelectedItem, on
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={placeholder}
+            placeholder={presentation.placeholder}
             onKeyPress={(e) => e.key === 'Enter' && handleAdvancedSearch(query)}
             disabled={loading}
             style={{
@@ -362,23 +367,6 @@ function AdvancedSearch({ type, staticData, placeholder, initialSelectedItem, on
               outline: 'none'
             }}
           />
-          <button
-            className={`search-language-button ${language}`}
-            onClick={toggleLanguage}
-            style={{
-              padding: '12px 20px',
-              background: language === 'traditional' ? '#ff6b6b' : '#51cf66',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              whiteSpace: 'nowrap'
-            }}
-            title="切換繁簡體"
-          >
-            {language === 'traditional' ? '繁' : '简'}
-          </button>
           <button
             className="search-submit-button"
             onClick={() => {
@@ -397,7 +385,7 @@ function AdvancedSearch({ type, staticData, placeholder, initialSelectedItem, on
               fontWeight: 'bold'
             }}
           >
-            {loading ? '搜尋中...' : '🔍 搜尋'}
+            {loading ? t('search.loading') : t('search.action')}
           </button>
         </div>
 
@@ -410,7 +398,7 @@ function AdvancedSearch({ type, staticData, placeholder, initialSelectedItem, on
               marginBottom: '8px',
               fontWeight: 'bold'
             }}>
-              🎵 韻格分類篩選 (可多選):
+              {t('search.rhymeFilter')}
             </div>
             <div className="rhyme-filter-options" style={{
               display: 'flex',
@@ -459,7 +447,7 @@ function AdvancedSearch({ type, staticData, placeholder, initialSelectedItem, on
                       transform: 'scale(1.1)'
                     }}
                   />
-                  <span>{pattern}</span>
+                  <span>{convertText(pattern)}</span>
                 </label>
               ))}
 
@@ -478,9 +466,9 @@ function AdvancedSearch({ type, staticData, placeholder, initialSelectedItem, on
                     fontSize: '11px',
                     fontWeight: 'bold'
                   }}
-                  title="清除所有篩選"
+                  title={t('search.clearFilters')}
                 >
-                  ✕ 清除
+                  {t('search.clear')}
                 </button>
               )}
             </div>
@@ -492,7 +480,7 @@ function AdvancedSearch({ type, staticData, placeholder, initialSelectedItem, on
                 color: '#666',
                 marginTop: '6px'
               }}>
-                已選擇 {selectedRhymePatterns.size} 個韻格分類
+                {t('search.selectedFilters', { count: selectedRhymePatterns.size })}
               </div>
             )}
           </div>
@@ -516,16 +504,16 @@ function AdvancedSearch({ type, staticData, placeholder, initialSelectedItem, on
               }} />
             </div>
             <div className="search-progress-label">
-              搜尋進度: {Math.round(progress)}%
+              {t('search.progress', { progress: Math.round(progress) })}
             </div>
           </div>
         )}
 
         {/* 结果统计 */}
         <div className="search-status" aria-live="polite">
-          {loadError ? convertText('資料暫時無法載入') : query ? `"${query}" 找到 ${results.length} 個結果` :
-           dataLoaded ? `已載入 ${allData.length} 個項目，顯示 ${results.length} 個` :
-           `正在載入數據...`}
+          {loadError ? t('search.statusUnavailable') : query ? t('search.statusQuery', { query, count: results.length }) :
+           dataLoaded ? t('search.statusLoaded', { total: allData.length, count: results.length }) :
+           t('search.statusLoading')}
         </div>
       </div>
 
@@ -640,9 +628,9 @@ function AdvancedSearch({ type, staticData, placeholder, initialSelectedItem, on
                   <strong className="result-card-title" style={{ fontSize: '18px', color: '#111100' }}>{convertText(item.text)}</strong>
                 </div>
                 <div className="result-pronunciations" style={{ color: '#7f8c8d', marginTop: '4px', display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
-                  {item.jyutPinyin && <div className="pronunciation jyutping" style={{ color: '#e67e22', fontWeight: 'bold' }}>粵拼：{item.jyutPinyin}</div>}
-                  {item.mandarinPinyin && <div className="pronunciation mandarin" style={{ color: '#2471a3', fontWeight: 'bold' }}>普拼：{item.mandarinPinyin}</div>}
-                  {item.qieyunPinyin && <div className="pronunciation qieyun" style={{ color: '#7d3c98', fontWeight: 'bold' }}>切韻：{item.qieyunPinyin}</div>}
+                  {item.jyutPinyin && <div className="pronunciation jyutping" style={{ color: '#e67e22', fontWeight: 'bold' }}>{t('search.jyutping')}{item.jyutPinyin}</div>}
+                  {item.mandarinPinyin && <div className="pronunciation mandarin" style={{ color: '#2471a3', fontWeight: 'bold' }}>{t('search.mandarin')}{item.mandarinPinyin}</div>}
+                  {item.qieyunPinyin && <div className="pronunciation qieyun" style={{ color: '#7d3c98', fontWeight: 'bold' }}>{t('search.qieyun')}{item.qieyunPinyin}</div>}
                 </div>
                 {getPreferredMeanings(item).length > 0 && (
                   <div className="result-card-preview" style={{ color: '#555', marginTop: '8px', lineHeight: '1.6', fontSize: '14px' }}>
@@ -913,6 +901,17 @@ function AdvancedSearch({ type, staticData, placeholder, initialSelectedItem, on
 function App() {
   const [view, setView] = useState('home');
   const [openingPoem, setOpeningPoem] = useState(null);
+  const [locale, setLocale] = useState(() => {
+    try {
+      const savedLocale = window.localStorage.getItem('interpolateyou:locale') ||
+        window.localStorage.getItem('interpolateyou:language');
+      return normalizeLocale(savedLocale);
+    } catch (error) {
+      return DEFAULT_LOCALE;
+    }
+  });
+  const [, setConverterReady] = useState(chineseConverter.isLoaded);
+  const t = useMemo(() => createTranslator(locale), [locale]);
   const viewConfig = VIEW_CONFIG[view];
   const openFeaturedPoem = useCallback((poemEntry) => {
     setOpeningPoem(poemEntry);
@@ -920,18 +919,41 @@ function App() {
   }, []);
   const clearOpeningPoem = useCallback(() => setOpeningPoem(null), []);
 
+  const updateLocale = useCallback((nextLocale) => {
+    const normalizedLocale = normalizeLocale(nextLocale);
+    setLocale(normalizedLocale);
+    try {
+      window.localStorage.setItem('interpolateyou:locale', normalizedLocale);
+    } catch (error) {
+      // The preference still applies for this session when storage is unavailable.
+    }
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = getDocumentLanguage(locale);
+  }, [locale]);
+
+  useEffect(() => {
+    chineseConverter.loadDictionaries().then(() => setConverterReady(chineseConverter.isLoaded));
+  }, []);
+
   return (
     <div className="app-shell">
-      <AppNavigation view={view} onViewChange={setView} />
+      <AppNavigation view={view} onViewChange={setView} t={t} />
 
       {view === 'home' ? (
-        <LandingPage onNavigate={setView} onOpenPoem={openFeaturedPoem} />
+        <LandingPage onNavigate={setView} onOpenPoem={openFeaturedPoem} locale={locale} t={t} />
+      ) : view === 'settings-language' ? (
+        <SettingsPage locale={locale} onLocaleChange={updateLocale} t={t} />
+      ) : view === 'founders-why' ? (
+        <FoundersWhyPage locale={locale} />
       ) : (
         <AdvancedSearch
           key={view}
           type={view}
           staticData={viewConfig.getStaticData()}
-          placeholder={viewConfig.placeholder}
+          locale={locale}
+          t={t}
           initialSelectedItem={view === 'poetry' ? openingPoem : null}
           onInitialItemHandled={clearOpeningPoem}
         />

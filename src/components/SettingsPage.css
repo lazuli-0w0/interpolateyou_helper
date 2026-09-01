@@ -1,0 +1,138 @@
+.settings-page {
+  position: relative;
+  min-height: calc(100vh - 74px);
+  overflow: hidden;
+  padding: 52px 24px 84px;
+  color: #f8f3e7;
+  background:
+    radial-gradient(circle at 12% 9%, rgba(139, 94, 99, 0.16), transparent 28%),
+    radial-gradient(circle at 92% 22%, rgba(87, 125, 131, 0.15), transparent 30%),
+    linear-gradient(145deg, #111b18 0%, #1a2924 44%, #101916 100%);
+  box-sizing: border-box;
+}
+
+.settings-page-orb {
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.settings-page-orb-one { width: 420px; height: 420px; top: -210px; right: -170px; }
+.settings-page-orb-two { width: 260px; height: 260px; bottom: -130px; left: -120px; }
+
+.settings-page-inner {
+  position: relative;
+  z-index: 1;
+  width: min(880px, 100%);
+  margin: 0 auto;
+}
+
+.settings-page-header { margin-bottom: 30px; }
+.settings-page-header p {
+  margin: 0 0 14px;
+  color: #aebfb6;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+.settings-page-header h1 {
+  margin: 0;
+  font-family: 'Noto Serif TC', 'Songti TC', 'STSong', serif;
+  font-size: clamp(34px, 4.5vw, 54px);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.settings-page-header > span { display: block; margin-top: 12px; color: #aeb8b3; font-size: 14px; }
+
+.settings-card {
+  padding: 28px;
+  color: #26312d;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px 28px 4px 4px;
+  background: #f8f3e7;
+  box-shadow: 0 34px 80px rgba(0, 0, 0, 0.28);
+}
+
+.settings-card-heading {
+  display: flex;
+  padding-bottom: 22px;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 1px solid #dcd3c4;
+}
+.settings-card-mark {
+  display: grid;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  color: #f8f3e7;
+  border-radius: 50%;
+  background: #26342e;
+  font-family: 'Noto Serif TC', 'Songti TC', serif;
+}
+.settings-card-heading p { margin: 0 0 5px; color: #8b8b82; font-size: 9px; font-weight: 700; letter-spacing: 0.16em; }
+.settings-card-heading h2 { margin: 0; font-family: 'Noto Serif TC', 'Songti TC', serif; font-size: 23px; font-weight: 500; }
+.settings-card-heading div > span { display: block; margin-top: 6px; color: #777a73; font-size: 12px; }
+
+.settings-language-list {
+  display: grid;
+  margin: 22px 0 0;
+  padding: 0;
+  gap: 10px;
+  list-style: none;
+}
+.settings-language-list button {
+  display: grid;
+  width: 100%;
+  padding: 17px 18px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 15px;
+  color: #26312d;
+  border: 1px solid #d8cfbf;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+.settings-language-list button:hover { border-color: #8b5e63; background: #fff; transform: translateY(-1px); }
+.settings-language-list button.selected { border-color: #8b5e63; background: #f0e6e3; box-shadow: inset 3px 0 0 #8b5e63; }
+.settings-language-mark {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  color: #66514c;
+  border: 1px solid #cdbdb7;
+  border-radius: 50%;
+  font-family: 'Noto Serif TC', 'Songti TC', serif;
+  font-size: 14px;
+}
+.settings-language-copy { min-width: 0; }
+.settings-language-copy strong,
+.settings-language-copy small,
+.settings-language-copy > span { display: block; }
+.settings-language-copy strong { font-size: 14px; }
+.settings-language-copy small { margin-top: 3px; color: #8d8e87; font-size: 10px; letter-spacing: 0.05em; }
+.settings-language-copy > span { margin-top: 7px; color: #6f746e; font-size: 11px; }
+.settings-language-check {
+  display: grid;
+  width: 25px;
+  height: 25px;
+  place-items: center;
+  color: #fff;
+  border: 1px solid #c9c0b2;
+  border-radius: 50%;
+  background: transparent;
+  font-size: 12px;
+}
+.settings-language-list button.selected .settings-language-check { border-color: #8b5e63; background: #8b5e63; }
+
+@media (max-width: 720px) {
+  .settings-page { padding: 36px 14px 60px; }
+  .settings-card { padding: 18px; border-radius: 3px 22px 3px 3px; }
+  .settings-language-copy > span { line-height: 1.5; }
+}

@@ -193,18 +193,18 @@ export function ResultModal({
                   {(selectedItem.jyutPinyin || selectedItem.mandarinPinyin || selectedItem.qieyunPinyin) && (
                     <div className="modal-pronunciations" style={{ fontSize: '18px', marginTop: '20px', display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'baseline' }}>
                       {selectedItem.jyutPinyin && (
-                        <span><strong>粵拼：</strong><span style={{ color: '#e67e22', fontWeight: 'bold', fontSize: '20px' }}>{selectedItem.jyutPinyin}</span></span>
+                        <span><strong>{convertText('粵拼')}：</strong><span style={{ color: '#e67e22', fontWeight: 'bold', fontSize: '20px' }}>{selectedItem.jyutPinyin}</span></span>
                       )}
                       {selectedItem.mandarinPinyin && (
-                        <span><strong>普拼：</strong><span style={{ color: '#2471a3', fontWeight: 'bold', fontSize: '20px' }}>{selectedItem.mandarinPinyin}</span></span>
+                        <span><strong>{convertText('普拼')}：</strong><span style={{ color: '#2471a3', fontWeight: 'bold', fontSize: '20px' }}>{selectedItem.mandarinPinyin}</span></span>
                       )}
                       {selectedItem.qieyunPinyin && (
-                        <span><strong>切韻：</strong><span style={{ color: '#7d3c98', fontWeight: 'bold', fontSize: '20px' }}>{selectedItem.qieyunPinyin}</span></span>
+                        <span><strong>{convertText('切韻')}：</strong><span style={{ color: '#7d3c98', fontWeight: 'bold', fontSize: '20px' }}>{selectedItem.qieyunPinyin}</span></span>
                       )}
                     </div>
                   )}
                   {!selectedItem.jyutPinyin && (
-                    <p style={{ color: '#95a5a6', fontStyle: 'italic' }}>此詞語暫無粵拼資料</p>
+                    <p style={{ color: '#95a5a6', fontStyle: 'italic' }}>{convertText('此詞語暫無粵拼資料')}</p>
                   )}
                   {Array.isArray(selectedItem.cantoneseMeanings) && selectedItem.cantoneseMeanings.length > 0 && (
                     <div className="meaning-block cantonese" style={{ marginTop: '22px' }}>
@@ -283,7 +283,7 @@ export function ResultModal({
                           {convertText(variant.author)} {variant.isMain && <span style={{ color: '#ff6600' }}>★ {convertText('主譜')}</span>}
                         </h4>
                         <span style={{ fontSize: '14px', color: '#666' }}>
-                          {variant.size}字
+                          {variant.size}{convertText('字')}
                         </span>
                       </div>
 
@@ -361,7 +361,7 @@ export function ResultModal({
 
                   {selectedItem.score && (
                     <p style={{ marginTop: '15px', color: '#666' }}>
-                      <strong>搜索評分:</strong> {selectedItem.score}分
+                      <strong>{convertText('搜尋評分')}：</strong> {selectedItem.score}{convertText('分')}
                     </p>
                   )}
                 </div>

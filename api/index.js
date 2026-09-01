@@ -24,6 +24,12 @@ app.use('/api/search', (req, res, next) => {
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
-app.listen(PORT, () => {
-  console.log(`Poetry helper API listening on port ${PORT}`);
-});
+// Vercel imports this file as a serverless function, while local development
+// still needs a listening HTTP server. Avoid opening a port when imported.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Poetry helper API listening on port ${PORT}`);
+  });
+}
+
+module.exports = app;

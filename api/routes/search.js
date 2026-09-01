@@ -48,15 +48,15 @@ router.get('/', (req, res) => {
   let filtered = data.filter(item => {
     // Phonetic filters
     if (phoneticKey && item.phoneticKey !== phoneticKey) return false;
-    if (pinyin && item.pinyin && !item.pinyin.includes(pinyin)) return false;
+    if (pinyin && (!item.pinyin || !item.pinyin.includes(pinyin))) return false;
     
     // Traditional poetry filters
     if (rhymeBook && item.rhymeBook !== rhymeBook) return false;
     if (pingze && item.pingze !== pingze) return false;
     if (rhyme && item.rhyme !== rhyme) return false;
     if (form && item.form !== form) return false;
-    if (allusion && Array.isArray(item.allusion) && !item.allusion.includes(allusion)) return false;
-    if (mood && Array.isArray(item.mood) && !item.mood.includes(mood)) return false;
+    if (allusion && (!Array.isArray(item.allusion) || !item.allusion.includes(allusion))) return false;
+    if (mood && (!Array.isArray(item.mood) || !item.mood.includes(mood))) return false;
     
     // Text search
     if (q) {

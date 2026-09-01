@@ -1,0 +1,145 @@
+.result-modal-backdrop {
+  padding: 24px;
+  background: rgba(8, 14, 12, 0.78) !important;
+  backdrop-filter: blur(9px);
+  box-sizing: border-box;
+}
+
+.result-modal-panel {
+  width: min(680px, 100%) !important;
+  max-width: 680px !important;
+  max-height: min(84vh, 820px) !important;
+  padding: 42px 44px 36px !important;
+  color: #27312d;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 4px 28px 4px 4px !important;
+  background: #f8f3e7 !important;
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.46);
+  box-sizing: border-box;
+  scrollbar-color: #b9ae9d transparent;
+}
+
+.result-modal-panel.novel-book,
+.result-modal-panel.novel-chapter { max-width: 820px !important; }
+
+.result-modal-close {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  top: 16px !important;
+  right: 18px !important;
+  place-items: center;
+  color: #5f665f !important;
+  border: 1px solid #d3c8b8 !important;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.52) !important;
+  font-size: 15px !important;
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.result-modal-close:hover { transform: rotate(8deg); background: #eee5d7 !important; }
+
+.result-modal-content h2 {
+  margin: 0 44px 8px 0 !important;
+  color: #23312b !important;
+  font-family: 'Noto Serif TC', 'Songti TC', 'STSong', serif;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.result-modal-content h3 { color: #39473f !important; font-family: 'Noto Serif TC', 'Songti TC', serif; font-weight: 600; }
+.result-modal-content > div > p { color: #7b7d75 !important; }
+.result-modal-content a { color: #657d72 !important; text-underline-offset: 3px; }
+
+.poetry-body,
+.novel-intro,
+.novel-reading-paper,
+.tone-pattern,
+.cipou-example {
+  border: 1px solid #ddd2c1;
+  background: rgba(255, 255, 255, 0.48) !important;
+}
+
+.poetry-body {
+  margin-top: 24px;
+  padding: 28px !important;
+  color: #313b36;
+  border-radius: 13px !important;
+  font-family: 'Noto Serif TC', 'Songti TC', 'STSong', serif;
+  font-size: 18px !important;
+  line-height: 2.05 !important;
+  letter-spacing: 0.045em;
+  white-space: pre-wrap;
+}
+
+.novel-intro { border-radius: 13px !important; }
+.novel-chapter-list { gap: 7px !important; }
+.novel-chapter-button {
+  padding: 12px 14px !important;
+  color: #4f574f !important;
+  border: 1px solid #d9cfbf !important;
+  border-radius: 10px !important;
+  background: rgba(255, 255, 255, 0.48) !important;
+  transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
+}
+.novel-chapter-button:hover { transform: translateX(3px); border-color: #997558 !important; background: #fff !important; }
+
+.novel-reading-paper {
+  padding: 30px !important;
+  border-radius: 13px !important;
+  color: #3d372f !important;
+  font-family: 'Noto Serif TC', 'Songti TC', 'STSong', serif;
+  font-size: 17px !important;
+  line-height: 2.1 !important;
+}
+
+.modal-pronunciations {
+  gap: 8px !important;
+  margin: 22px 0 4px !important;
+  padding: 16px;
+  border-top: 1px solid #dcd2c2;
+  border-bottom: 1px solid #dcd2c2;
+}
+.modal-pronunciations > span {
+  padding: 6px 10px;
+  color: #59625d;
+  border-radius: 999px;
+  background: #eee6d9;
+  font-size: 13px;
+}
+.modal-pronunciations span span { color: #40594e !important; font-size: 15px !important; }
+
+.meaning-block {
+  padding: 18px 20px;
+  border: 1px solid #ddd3c3;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.4);
+}
+.meaning-block h3 { margin-top: 0; }
+.meaning-block ol { margin-bottom: 0; color: #4e5752 !important; }
+.meaning-block li { padding-left: 4px; }
+
+.cipou-variant {
+  margin: 14px 0 !important;
+  padding: 20px !important;
+  border: 1px solid #ddd3c3 !important;
+  border-radius: 13px !important;
+  background: rgba(255, 255, 255, 0.4) !important;
+}
+.cipou-variant.main { border-color: #b9936e !important; background: #f2e8d7 !important; }
+.tone-pattern { padding: 13px !important; border-radius: 9px !important; }
+.cipou-example { padding: 18px !important; border-radius: 9px !important; font-family: 'Noto Serif TC', 'Songti TC', serif; }
+
+@media (max-width: 620px) {
+  .result-modal-backdrop { padding: 10px; align-items: flex-end !important; }
+  .result-modal-panel {
+    width: 100% !important;
+    max-height: 90vh !important;
+    padding: 36px 22px 28px !important;
+    border-radius: 18px 18px 3px 3px !important;
+  }
+  .result-modal-content h2 { font-size: 30px; }
+  .poetry-body,
+  .novel-reading-paper { padding: 20px !important; }
+}

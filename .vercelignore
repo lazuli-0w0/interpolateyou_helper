@@ -1,0 +1,5 @@
+data-sources/
+build/
+src/**/*.test.js
+server.log
+npm_output.log

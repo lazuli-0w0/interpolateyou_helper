@@ -1,6 +1,6 @@
 {
   "name": "interpolateyou_helper",
-  "version": "1.0.0",
+  "version": "2.1.0",
   "private": false,
   "homepage": "./",
   "dependencies": {
@@ -17,6 +17,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "data:moedict": "node scripts/build-moedict-index.js",
+    "data:literature": "node scripts/build-literature-index.js && node scripts/build-featured-poems.js",
+    "data:featured-poems": "node scripts/build-featured-poems.js",
     "eject": "react-scripts eject",
     "predeploy": "npm run set-gh-homepage && npm run build",
     "deploy": "gh-pages -d build",
@@ -43,6 +46,8 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^6.3.0"
+    "gh-pages": "^6.3.0",
+    "tshet-uinh": "^0.15.4",
+    "tshet-uinh-examples": "^20260629.0.1"
   }
 }

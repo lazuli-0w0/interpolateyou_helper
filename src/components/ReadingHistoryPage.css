@@ -1,0 +1,145 @@
+.reading-history-page {
+  position: relative;
+  min-height: calc(100vh - 116px);
+  overflow: hidden;
+  background: var(--app-background, #10201b);
+  color: var(--app-ink, #f5efe3);
+}
+
+.reading-history-orb {
+  position: absolute;
+  width: 42rem;
+  height: 42rem;
+  right: -20rem;
+  top: -24rem;
+  border: 1px solid rgba(245, 239, 227, 0.14);
+  border-radius: 50%;
+}
+
+.reading-history-inner {
+  position: relative;
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 76px 0 100px;
+}
+
+.reading-history-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  align-items: flex-end;
+  margin-bottom: 48px;
+}
+
+.reading-history-header p,
+.reading-history-card-label {
+  margin: 0 0 14px;
+  color: #bf806f;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.reading-history-header h1 {
+  margin: 0 0 14px;
+  font-family: var(--font-serif);
+  font-size: clamp(48px, 7vw, 92px);
+  font-weight: 400;
+  line-height: 0.98;
+}
+
+.reading-history-header span {
+  color: var(--app-muted, #aeb8b2);
+  font-size: 18px;
+}
+
+.reading-history-mark,
+.reading-history-empty > div,
+.reading-history-card-mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 1px solid #bf806f;
+  border-radius: 50%;
+  font-family: var(--font-serif);
+}
+
+.reading-history-mark {
+  width: 82px;
+  height: 82px;
+  font-size: 34px;
+}
+
+.reading-history-content,
+.reading-history-empty {
+  border-radius: 32px;
+  background: var(--paper-background, #f6f0e4);
+  color: var(--paper-ink, #20302b);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.16);
+}
+
+.reading-history-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 28px 34px;
+  border-bottom: 1px solid rgba(32, 48, 43, 0.16);
+}
+
+.reading-history-toolbar p { margin: 0; color: #727b77; }
+
+.reading-history-toolbar button,
+.reading-history-card > button {
+  border: 1px solid rgba(32, 48, 43, 0.28);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
+
+.reading-history-toolbar button { padding: 9px 16px; }
+.reading-history-toolbar button:hover { border-color: #985c61; color: #985c61; }
+
+.reading-history-list { padding: 10px 34px 30px; }
+
+.reading-history-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 0;
+  border-bottom: 1px solid rgba(32, 48, 43, 0.14);
+}
+
+.reading-history-card:last-child { border-bottom: 0; }
+.reading-history-card-mark { width: 60px; height: 60px; font-size: 24px; }
+.reading-history-card-label { margin-bottom: 6px; font-size: 10px; }
+.reading-history-card h2 { margin: 0; font-family: var(--font-serif); font-size: 27px; font-weight: 500; }
+.reading-history-card-copy p { margin: 6px 0 0; color: #737b77; }
+.reading-history-card-copy time { display: block; margin-top: 7px; color: #929894; font-size: 12px; }
+.reading-history-card > button { display: flex; gap: 10px; align-items: center; padding: 12px 18px; }
+.reading-history-card > button:hover { background: #20302b; color: #f6f0e4; }
+.reading-history-card > button:disabled { cursor: wait; opacity: 0.55; }
+
+.reading-history-empty { padding: 72px 28px; text-align: center; }
+.reading-history-empty > div { width: 72px; height: 72px; margin: 0 auto 24px; font-size: 28px; }
+.reading-history-empty h2 { margin: 0; font-family: var(--font-serif); font-size: 34px; font-weight: 500; }
+.reading-history-empty p { margin: 12px auto 0; max-width: 520px; color: #727b77; }
+
+@media (max-width: 640px) {
+  .reading-history-inner { width: min(100% - 28px, 1180px); padding: 48px 0 72px; }
+  .reading-history-header { align-items: center; margin-bottom: 30px; }
+  .reading-history-header h1 { font-size: 48px; }
+  .reading-history-header span { font-size: 15px; }
+  .reading-history-mark { width: 58px; height: 58px; font-size: 24px; }
+  .reading-history-content, .reading-history-empty { border-radius: 22px; }
+  .reading-history-toolbar { padding: 22px; }
+  .reading-history-list { padding: 4px 22px 18px; }
+  .reading-history-card { grid-template-columns: auto minmax(0, 1fr); gap: 16px; }
+  .reading-history-card-mark { width: 48px; height: 48px; font-size: 20px; }
+  .reading-history-card h2 { font-size: 23px; overflow-wrap: anywhere; }
+  .reading-history-card > button { grid-column: 2; width: fit-content; }
+}

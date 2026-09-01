@@ -24,7 +24,7 @@ const SECTIONS = [
     number: '03',
     label: '初心',
     paragraphs: [
-      '所以我想把中國文化原原本本的用藝術的形式分享給大家。'
+      '所以我想把中國文化原原本本的分享給大家。'
     ],
     purpose: true
   }
@@ -45,7 +45,7 @@ export function FoundersWhyPage({ locale }) {
             <span>FOUNDER’S</span>
             <span>WHY</span>
           </h1>
-          <p className="founders-why-lead">{localize('中國文化平常離我們頗遠。')}</p>
+          <p className="founders-why-lead">{localize('中國文化時常離我們很遠。')}</p>
           <div className="founders-why-seal" aria-hidden="true">{localize('知')}</div>
         </header>
 
@@ -86,6 +86,11 @@ export function FoundersWhyPage({ locale }) {
           <span aria-hidden="true">—</span>
           <p>{localize('邯鄲學步，乞望輯正。')}</p>
         </footer>
+
+        <aside className="founders-why-contribution" aria-label="Contribution">
+          <p>CONTRIBUTION</p>
+          <span>{localize('特別鳴謝 Gwen Ho 教導我建立 Vercel app。')}</span>
+        </aside>
       </article>
     </main>
   );

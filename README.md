@@ -1,6 +1,6 @@
 # 覺知 你 · Interpolate You
 
-版本 `2.2.0` 是一套以古典中文為核心的瀏覽器資料庫，整合詞語、詩詞、古典小說與詞牌格律搜尋。
+版本 `2.3.0` 是一套以古典中文為核心的瀏覽器資料庫，整合詞語、詩詞、古典小說與詞牌格律搜尋。
 
 正式網站：[interpolateyou-helper.vercel.app](https://interpolateyou-helper.vercel.app)
 
@@ -55,4 +55,4 @@ pnpm data:featured-poems
 
 ## 版本
 
-目前版本：`v2.2.0`。完整內容請參閱 [CHANGELOG.md](CHANGELOG.md)。
+目前版本：`v2.3.0`。完整內容請參閱 [CHANGELOG.md](CHANGELOG.md)。

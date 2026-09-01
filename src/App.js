@@ -6,6 +6,8 @@ import { SettingsPage } from './components/SettingsPage.js';
 import { FoundersWhyPage } from './components/FoundersWhyPage.js';
 import { ProductPage } from './components/ProductPage.js';
 import { ForumPage } from './components/ForumPage.js';
+import { ReadingHistoryPage } from './components/ReadingHistoryPage.js';
+import { ReadingNotesPage } from './components/ReadingNotesPage.js';
 import { chineseConverter } from './utils/ChineseConverter.js';
 import { createTranslator, DEFAULT_LOCALE, getDocumentLanguage, normalizeLocale } from './i18n.js';
 import {
@@ -16,6 +18,13 @@ import {
   mergeUniqueResults
 } from './utils/search.js';
 import { dataManager } from './services/DataManager.js';
+import {
+  addReadingHistoryEntry,
+  clearStoredReadingHistory,
+  loadReadingHistory,
+  saveReadingHistory
+} from './services/readingHistory.js';
+import { addReadingNote, loadReadingNotes, saveReadingNotes } from './services/readingNotes.js';
 import './App.css';
 
 const VIEW_CONFIG = {
@@ -59,13 +68,80 @@ const PRODUCT_VIEW_BY_ROUTE = {
   'product-reading-notes': 'reading-notes'
 };
 
+const VIEW_BY_ENTRY_TYPE = {
+  word: 'words',
+  poetry: 'poetry',
+  'novel-book': 'novels',
+  'novel-chapter': 'novels',
+  cipou: 'cipou'
+};
+
+async function resolveSavedEntry(snapshot) {
+  if (!snapshot) return null;
+
+  if (snapshot.literatureId != null) {
+    const [record] = await dataManager.loadLiteratureRecords([snapshot.literatureId]);
+    return dataManager.loadLiteratureBody(record || snapshot);
+  }
+
+  if (snapshot.type === 'poetry') {
+    if (snapshot.content) return snapshot;
+    const matches = await dataManager.searchPoetryData(snapshot.title || snapshot.text || '', 0, 200);
+    const exactMatch = matches.results.find(item => (
+      item.title === snapshot.title && (!snapshot.author || item.author === snapshot.author)
+    ));
+    return dataManager.loadLiteratureBody(exactMatch || matches.results[0] || snapshot);
+  }
+
+  if (snapshot.type === 'novel-chapter') {
+    const matches = await dataManager.searchNovelData(snapshot.title || '', 0, 200);
+    const exactMatch = matches.results.find(item => (
+      item.type === 'novel-chapter' && item.title === snapshot.title &&
+      (!snapshot.author || item.author === snapshot.author)
+    ));
+    return dataManager.loadLiteratureBody(exactMatch || snapshot);
+  }
+
+  if (snapshot.type === 'novel-book') {
+    const books = await dataManager.loadNovelsData();
+    return books.find(book => (
+      String(book.id) === String(snapshot.id) || book.title === snapshot.title
+    )) || snapshot;
+  }
+
+  if (snapshot.type === 'word') {
+    const words = await dataManager.loadWordsData();
+    return words.find(word => (
+      String(word.id) === String(snapshot.id) || word.text === (snapshot.text || snapshot.title)
+    )) || snapshot;
+  }
+
+  if (snapshot.type === 'cipou') {
+    const patterns = await dataManager.loadCipouData();
+    return patterns.find(pattern => (
+      String(pattern.id) === String(snapshot.id) || pattern.name === (snapshot.name || snapshot.title)
+    )) || snapshot;
+  }
+
+  return snapshot;
+}
+
 const STORAGE_KEYS = {
   locale: 'interpolateyou:locale',
   legacyLocale: 'interpolateyou:language',
   theme: 'interpolateyou:theme'
 };
 
-function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onInitialItemHandled }) {
+function AdvancedSearch({
+  type,
+  staticData,
+  locale,
+  t,
+  initialSelectedItem,
+  onInitialItemHandled,
+  onEntryOpened,
+  onSaveReadingNote
+}) {
   const viewConfig = VIEW_CONFIG[type];
   const presentation = {
     eyebrow: t(viewConfig.eyebrowKey),
@@ -95,8 +171,11 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
   const rhymePatterns = ['平韻格', '仄韻格', '通韻格', '換韻格', '未分類'];
 
   useEffect(() => {
-    if (initialSelectedItem) onInitialItemHandled();
-  }, [initialSelectedItem, onInitialItemHandled]);
+    if (initialSelectedItem) {
+      onEntryOpened(initialSelectedItem, type);
+      onInitialItemHandled();
+    }
+  }, [initialSelectedItem, onEntryOpened, onInitialItemHandled, type]);
 
   // 加载数据
   useEffect(() => {
@@ -326,24 +405,29 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
     if (item.type === 'poetry' || item.type === 'novel-chapter') {
       setLoading(true);
       try {
-        setSelectedItem(await dataManager.loadLiteratureBody(item));
+        const loadedItem = await dataManager.loadLiteratureBody(item);
+        setSelectedItem(loadedItem);
+        onEntryOpened(loadedItem, type);
       } finally {
         setLoading(false);
       }
       return;
     }
     setSelectedItem(item);
-  }, []);
+    onEntryOpened(item, type);
+  }, [onEntryOpened, type]);
 
   const loadNovelChapter = useCallback(async (chapterId) => {
     setLoading(true);
     try {
       const [chapter] = await dataManager.loadLiteratureRecords([chapterId]);
-      setSelectedItem(await dataManager.loadLiteratureBody(chapter));
+      const loadedChapter = await dataManager.loadLiteratureBody(chapter);
+      setSelectedItem(loadedChapter);
+      onEntryOpened(loadedChapter, type);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [onEntryOpened, type]);
 
   return (
     <main className={`search-page search-page-${type}`}>
@@ -873,6 +957,7 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
         convertText={convertText}
         onClose={() => setSelectedItem(null)}
         onLoadNovelChapter={loadNovelChapter}
+        onSaveReadingNote={onSaveReadingNote}
       />
 
       {/* 詩詞模式專用提示 */}
@@ -916,7 +1001,9 @@ function AdvancedSearch({ type, staticData, locale, t, initialSelectedItem, onIn
 
 function App() {
   const [view, setView] = useState('home');
-  const [openingPoem, setOpeningPoem] = useState(null);
+  const [openingEntry, setOpeningEntry] = useState(null);
+  const [readingHistory, setReadingHistory] = useState(loadReadingHistory);
+  const [readingNotes, setReadingNotes] = useState(loadReadingNotes);
   const [theme, setTheme] = useState(() => {
     try {
       return window.localStorage.getItem(STORAGE_KEYS.theme) === 'dark' ? 'dark' : 'light';
@@ -937,11 +1024,48 @@ function App() {
   const t = useMemo(() => createTranslator(locale), [locale]);
   const viewConfig = VIEW_CONFIG[view];
   const product = PRODUCT_VIEW_BY_ROUTE[view];
+  const recordReading = useCallback((item, fallbackView) => {
+    setReadingHistory(currentHistory => {
+      const nextHistory = addReadingHistoryEntry(currentHistory, item, fallbackView);
+      saveReadingHistory(nextHistory);
+      return nextHistory;
+    });
+  }, []);
   const openFeaturedPoem = useCallback((poemEntry) => {
-    setOpeningPoem(poemEntry);
+    setOpeningEntry({ view: 'poetry', item: poemEntry });
     setView('poetry');
   }, []);
-  const clearOpeningPoem = useCallback(() => setOpeningPoem(null), []);
+  const clearOpeningEntry = useCallback(() => setOpeningEntry(null), []);
+  const clearReadingHistory = useCallback(() => {
+    setReadingHistory([]);
+    clearStoredReadingHistory();
+  }, []);
+  const saveReadingNote = useCallback(draft => {
+    setReadingNotes(currentNotes => {
+      const nextNotes = addReadingNote(currentNotes, draft);
+      saveReadingNotes(nextNotes);
+      return nextNotes;
+    });
+  }, []);
+  const deleteReadingNote = useCallback(noteId => {
+    setReadingNotes(currentNotes => {
+      const nextNotes = currentNotes.filter(note => note.id !== noteId);
+      saveReadingNotes(nextNotes);
+      return nextNotes;
+    });
+  }, []);
+  const openStoredEntry = useCallback(async (snapshot, targetView) => {
+    const item = await resolveSavedEntry(snapshot);
+    if (!item || !targetView) return;
+    setOpeningEntry({ view: targetView, item });
+    setView(targetView);
+  }, []);
+  const openHistoryEntry = useCallback(entry => (
+    openStoredEntry(entry.item, entry.view)
+  ), [openStoredEntry]);
+  const openReadingNote = useCallback(note => (
+    openStoredEntry(note.source, VIEW_BY_ENTRY_TYPE[note.source?.type])
+  ), [openStoredEntry]);
 
   const updateLocale = useCallback((nextLocale) => {
     const normalizedLocale = normalizeLocale(nextLocale);
@@ -1004,6 +1128,22 @@ function App() {
         <FoundersWhyPage locale={locale} />
       ) : view === 'forum' ? (
         <ForumPage t={t} />
+      ) : view === 'reading-history' ? (
+        <ReadingHistoryPage
+          history={readingHistory}
+          locale={locale}
+          t={t}
+          onOpen={openHistoryEntry}
+          onClear={clearReadingHistory}
+        />
+      ) : view === 'reading-notes' ? (
+        <ReadingNotesPage
+          notes={readingNotes}
+          locale={locale}
+          t={t}
+          onOpen={openReadingNote}
+          onDelete={deleteReadingNote}
+        />
       ) : product ? (
         <ProductPage product={product} t={t} />
       ) : viewConfig ? (
@@ -1013,8 +1153,10 @@ function App() {
           staticData={viewConfig.getStaticData()}
           locale={locale}
           t={t}
-          initialSelectedItem={view === 'poetry' ? openingPoem : null}
-          onInitialItemHandled={clearOpeningPoem}
+          initialSelectedItem={openingEntry?.view === view ? openingEntry.item : null}
+          onInitialItemHandled={clearOpeningEntry}
+          onEntryOpened={recordReading}
+          onSaveReadingNote={saveReadingNote}
         />
       ) : (
         <LandingPage onNavigate={setView} onOpenPoem={openFeaturedPoem} locale={locale} t={t} />

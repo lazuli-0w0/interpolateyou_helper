@@ -101,6 +101,11 @@
 .founders-why-section-index span { color: #835c51; font-family: Georgia, serif; font-size: 13px; letter-spacing: 0.16em; }
 .founders-why-section-index small { margin-top: 10px; color: #8d9a94; font-size: 10px; font-weight: 700; letter-spacing: 0.26em; }
 
+.founders-why-section-content {
+  width: 100%;
+  min-width: 0;
+}
+
 .founders-why-section-content > p {
   margin: 0;
   color: #ddd8cd;
@@ -113,6 +118,8 @@
 
 .founders-why-section-content blockquote {
   position: relative;
+  width: 100%;
+  max-width: 100%;
   margin: 48px 0 0;
   padding: 36px 38px 36px 46px;
   overflow: hidden;
@@ -120,6 +127,7 @@
   border: 0;
   border-radius: 3px 24px 3px 3px;
   background: #f1eadc;
+  box-sizing: border-box;
 }
 .founders-why-section-content blockquote::after {
   content: '道';
@@ -134,6 +142,8 @@
   position: relative;
   z-index: 1;
   margin: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   font-family: 'Noto Serif TC', 'Songti TC', serif;
   font-size: clamp(20px, 2.6vw, 29px);
   line-height: 1.75;
@@ -182,6 +192,25 @@
   letter-spacing: 0.08em;
 }
 
+.founders-why-contribution {
+  margin-top: 58px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(239, 232, 216, 0.13);
+}
+.founders-why-contribution p {
+  margin: 0 0 10px;
+  color: #a87363;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+}
+.founders-why-contribution span {
+  color: #abb5af;
+  font-family: 'Noto Serif TC', 'Songti TC', serif;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
 .theme-dark .founders-why-section-content blockquote {
   color: #e1dbcf;
   border: 1px solid #3c4944;
@@ -202,4 +231,5 @@
   .founders-why-section-content blockquote,
   .founders-why-purpose { margin-top: 34px; padding: 28px 24px; }
   .founders-why-closing { padding-top: 56px; justify-content: flex-start; }
+  .founders-why-contribution { margin-top: 44px; }
 }

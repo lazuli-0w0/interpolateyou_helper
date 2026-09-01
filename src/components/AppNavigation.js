@@ -13,7 +13,9 @@ const NAV_TABS = [
       { view: 'words', markKey: 'tool.words.mark', labelKey: 'tool.words.title', descriptionKey: 'tool.words.menuDescription' },
       { view: 'poetry', markKey: 'tool.poetry.mark', labelKey: 'tool.poetry.title', descriptionKey: 'tool.poetry.menuDescription' },
       { view: 'novels', markKey: 'tool.novels.mark', labelKey: 'tool.novels.title', descriptionKey: 'tool.novels.menuDescription' },
-      { view: 'cipou', markKey: 'tool.cipou.mark', labelKey: 'tool.cipou.title', descriptionKey: 'tool.cipou.menuDescription' }
+      { view: 'cipou', markKey: 'tool.cipou.mark', labelKey: 'tool.cipou.title', descriptionKey: 'tool.cipou.menuDescription' },
+      { view: 'reading-notes', markKey: 'notes.mark', labelKey: 'notes.title', descriptionKey: 'notes.menuDescription' },
+      { view: 'reading-history', markKey: 'history.mark', labelKey: 'history.title', descriptionKey: 'history.menuDescription' }
     ]
   },
   {

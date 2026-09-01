@@ -1,0 +1,60 @@
+.reading-notes-page { position: relative; min-height: calc(100vh - 116px); overflow: hidden; color: #f5efe3; background: #10201b; }
+.reading-notes-orb { position: absolute; width: 42rem; height: 42rem; right: -20rem; top: -24rem; border: 1px solid rgba(245,239,227,.14); border-radius: 50%; }
+.reading-notes-inner { position: relative; width: min(1040px, calc(100% - 48px)); margin: 0 auto; padding: 76px 0 100px; }
+.reading-notes-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; margin-bottom: 48px; }
+.reading-notes-header > div > p { margin: 0 0 14px; color: #bf806f; font-size: 13px; font-weight: 700; letter-spacing: .22em; }
+.reading-notes-header h1 { margin: 0 0 14px; font-family: 'Noto Serif TC','Songti TC',serif; font-size: clamp(48px,7vw,84px); font-weight: 400; line-height: 1; }
+.reading-notes-header span { color: #aeb8b2; font-size: 18px; }
+.reading-notes-mark,
+.reading-notes-empty > div { display: grid; place-items: center; border: 1px solid #bf806f; border-radius: 50%; font-family: 'Noto Serif TC','Songti TC',serif; }
+.reading-notes-mark { width: 82px; height: 82px; flex: 0 0 auto; font-size: 34px; }
+.reading-notes-list { display: grid; gap: 18px; }
+.reading-note-card,
+.reading-notes-empty { color: #24312c; border-radius: 22px; background: #f6f0e4; box-shadow: 0 20px 60px rgba(0,0,0,.16); }
+.reading-note-card { position: relative; padding: 28px 32px; cursor: pointer; transition: transform 160ms ease, box-shadow 160ms ease; }
+.reading-note-card:hover { transform: translateY(-2px); box-shadow: 0 24px 68px rgba(0,0,0,.22); }
+.reading-note-card-topline { display: flex; justify-content: space-between; gap: 16px; color: #78807c; font-size: 12px; }
+.reading-note-card blockquote { margin: 22px 56px 20px 0; padding: 0; border: 0; font-family: 'Noto Serif TC','Songti TC',serif; font-size: clamp(24px,4vw,36px); line-height: 1.55; overflow-wrap: anywhere; }
+.reading-note-annotation { padding: 15px 18px; border-left: 3px solid #b97d70; background: rgba(221,208,188,.35); }
+.reading-note-annotation small { color: #8b5d58; font-weight: 700; letter-spacing: .12em; }
+.reading-note-annotation p { margin: 7px 0 0; color: #515b56; line-height: 1.7; white-space: pre-wrap; }
+.reading-note-open { position: absolute; inset: 0; z-index: 1; width: 100%; color: #8b5d58; border: 0; border-radius: 22px; background: transparent; cursor: pointer; }
+.reading-note-open > span { position: absolute; right: 28px; top: 66px; font-size: 22px; transition: transform 160ms ease; }
+.reading-note-open:hover > span { transform: translate(2px, -2px); }
+.reading-note-open:focus-visible { outline: 3px solid #bf806f; outline-offset: 4px; }
+.reading-note-open:disabled { cursor: progress; }
+.reading-note-delete { position: absolute; right: 24px; bottom: 24px; z-index: 2; padding: 8px 12px; color: #8b5d58; border: 1px solid #cbbeb0; border-radius: 999px; background: #f6f0e4; cursor: pointer; }
+.reading-note-delete:hover { color: #f6f0e4; background: #8b5d58; }
+.reading-note-confirm-backdrop { position: fixed; inset: 0; z-index: 1300; display: grid; padding: 20px; place-items: center; background: rgba(7,14,11,.74); backdrop-filter: blur(8px); }
+.reading-note-confirm { width: min(460px, 100%); padding: 32px; color: #27312d; border: 1px solid rgba(255,255,255,.45); border-radius: 4px 24px 4px 4px; background: #f6f0e4; box-shadow: 0 30px 90px rgba(0,0,0,.4); box-sizing: border-box; }
+.reading-note-confirm-mark { display: grid; width: 48px; height: 48px; margin-bottom: 20px; place-items: center; color: #8b5d58; border: 1px solid #bf806f; border-radius: 50%; font-family: 'Noto Serif TC','Songti TC',serif; font-size: 21px; }
+.reading-note-confirm h2 { margin: 0; font-family: 'Noto Serif TC','Songti TC',serif; font-size: 30px; font-weight: 500; }
+.reading-note-confirm > p { margin: 10px 0 0; color: #727b77; }
+.reading-note-confirm blockquote { margin: 22px 0; padding: 14px 16px; color: #3f4a45; border-left: 3px solid #bf806f; background: rgba(221,208,188,.35); font-family: 'Noto Serif TC','Songti TC',serif; font-size: 20px; overflow-wrap: anywhere; }
+.reading-note-confirm-actions { display: flex; justify-content: flex-end; gap: 10px; }
+.reading-note-confirm-actions button { padding: 10px 16px; color: #4f5a55; border: 1px solid #cbbeb0; border-radius: 999px; background: transparent; cursor: pointer; font: inherit; }
+.reading-note-confirm-actions button.danger { color: #fff8ef; border-color: #8b5d58; background: #8b5d58; }
+.reading-note-confirm-actions button:focus-visible { outline: 3px solid #bf806f; outline-offset: 2px; }
+.reading-notes-empty { padding: 72px 28px; text-align: center; }
+.reading-notes-empty > div { width: 72px; height: 72px; margin: 0 auto 24px; font-size: 28px; }
+.reading-notes-empty h2 { margin: 0; font-family: 'Noto Serif TC','Songti TC',serif; font-size: 34px; font-weight: 500; }
+.reading-notes-empty p { margin: 12px auto 0; max-width: 520px; color: #727b77; }
+.theme-dark .reading-note-card,
+.theme-dark .reading-notes-empty { color: #e2ddd3; border: 1px solid #45524c; background: #19241f; }
+.theme-dark .reading-note-annotation { background: #202e28; }
+.theme-dark .reading-note-annotation p { color: #bbc5bf; }
+.theme-dark .reading-note-delete { background: #19241f; }
+.theme-dark .reading-note-confirm { color: #e2ddd3; border-color: #45524c; background: #19241f; }
+.theme-dark .reading-note-confirm blockquote { color: #d5ddd8; background: #202e28; }
+@media (max-width: 640px) {
+  .reading-notes-inner { width: calc(100% - 28px); padding: 48px 0 72px; }
+  .reading-notes-header { align-items: center; margin-bottom: 30px; }
+  .reading-notes-header h1 { font-size: 48px; }
+  .reading-notes-header span { font-size: 15px; }
+  .reading-notes-mark { width: 58px; height: 58px; font-size: 24px; }
+  .reading-note-card { padding: 24px 22px 72px; }
+  .reading-note-card-topline { display: grid; }
+  .reading-note-card blockquote { margin-right: 0; }
+  .reading-note-open > span { right: 22px; top: 88px; }
+  .reading-note-confirm { padding: 26px 22px; }
+}

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { dataManager } from '../services/DataManager.js';
 import { getPrimaryPronunciation } from '../utils/pronunciation.js';
 import { supportsLiveTranslation, translateEntryLive } from '../services/liveTranslation.js';
 import { getPreferredMeanings, getSecondaryMeanings } from '../utils/search.js';
 import { splitReadingParagraphs } from '../utils/readingFormat.js';
+import { SelectionAssistant } from './SelectionAssistant.js';
 import './ResultModal.css';
 
 function ReadingFormatTabs({ mode, onChange, t }) {
@@ -187,8 +188,10 @@ export function ResultModal({
   t,
   convertText,
   onClose,
-  onLoadNovelChapter
+  onLoadNovelChapter,
+  onSaveReadingNote
 }) {
+  const contentRef = useRef(null);
   const [readingMode, setReadingMode] = useState('original');
   const [pronunciationMode, setPronunciationMode] = useState('none');
   const [pronunciations, setPronunciations] = useState({});
@@ -272,7 +275,7 @@ export function ResultModal({
               ✕
             </button>
 
-            <div className="result-modal-content">
+            <div className="result-modal-content" ref={contentRef}>
               {(selectedItem.type === 'poetry' || type === 'poetry') && (
                 <div className="result-modal-section poetry-detail">
                   <h2 style={{ color: '#6890ff', marginBottom: '15px' }}>{convertText(selectedItem.title)}</h2>
@@ -532,6 +535,13 @@ export function ResultModal({
               )}
               <LiveTranslation source={translationSource} locale={locale} t={t} />
             </div>
+            <SelectionAssistant
+              scopeRef={contentRef}
+              t={t}
+              convertText={convertText}
+              source={selectedItem}
+              onSaveReadingNote={onSaveReadingNote}
+            />
           </div>
         </div>
       )}

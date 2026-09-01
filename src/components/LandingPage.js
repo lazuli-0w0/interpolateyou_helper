@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import {
   FEATURED_POEMS,
   getFeaturedPoemPresentation,
-  pickFeaturedPoem
+  pickFeaturedPoem,
+  toFeaturedPoemEntry
 } from '../data/featuredPoems.js';
 import './LandingPage.css';
 
@@ -23,7 +24,7 @@ function getPreviousPoemId() {
   }
 }
 
-export function LandingPage({ onNavigate }) {
+export function LandingPage({ onNavigate, onOpenPoem }) {
   const [poems, setPoems] = useState(FEATURED_POEMS);
   const [poem, setPoem] = useState(() => pickFeaturedPoem(getPreviousPoemId()));
 
@@ -40,9 +41,14 @@ export function LandingPage({ onNavigate }) {
           const lines = item.c.match(/[^。！？；]+[。！？；]?/g) || [item.c];
           return {
             id: `literature-${item.i}`,
+            literatureId: item.i,
             title: item.t,
             author: item.a,
             dynasty: item.d,
+            literatureKind: item.k,
+            kindLabel: item.k === 'ci' ? '詞' : item.k === 'qu' ? '曲' : '詩',
+            work: item.w,
+            content: item.c,
             lines,
             weight: item.r || 1
           };
@@ -65,6 +71,7 @@ export function LandingPage({ onNavigate }) {
   }, [poem.id]);
 
   const showAnotherPoem = () => setPoem(current => pickFeaturedPoem(current.id, Math.random(), poems));
+  const openPoem = () => onOpenPoem(toFeaturedPoemEntry(poem));
   const poemPresentation = getFeaturedPoemPresentation(poem);
 
   return (
@@ -88,17 +95,22 @@ export function LandingPage({ onNavigate }) {
             <span>本次詩選</span>
             <span className="featured-poem-mark">詩</span>
           </div>
-          <div className="featured-poem-body">
-            <p className="featured-poem-dynasty">{poem.dynasty}</p>
-            <h2>{poem.title}</h2>
-            <p className="featured-poem-author">{poem.author}</p>
-            <div className={`featured-poem-lines ${poemPresentation.density}`}>
-              {poemPresentation.lines.map((line, index) => <p key={`${index}-${line}`}>{line}</p>)}
+          <button className="featured-poem-open" type="button" onClick={openPoem} aria-label={`查看《${poem.title}》全文`}>
+            <div className="featured-poem-body">
+              <p className="featured-poem-dynasty">{poem.dynasty}</p>
+              <h2>{poem.title}</h2>
+              <p className="featured-poem-author">{poem.author}</p>
+              <div className={`featured-poem-lines ${poemPresentation.density}`}>
+                {poemPresentation.lines.map((line, index) => <p key={`${index}-${line}`}>{line}</p>)}
+              </div>
             </div>
-          </div>
+          </button>
           <div className="featured-poem-footer">
             <span>從 500 首精選名篇中，遇見不同的詩</span>
-            <button onClick={showAnotherPoem} aria-label="顯示另一首詩">↻</button>
+            <div className="featured-poem-footer-actions">
+              <button className="featured-poem-entry-button" onClick={openPoem}>查看全文 <span aria-hidden="true">↗</span></button>
+              <button className="featured-poem-refresh" onClick={showAnotherPoem} aria-label="顯示另一首詩">↻</button>
+            </div>
           </div>
         </article>
       </section>

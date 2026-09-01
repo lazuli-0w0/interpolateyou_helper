@@ -30,6 +30,24 @@ export function pickFeaturedPoem(previousId, randomValue = Math.random(), collec
   return candidates[candidates.length - 1];
 }
 
+export function toFeaturedPoemEntry(poem) {
+  const content = poem.content || (poem.lines || []).join('');
+  return {
+    id: poem.id,
+    literatureId: poem.literatureId,
+    title: poem.title,
+    author: poem.author,
+    dynasty: poem.dynasty,
+    literatureKind: poem.literatureKind || 'poem',
+    kindLabel: poem.kindLabel || '詩',
+    work: poem.work,
+    content,
+    preview: content.slice(0, 120),
+    type: 'poetry',
+    source: 'chinese-poetry'
+  };
+}
+
 export function getFeaturedPoemPresentation(poem, maxCharacters = 84, maxLines = 4) {
   const sourceLines = (poem?.lines || []).map(line => String(line).trim()).filter(Boolean);
   const characterCount = sourceLines.reduce((total, line) => total + Array.from(line).length, 0);

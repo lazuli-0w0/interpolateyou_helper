@@ -46,6 +46,10 @@
 .featured-poem::after { content: ''; position: absolute; width: 140px; height: 140px; right: -50px; bottom: 36px; border: 1px solid rgba(113, 61, 38, 0.13); border-radius: 50%; }
 .featured-poem-topline { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid #ded5c5; color: #777267; font-size: 11px; font-weight: 700; letter-spacing: 0.16em; }
 .featured-poem-mark { display: grid; place-items: center; width: 30px; height: 30px; color: #8d4b3d; border: 1px solid #b78a77; border-radius: 50%; font-family: serif; font-size: 15px; }
+.featured-poem-open { position: relative; z-index: 1; display: block; width: 100%; padding: 0; color: inherit; border: 0; background: transparent; cursor: pointer; text-align: left; }
+.featured-poem-open:focus-visible { outline: 2px solid #8d6252; outline-offset: -5px; }
+.featured-poem-open h2 { transition: color 160ms ease, transform 160ms ease; }
+.featured-poem-open:hover h2 { color: #8d4b3d; transform: translateX(3px); }
 .featured-poem-body { height: 330px; padding: 42px 48px 38px; overflow: hidden; box-sizing: border-box; }
 .featured-poem-dynasty { margin: 0 0 8px; color: #9b6c54; font-size: 12px; font-weight: 700; letter-spacing: 0.22em; }
 .featured-poem h2 { margin: 0; color: #202724; font-family: 'Noto Serif TC', 'Songti TC', 'STSong', serif; font-size: clamp(28px, 3vw, 39px); font-weight: 500; letter-spacing: 0.06em; }
@@ -56,8 +60,12 @@
 .featured-poem-lines.dense { font-size: clamp(14px, 1.25vw, 15.5px); line-height: 1.68; letter-spacing: 0.035em; }
 .featured-poem-lines p { margin: 0; }
 .featured-poem-footer { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-top: 1px solid #ded5c5; color: #827e74; font-size: 11px; }
-.featured-poem-footer button { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid #cfc5b5; border-radius: 50%; color: #5c625e; background: transparent; cursor: pointer; transition: transform 180ms ease, background 180ms ease; }
-.featured-poem-footer button:hover { transform: rotate(25deg); background: #eee6d8; }
+.featured-poem-footer-actions { display: flex; align-items: center; gap: 8px; }
+.featured-poem-entry-button { padding: 8px 12px; color: #5f544b; border: 1px solid #d1c5b5; border-radius: 999px; background: transparent; cursor: pointer; font-size: 11px; font-weight: 700; transition: transform 160ms ease, background 160ms ease; }
+.featured-poem-entry-button:hover { transform: translateY(-2px); background: #eee6d8; }
+.featured-poem-entry-button span { margin-left: 6px; }
+.featured-poem-refresh { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid #cfc5b5; border-radius: 50%; color: #5c625e; background: transparent; cursor: pointer; transition: transform 180ms ease, background 180ms ease; }
+.featured-poem-refresh:hover { transform: rotate(25deg); background: #eee6d8; }
 
 .landing-menu { margin-top: 76px; }
 .landing-menu-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.13); }
@@ -92,6 +100,8 @@
   .landing-intro h1 { font-size: 45px; }
   .landing-lead { font-size: 15px; }
   .featured-poem-body { height: 300px; padding: 34px 26px; }
+  .featured-poem-footer > span { display: none; }
+  .featured-poem-footer { justify-content: flex-end; }
   .landing-menu { margin-top: 52px; }
   .landing-menu-heading { align-items: flex-start; flex-direction: column; gap: 7px; }
   .landing-menu-grid { grid-template-columns: 1fr; }

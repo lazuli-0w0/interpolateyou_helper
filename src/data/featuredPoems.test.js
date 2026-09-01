@@ -1,7 +1,8 @@
 import {
   FEATURED_POEMS,
   getFeaturedPoemPresentation,
-  pickFeaturedPoem
+  pickFeaturedPoem,
+  toFeaturedPoemEntry
 } from './featuredPoems.js';
 
 test('featured poem picker never repeats the previous poem', () => {
@@ -43,4 +44,21 @@ test('featured poem presentation limits the number of visible lines', () => {
   const result = getFeaturedPoemPresentation({ lines: ['一。', '二。', '三。', '四。', '五。'] });
   expect(result.lines).toHaveLength(4);
   expect(result.lines[3]).toBe('四……');
+});
+
+test('turns a featured poem into its poetry entry', () => {
+  const entry = toFeaturedPoemEntry({
+    id: 'literature-321120',
+    literatureId: 321120,
+    title: '靜夜思',
+    author: '李白',
+    dynasty: '唐',
+    work: '全唐詩',
+    lines: ['牀前看月光，', '低頭思故鄉。']
+  });
+
+  expect(entry.type).toBe('poetry');
+  expect(entry.literatureId).toBe(321120);
+  expect(entry.content).toBe('牀前看月光，低頭思故鄉。');
+  expect(entry.work).toBe('全唐詩');
 });

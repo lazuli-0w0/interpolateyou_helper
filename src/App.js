@@ -48,14 +48,14 @@ const VIEW_CONFIG = {
   }
 };
 
-function AdvancedSearch({ type, staticData, placeholder }) {
+function AdvancedSearch({ type, staticData, placeholder, initialSelectedItem, onInitialItemHandled }) {
   const presentation = VIEW_CONFIG[type];
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [allData, setAllData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(initialSelectedItem || null);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [loadError, setLoadError] = useState('');
   const [language, setLanguage] = useState('traditional'); // 'traditional' 或 'simplified'
@@ -70,6 +70,10 @@ function AdvancedSearch({ type, staticData, placeholder }) {
 
   // 韻格選項
   const rhymePatterns = ['平韻格', '仄韻格', '通韻格', '換韻格', '未分類'];
+
+  useEffect(() => {
+    if (initialSelectedItem) onInitialItemHandled();
+  }, [initialSelectedItem, onInitialItemHandled]);
 
   // 加载数据
   useEffect(() => {
@@ -908,20 +912,28 @@ function AdvancedSearch({ type, staticData, placeholder }) {
 
 function App() {
   const [view, setView] = useState('home');
+  const [openingPoem, setOpeningPoem] = useState(null);
   const viewConfig = VIEW_CONFIG[view];
+  const openFeaturedPoem = useCallback((poemEntry) => {
+    setOpeningPoem(poemEntry);
+    setView('poetry');
+  }, []);
+  const clearOpeningPoem = useCallback(() => setOpeningPoem(null), []);
 
   return (
     <div className="app-shell">
       <AppNavigation view={view} onViewChange={setView} />
 
       {view === 'home' ? (
-        <LandingPage onNavigate={setView} />
+        <LandingPage onNavigate={setView} onOpenPoem={openFeaturedPoem} />
       ) : (
         <AdvancedSearch
           key={view}
           type={view}
           staticData={viewConfig.getStaticData()}
           placeholder={viewConfig.placeholder}
+          initialSelectedItem={view === 'poetry' ? openingPoem : null}
+          onInitialItemHandled={clearOpeningPoem}
         />
       )}
     </div>

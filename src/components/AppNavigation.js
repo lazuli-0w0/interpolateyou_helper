@@ -24,10 +24,16 @@ const NAV_TABS = [
     descriptionKey: 'nav.products.description',
     features: [
       { href: 'https://patreon.com/interpolateyou', markKey: 'product.patreon.mark', labelKey: 'product.patreon.label', descriptionKey: 'product.patreon.menuDescription' },
+      { href: 'https://www.instagram.com/shadow_lazuli', markKey: 'product.videoDiary.mark', labelKey: 'product.videoDiary.label', descriptionKey: 'product.videoDiary.menuDescription' },
       { view: 'product-bookmark', markKey: 'product.bookmark.mark', labelKey: 'product.bookmark.label', descriptionKey: 'product.bookmark.menuDescription' },
       { view: 'product-cards', markKey: 'product.cards.mark', labelKey: 'product.cards.label', descriptionKey: 'product.cards.menuDescription' },
       { view: 'product-reading-notes', markKey: 'product.readingNotes.mark', labelKey: 'product.readingNotes.label', descriptionKey: 'product.readingNotes.menuDescription' }
     ]
+  },
+  {
+    id: 'forum',
+    view: 'forum',
+    labelKey: 'nav.forum'
   },
   {
     id: 'settings',

@@ -5,6 +5,7 @@ import { ResultModal } from './components/ResultModal.js';
 import { SettingsPage } from './components/SettingsPage.js';
 import { FoundersWhyPage } from './components/FoundersWhyPage.js';
 import { ProductPage } from './components/ProductPage.js';
+import { ForumPage } from './components/ForumPage.js';
 import { chineseConverter } from './utils/ChineseConverter.js';
 import { createTranslator, DEFAULT_LOCALE, getDocumentLanguage, normalizeLocale } from './i18n.js';
 import {
@@ -988,6 +989,8 @@ function App() {
         />
       ) : view === 'founders-why' ? (
         <FoundersWhyPage locale={locale} />
+      ) : view === 'forum' ? (
+        <ForumPage t={t} />
       ) : view === 'product-bookmark' || view === 'product-cards' || view === 'product-reading-notes' ? (
         <ProductPage
           product={view === 'product-cards' ? 'cards' : view === 'product-reading-notes' ? 'reading-notes' : 'bookmark'}

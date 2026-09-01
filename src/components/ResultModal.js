@@ -1,6 +1,62 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { getPreferredMeanings, getSecondaryMeanings } from '../utils/search.js';
+import { splitReadingParagraphs } from '../utils/readingFormat.js';
 import './ResultModal.css';
+
+function ReadingFormatTabs({ mode, onChange, convertText }) {
+  return (
+    <div className="reading-format-toolbar">
+      <span className="reading-format-label">{convertText('閱讀排版')}</span>
+      <div className="reading-format-tabs" role="tablist" aria-label={convertText('正文排版')}>
+        {[
+          ['original', '原文'],
+          ['readable', '易讀']
+        ].map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            role="tab"
+            aria-selected={mode === value}
+            className={mode === value ? 'active' : ''}
+            onClick={() => onChange(value)}
+          >
+            {convertText(label)}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ReadingText({ content, kind, mode, convertText }) {
+  const convertedContent = convertText(content || '');
+  if (mode === 'original') return convertedContent;
+
+  const paragraphs = splitReadingParagraphs(convertedContent, kind);
+  if (kind === 'poetry') {
+    return (
+      <div className="formatted-poetry-text">
+        {paragraphs.flatMap(paragraph => paragraph).map((line, index) => (
+          <div className="formatted-poetry-line" key={`${index}-${line}`}>{line}</div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="formatted-prose-text">
+      {paragraphs.map((paragraph, paragraphIndex) => (
+        <p key={paragraphIndex}>
+          {paragraph.map((sentence, sentenceIndex) => (
+            <span className="formatted-prose-sentence" key={`${sentenceIndex}-${sentence}`}>
+              {sentence}
+            </span>
+          ))}
+        </p>
+      ))}
+    </div>
+  );
+}
 
 export function ResultModal({
   selectedItem,
@@ -9,6 +65,13 @@ export function ResultModal({
   onClose,
   onLoadNovelChapter
 }) {
+  const [readingMode, setReadingMode] = useState('original');
+  const selectedItemKey = selectedItem?.id || selectedItem?.title || null;
+
+  useEffect(() => {
+    setReadingMode('original');
+  }, [selectedItemKey]);
+
   if (!selectedItem) return null;
 
   const setSelectedItem = value => {
@@ -66,6 +129,7 @@ export function ResultModal({
                   <p style={{ color: '#7f8c8d', marginBottom: '15px' }}>
                     {[selectedItem.dynasty, selectedItem.author, selectedItem.work].filter(Boolean).map(convertText).join(' · ')}
                   </p>
+                  <ReadingFormatTabs mode={readingMode} onChange={setReadingMode} convertText={convertText} />
                   <div className="poetry-body" style={{
                     background: '#f8f9fa',
                     padding: '20px',
@@ -74,7 +138,7 @@ export function ResultModal({
                     fontSize: '16px',
                     textAlign: 'center'
                   }}>
-                    {convertText(selectedItem.content)}
+                    <ReadingText content={selectedItem.content} kind="poetry" mode={readingMode} convertText={convertText} />
                   </div>
                   <p style={{ marginTop: '16px', fontSize: '12px', color: '#888' }}>
                     {convertText('資料來源')}：<a href="https://github.com/chinese-poetry/chinese-poetry" target="_blank" rel="noreferrer" style={{ color: '#3f80ff' }}>chinese-poetry</a>
@@ -86,7 +150,14 @@ export function ResultModal({
                 <div className="result-modal-section novel-detail">
                   <h2 style={{ color: '#8a5a2b', marginBottom: '8px' }}>{convertText(selectedItem.title)}</h2>
                   <p style={{ color: '#7f8c8d' }}>{[selectedItem.dynasty, selectedItem.author, selectedItem.category].filter(Boolean).map(convertText).join(' · ')}</p>
-                  {selectedItem.intro && <p className="novel-intro" style={{ background: '#fffaf2', padding: '14px', borderRadius: '8px', lineHeight: 1.7, color: '#555' }}>{convertText(selectedItem.intro)}</p>}
+                  {selectedItem.intro && (
+                    <>
+                      <ReadingFormatTabs mode={readingMode} onChange={setReadingMode} convertText={convertText} />
+                      <div className="novel-intro" style={{ background: '#fffaf2', padding: '14px', borderRadius: '8px', lineHeight: 1.7, color: '#555' }}>
+                        <ReadingText content={selectedItem.intro} kind="prose" mode={readingMode} convertText={convertText} />
+                      </div>
+                    </>
+                  )}
                   <h3 style={{ color: '#8a5a2b', marginTop: '22px' }}>{convertText('章回目錄')}</h3>
                   <div className="novel-chapter-list" style={{ display: 'grid', gap: '8px' }}>
                     {selectedItem.chapters.map((chapter, index) => (
@@ -106,8 +177,9 @@ export function ResultModal({
                   <div style={{ color: '#8a5a2b', fontWeight: 'bold', marginBottom: '8px' }}>{convertText(selectedItem.work)}</div>
                   <h2 style={{ color: '#5f4528', marginBottom: '8px' }}>{convertText(selectedItem.title)}</h2>
                   <p style={{ color: '#7f8c8d' }}>{[selectedItem.dynasty, selectedItem.author, selectedItem.category].filter(Boolean).map(convertText).join(' · ')}</p>
+                  <ReadingFormatTabs mode={readingMode} onChange={setReadingMode} convertText={convertText} />
                   <article className="novel-reading-paper" style={{ background: '#fffaf2', padding: '22px', borderRadius: '8px', lineHeight: 2, fontSize: '17px', color: '#332a20', whiteSpace: 'pre-wrap', textAlign: 'left' }}>
-                    {convertText(selectedItem.content)}
+                    <ReadingText content={selectedItem.content} kind="prose" mode={readingMode} convertText={convertText} />
                   </article>
                   <p style={{ marginTop: '16px', fontSize: '12px', color: '#888' }}>
                     {convertText('資料來源')}：<a href="https://github.com/luoxuhai/chinese-novel" target="_blank" rel="noreferrer" style={{ color: '#8a5a2b' }}>chinese-novel</a>

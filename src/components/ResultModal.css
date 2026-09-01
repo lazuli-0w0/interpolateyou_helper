@@ -52,6 +52,56 @@
 .result-modal-content > div > p { color: #7b7d75 !important; }
 .result-modal-content a { color: #657d72 !important; text-underline-offset: 3px; }
 
+.reading-format-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 20px 0 10px;
+  padding-top: 14px;
+  border-top: 1px solid #dcd2c2;
+}
+
+.reading-format-label {
+  color: #74766f;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.reading-format-tabs {
+  display: inline-grid;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 3px;
+  border: 1px solid #d4c8b7;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.reading-format-tabs button {
+  min-width: 62px;
+  padding: 7px 13px;
+  color: #6e726d;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  transition: color 150ms ease, background 150ms ease, box-shadow 150ms ease;
+}
+
+.reading-format-tabs button.active {
+  color: #f8f3e7;
+  background: #43594f;
+  box-shadow: 0 2px 8px rgba(33, 49, 42, 0.18);
+}
+
+.reading-format-tabs button:focus-visible {
+  outline: 2px solid #7f9c8f;
+  outline-offset: 2px;
+}
+
 .poetry-body,
 .novel-intro,
 .novel-reading-paper,
@@ -71,6 +121,28 @@
   line-height: 2.05 !important;
   letter-spacing: 0.045em;
   white-space: pre-wrap;
+}
+
+.formatted-poetry-text {
+  display: grid;
+  gap: 7px;
+  width: fit-content;
+  min-width: min(16em, 100%);
+  max-width: 30em;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.formatted-poetry-line {
+  position: relative;
+  padding: 1px 8px 1px 18px;
+}
+
+.formatted-poetry-line::before {
+  position: absolute;
+  left: 2px;
+  color: #b8aa94;
+  content: '·';
 }
 
 .novel-intro { border-radius: 13px !important; }
@@ -93,6 +165,26 @@
   font-size: 17px !important;
   line-height: 2.1 !important;
 }
+
+.formatted-prose-text {
+  max-width: 42em;
+  margin: 0 auto;
+}
+
+.formatted-prose-text p {
+  margin: 0 0 1.45em;
+}
+
+.formatted-prose-text p:last-child { margin-bottom: 0; }
+
+.formatted-prose-sentence {
+  display: block;
+  padding: 0.22em 0 0.22em 1.25em;
+  border-left: 2px solid rgba(126, 105, 77, 0.18);
+  text-indent: -0.35em;
+}
+
+.formatted-prose-sentence + .formatted-prose-sentence { margin-top: 0.45em; }
 
 .modal-pronunciations {
   gap: 8px !important;
@@ -140,6 +232,8 @@
     border-radius: 18px 18px 3px 3px !important;
   }
   .result-modal-content h2 { font-size: 30px; }
+  .reading-format-toolbar { align-items: flex-start; }
+  .reading-format-tabs button { min-width: 56px; padding-inline: 10px; }
   .poetry-body,
   .novel-reading-paper { padding: 20px !important; }
 }

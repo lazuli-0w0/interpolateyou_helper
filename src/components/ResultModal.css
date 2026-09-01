@@ -291,71 +291,6 @@
 
 .formatted-prose-sentence + .formatted-prose-sentence { margin-top: 0.45em; }
 
-.vernacular-translation { text-align: left; }
-
-.vernacular-translation-heading {
-  display: flex;
-  margin-bottom: 18px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  color: #4d5d55;
-  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.vernacular-translation-heading small {
-  padding: 5px 9px;
-  color: #805c52;
-  border: 1px solid #c9aaa0;
-  border-radius: 999px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-}
-
-.vernacular-translation-status { margin: 0 !important; color: #747b76 !important; }
-.vernacular-translation-pairs {
-  overflow: hidden;
-  border: 1px solid #ddd3c3;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.44);
-}
-
-.vernacular-translation-pair { padding: 16px 18px; }
-.vernacular-translation-pair + .vernacular-translation-pair { border-top: 1px solid #ddd3c3; }
-.vernacular-translation-source,
-.vernacular-translation-copy {
-  display: grid;
-  grid-template-columns: 42px minmax(0, 1fr);
-  gap: 10px;
-  align-items: start;
-}
-.vernacular-translation-copy { margin-top: 10px; color: #303a35; }
-.vernacular-translation-source { color: #6d746f; }
-.vernacular-translation-source small,
-.vernacular-translation-copy small {
-  padding-top: 0.25em;
-  color: #8b655b;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-}
-.vernacular-translation-source p,
-.vernacular-translation-copy p { margin: 0 !important; line-height: 1.85; white-space: pre-wrap; }
-.vernacular-translation-error p { margin: 0 0 12px; color: #8b5d58 !important; }
-.vernacular-translation-error button {
-  padding: 7px 12px;
-  color: #f8f3e7;
-  border: 0;
-  border-radius: 999px;
-  background: #785c57;
-  cursor: pointer;
-  font: inherit;
-  font-size: 12px;
-}
-
 .live-translation {
   margin-top: 24px;
   padding: 20px;
@@ -483,14 +418,6 @@
 .theme-dark .novel-chapter-button:hover { border-color: #9f7860 !important; background: #26342e !important; }
 .theme-dark .novel-reader-back { color: #d2d9d4; border-color: #4a5750; background: #202c28; }
 .theme-dark .novel-reader-back:hover { border-color: #9f7860; background: #293731; }
-.theme-dark .vernacular-translation-heading { color: #cbd5cf; }
-.theme-dark .vernacular-translation-heading small { color: #e0b7aa; border-color: #805e56; }
-.theme-dark .vernacular-translation-pairs { border-color: #46534d; background: rgba(24, 34, 30, 0.62); }
-.theme-dark .vernacular-translation-pair + .vernacular-translation-pair { border-color: #46534d; }
-.theme-dark .vernacular-translation-source { color: #aeb9b3; }
-.theme-dark .vernacular-translation-copy { color: #e1ddd3; }
-.theme-dark .vernacular-translation-source small,
-.theme-dark .vernacular-translation-copy small { color: #e0b7aa; }
 .theme-dark .modal-pronunciations > span { color: #bdc8c2; background: #25312c; }
 .theme-dark .modal-pronunciations span span { color: #a9cabb !important; }
 .theme-dark .meaning-block ol { color: #bdc6c1 !important; }

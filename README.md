@@ -55,4 +55,4 @@ pnpm data:featured-poems
 
 ## 版本
 
-目前版本：`v2.3.0`。完整內容請參閱 [CHANGELOG.md](CHANGELOG.md)。
+目前版本：`v2.5.1`。完整內容請參閱 [CHANGELOG.md](CHANGELOG.md)。

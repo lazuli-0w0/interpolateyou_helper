@@ -33,6 +33,9 @@ importers:
         specifier: ^2.1.4
         version: 2.1.4
     devDependencies:
+      eslint-config-react-app:
+        specifier: ^7.0.1
+        version: 7.0.1(@babel/plugin-syntax-flow@7.29.7(@babel/core@7.29.7(supports-color@8.1.1)))(@babel/plugin-transform-react-jsx@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(eslint@8.57.1(supports-color@8.1.1))(jest@27.5.1(supports-color@8.1.1))(supports-color@8.1.1)(typescript@4.9.5)
       gh-pages:
         specifier: ^6.3.0
         version: 6.3.0

@@ -1,6 +1,6 @@
 {
   "name": "interpolateyou_helper",
-  "version": "2.3.0",
+  "version": "2.5.1",
   "private": false,
   "homepage": "./",
   "dependencies": {
@@ -46,6 +46,7 @@
     ]
   },
   "devDependencies": {
+    "eslint-config-react-app": "^7.0.1",
     "gh-pages": "^6.3.0",
     "tshet-uinh": "^0.15.4",
     "tshet-uinh-examples": "^20260629.0.1"

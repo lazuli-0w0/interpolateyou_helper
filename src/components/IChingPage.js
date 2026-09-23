@@ -10,9 +10,13 @@ import { readingFromValues, zhuXiSelections } from '../utils/ichingTexts.js';
 import { ichingParaphrase } from '../data/ichingParaphrases.js';
 import { referenceUrl } from '../data/references.js';
 import { downloadIChingReport } from '../utils/ichingReport.js';
+import { TongbaoCoinButton } from './TongbaoCoinButton.js';
 import './IChingPage.css';
 
 const INITIAL_FACES = [COIN_TEXT, COIN_TEXT, COIN_TEXT];
+const INITIAL_ROTATIONS = [0, 0, 0];
+const RANDOM_SPIN_MS = 500;
+const MANUAL_SPIN_MS = 720;
 const LINE_POSITIONS = ['initial', 'second', 'third', 'fourth', 'fifth', 'top'];
 const COIN_HINT_STORAGE_KEY = 'interpolateyou:iching-coin-hint:v1';
 
@@ -83,7 +87,12 @@ export function IChingPage({ t }) {
     catch (error) { return true; }
   });
   const coinHintCloseRef = useRef(null);
+  const randomTimerRef = useRef(null);
   const [faces, setFaces] = useState(INITIAL_FACES);
+  const [rotations, setRotations] = useState(INITIAL_ROTATIONS);
+  const [spinGeneration, setSpinGeneration] = useState(0);
+  const [casting, setCasting] = useState(false);
+  const [heldCoin, setHeldCoin] = useState(null);
   const [values, setValues] = useState([]);
   const [error, setError] = useState('');
   const [reportError, setReportError] = useState('');
@@ -111,28 +120,60 @@ export function IChingPage({ t }) {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [showCoinHint, acknowledgeCoinHint]);
 
+  useEffect(() => () => {
+    if (randomTimerRef.current) window.clearTimeout(randomTimerRef.current);
+  }, []);
+
   const flipCoin = index => {
-    if (complete) return;
+    if (complete || casting) return;
     setFaces(current => current.map((face, coinIndex) => coinIndex === index
       ? face === COIN_TEXT ? COIN_REVERSE : COIN_TEXT
       : face));
+    // A full turn plus a half turn exposes the other face.
+    setRotations(current => current.map((angle, coinIndex) => coinIndex === index ? angle + 540 : angle));
     setError('');
   };
 
   const castRandomly = () => {
-    if (complete) return;
+    if (complete || casting) return;
     try {
-      setFaces(randomCoinFaces());
+      const nextFaces = randomCoinFaces();
+      setCasting(true);
+      setFaces(nextFaces);
+      setRotations(current => current.map((angle, index) => {
+        const currentFaceAngle = ((angle % 360) + 360) % 360;
+        const finalFaceAngle = nextFaces[index] === COIN_REVERSE ? 180 : 0;
+        return angle + 1080 + ((finalFaceAngle - currentFaceAngle + 360) % 360);
+      }));
       setError('');
+      randomTimerRef.current = window.setTimeout(() => {
+        setValues(current => [...current, lineValueFromCoins(nextFaces)]);
+        setCasting(false);
+        randomTimerRef.current = null;
+      }, RANDOM_SPIN_MS);
     } catch (failure) {
       setError(t('iching.randomUnavailable'));
     }
   };
 
+  const randomizeCoin = index => {
+    if (complete || casting) return;
+    try {
+      const nextFace = randomCoinFaces()[index];
+      setFaces(current => current.map((face, coinIndex) => coinIndex === index ? nextFace : face));
+      setRotations(current => current.map((angle, coinIndex) => coinIndex === index
+        ? angle + 720 + (((nextFace === COIN_REVERSE ? 180 : 0) - angle % 360 + 360) % 360)
+        : angle));
+      setError('');
+    } catch (failure) { setError(t('iching.randomUnavailable')); }
+  };
+
   const confirmLine = () => {
-    if (complete) return;
+    if (complete || casting) return;
     setValues(current => [...current, currentValue]);
     setFaces(INITIAL_FACES);
+    setRotations(INITIAL_ROTATIONS);
+    setSpinGeneration(current => current + 1);
     setError('');
   };
 
@@ -142,8 +183,13 @@ export function IChingPage({ t }) {
   };
 
   const restart = () => {
+    if (randomTimerRef.current) window.clearTimeout(randomTimerRef.current);
+    randomTimerRef.current = null;
+    setCasting(false);
     setValues([]);
     setFaces(INITIAL_FACES);
+    setRotations(INITIAL_ROTATIONS);
+    setSpinGeneration(current => current + 1);
     setError('');
     setReportError('');
   };
@@ -194,30 +240,33 @@ export function IChingPage({ t }) {
           </div>
 
           <div className="iching-coins" role="group" aria-label={t('iching.threeCoins')}>
-            {faces.map((face, index) => <button
+            {faces.map((face, index) => <TongbaoCoinButton
               key={index}
-              className={`iching-coin ${face === COIN_REVERSE ? 'reverse' : 'text'}`}
-              type="button"
-              disabled={complete}
+              className={`iching-coin ${face === COIN_REVERSE ? 'reverse' : 'text'} ${casting ? 'rolling' : ''}`}
+              disabled={complete || casting || (heldCoin !== null && heldCoin !== index)}
               aria-label={t('iching.coinToggle', {
                 number: index + 1,
                 face: t(face === COIN_TEXT ? 'iching.textFace' : 'iching.reverseFace')
               })}
               aria-pressed={face === COIN_REVERSE}
-              onClick={() => flipCoin(index)}
+              onFlip={() => flipCoin(index)}
+              onRandom={() => randomizeCoin(index)} randomizing={casting}
+              onHoldingChange={isHolding => setHeldCoin(isHolding ? index : null)}
+              id={`coin-${index}`} resetKey={spinGeneration}
+              angle={rotations[index]} duration={casting ? RANDOM_SPIN_MS : MANUAL_SPIN_MS}
             >
-              <span className="iching-coin-face" style={{ backgroundImage: "url('/tongbao-reference.jpeg')" }} aria-hidden="true" />
               <small>{t(face === COIN_TEXT ? 'iching.textFace' : 'iching.reverseFace')}</small>
-            </button>)}
+            </TongbaoCoinButton>)}
           </div>
 
           <div className="iching-cast-readout" aria-live="polite">
-            <span>{complete ? t('iching.castComplete') : t('iching.nextLine', { position: linePosition(t, values.length + 1) })}</span>
-            {!complete && <strong>{t(`iching.value.${currentValue}`)}</strong>}
+            <span>{casting ? t('iching.randomSpinning') : complete ? t('iching.castComplete')
+              : t('iching.nextLine', { position: linePosition(t, values.length + 1) })}</span>
+            {!complete && !casting && <strong>{t(`iching.value.${currentValue}`)}</strong>}
           </div>
           <div className="iching-actions">
-            <button className="iching-button secondary" type="button" disabled={complete} onClick={castRandomly}>{t('iching.random')}</button>
-            <button className="iching-button primary" type="button" disabled={complete} onClick={confirmLine}>{t('iching.confirm')}</button>
+            <button className="iching-button secondary" type="button" disabled={complete || casting || heldCoin !== null} onClick={castRandomly}>{t('iching.random')}</button>
+            <button className="iching-button primary" type="button" disabled={complete || casting || heldCoin !== null} onClick={confirmLine}>{t('iching.confirm')}</button>
           </div>
           {error && <p className="iching-error" role="alert">{error}</p>}
         </section>
@@ -240,8 +289,8 @@ export function IChingPage({ t }) {
             })}
           </ul>
           <div className="iching-record-actions">
-            <button type="button" disabled={!values.length} onClick={undoLine}>{t('iching.undo')}</button>
-            <button type="button" disabled={!values.length} onClick={restart}>{t('iching.restart')}</button>
+            <button type="button" disabled={!values.length || casting || heldCoin !== null} onClick={undoLine}>{t('iching.undo')}</button>
+            <button type="button" disabled={!values.length || casting || heldCoin !== null} onClick={restart}>{t('iching.restart')}</button>
           </div>
         </section>
       </div>

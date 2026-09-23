@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { IChingPage } from './IChingPage.js';
 import { createTranslator } from '../i18n.js';
 import * as iching from '../utils/iching.js';
@@ -35,8 +35,9 @@ test('six unchanged lines show only the original hexagram', () => {
 
 test('manual coin flips record lines from bottom to top and reveal both figures after six lines', () => {
   render(<IChingPage t={t} />);
-  expect(screen.getByRole('button', { name: /第 1 枚：通寶 · 陰/ }).querySelector('.iching-coin-face').style.backgroundImage)
-    .toContain('tongbao-reference.jpeg');
+  const firstCoin = screen.getByRole('button', { name: /第 1 枚：通寶 · 陰/ });
+  expect(firstCoin.querySelector('image').getAttribute('href')).toBe('/tongbao-reference.jpeg');
+  expect(firstCoin.querySelector('canvas')).not.toBeNull();
   fireEvent.click(screen.getByRole('button', { name: /第 1 枚：通寶 · 陰/ }));
   expect(screen.getByRole('button', { name: /第 1 枚：滿文 · 陽/ }).getAttribute('aria-pressed')).toBe('true');
   expect(screen.getByText('少陰 ‘’')).not.toBeNull();
@@ -73,20 +74,77 @@ test('old yin and old yang use distinct X and O marks', () => {
   expect(screen.getByText('O')).not.toBeNull();
 });
 
-test('the random button fills the same three-coin input before confirmation', () => {
+test('holding one coin keeps it spinning until release without flipping a neighbouring coin or double-flipping', () => {
   const random = jest.spyOn(iching, 'randomCoinFaces').mockReturnValue([
     iching.COIN_REVERSE, iching.COIN_REVERSE, iching.COIN_REVERSE
   ]);
+  jest.useFakeTimers();
+  const pointer = (element, type) => fireEvent(element, Object.assign(new Event(type, { bubbles: true }), {
+    button: 0, pointerId: 1, isPrimary: true
+  }));
+  try {
+    render(<IChingPage t={t} />);
+    const first = screen.getByRole('button', { name: /第 1 枚/ });
+    const second = screen.getByRole('button', { name: /第 2 枚/ });
+    pointer(first, 'pointerdown');
+    act(() => jest.advanceTimersByTime(219));
+    expect(first.getAttribute('aria-busy')).toBe('false');
+    act(() => jest.advanceTimersByTime(5000));
+    expect(first.getAttribute('aria-busy')).toBe('true');
+    expect(first.querySelector('.effect-charged')).not.toBeNull();
+    expect(random).not.toHaveBeenCalled();
+    expect(second.disabled).toBe(true);
+    expect(screen.getByRole('button', { name: '確認此爻' }).disabled).toBe(true);
+    pointer(first, 'pointerup');
+    fireEvent.click(first);
+    expect(random).toHaveBeenCalledTimes(1);
+    expect(first.getAttribute('aria-busy')).toBe('true');
+    act(() => jest.advanceTimersByTime(500));
+    expect(first.getAttribute('aria-busy')).toBe('false');
+    expect(first.getAttribute('aria-pressed')).toBe('true');
+    expect(second.getAttribute('aria-pressed')).toBe('false');
+    expect(second.disabled).toBe(false);
+    expect(first.querySelector('.effect-landed')).not.toBeNull();
+  } finally { jest.useRealTimers(); random.mockRestore(); }
+});
+
+test('cancelling a held coin stops the spin without changing its face', () => {
+  jest.useFakeTimers();
+  try {
+    render(<IChingPage t={t} />);
+    const first = screen.getByRole('button', { name: /第 1 枚/ });
+    fireEvent.keyDown(first, { key: ' ' });
+    act(() => jest.advanceTimersByTime(300));
+    expect(first.getAttribute('aria-busy')).toBe('true');
+    fireEvent.blur(window);
+    expect(first.getAttribute('aria-busy')).toBe('false');
+    expect(first.getAttribute('aria-pressed')).toBe('false');
+  } finally { jest.useRealTimers(); }
+});
+
+test('the random button spins for 0.5 seconds and then confirms the line automatically', () => {
+  const random = jest.spyOn(iching, 'randomCoinFaces').mockReturnValue([
+    iching.COIN_REVERSE, iching.COIN_REVERSE, iching.COIN_REVERSE
+  ]);
+  jest.useFakeTimers();
   try {
     render(<IChingPage t={t} />);
     expect(screen.getByText('I Ching · TRE MONETE METODO')).not.toBeNull();
     expect(screen.queryByText(/動爻機率為 1\/4/)).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: '隨機擲三枚' }));
     expect(random).toHaveBeenCalledTimes(1);
-    expect(screen.getByText('老陽 O · 動爻')).not.toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: '確認此爻' }));
+    expect(screen.getByText('擲幣中…')).not.toBeNull();
+    expect(screen.getByRole('button', { name: '確認此爻' }).disabled).toBe(true);
+    act(() => jest.advanceTimersByTime(499));
+    expect(screen.getByText('擲幣中…')).not.toBeNull();
+    act(() => jest.advanceTimersByTime(1));
     expect(screen.getByText('準備記錄二爻')).not.toBeNull();
+    expect(screen.getByText('O')).not.toBeNull();
+    expect(document.querySelectorAll('.effect-landed')).toHaveLength(3);
+    expect(screen.getAllByRole('button', { name: /滿文 · 陽，按下切換/ })).toHaveLength(3);
+    expect(screen.getByRole('button', { name: '確認此爻' }).disabled).toBe(false);
   } finally {
+    jest.useRealTimers();
     random.mockRestore();
   }
 });

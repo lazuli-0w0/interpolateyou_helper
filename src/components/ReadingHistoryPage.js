@@ -37,6 +37,9 @@ export function ReadingHistoryPage({ history, locale, t, onOpen, onClear }) {
       setOpeningId(null);
     }
   };
+  const confirmClear = () => {
+    if (window.confirm(t('history.clearConfirm', { count: history.length }))) onClear();
+  };
 
   return (
     <main className="reading-history-page">
@@ -61,7 +64,7 @@ export function ReadingHistoryPage({ history, locale, t, onOpen, onClear }) {
           <section className="reading-history-content" aria-label={t('history.title')}>
             <div className="reading-history-toolbar">
               <p>{t('history.count', { count: history.length })}</p>
-              <button type="button" onClick={onClear}>{t('history.clear')}</button>
+              <button type="button" onClick={confirmClear}>{t('history.clear')}</button>
             </div>
             <div className="reading-history-list">
               {history.map(entry => (

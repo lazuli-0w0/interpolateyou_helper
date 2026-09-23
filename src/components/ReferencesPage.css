@@ -1,0 +1,23 @@
+.references-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 24px 0 28px; }
+.references-stats > div { display: flex; flex-direction: column; gap: 5px; padding: 16px; border: 1px solid #ded3c3; border-radius: 12px; background: #fffdf8; }
+.references-stats strong { font: 500 28px/1.2 'Noto Serif TC', 'Songti TC', serif; }
+.references-stats span { color: #647168; font-size: 12px; }
+.references-group { margin-top: 25px; }
+.references-group h3 { margin: 0 0 10px; font: 600 18px/1.4 'Noto Serif TC', 'Songti TC', serif; }
+.references-group ul { margin: 0; padding: 0; list-style: none; }
+.references-item { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-top: 1px solid #e5dccf; }
+.references-item a, .references-item strong { color: #2b5142; font-size: 14px; font-weight: 650; overflow-wrap: anywhere; }
+.references-item a { text-underline-offset: 3px; }
+.references-item small { display: block; margin-top: 4px; color: #68746d; font-size: 12px; }
+.references-local { align-self: flex-start; flex: 0 0 auto; padding: 3px 8px; border-radius: 999px; background: #eee5d7; color: #715741; font-size: 11px; }
+.references-item a:focus-visible { outline: 3px solid #b88952; outline-offset: 3px; }
+.theme-dark .references-stats > div { border-color: #46564c; background: #1d2925; }
+.theme-dark .references-stats span, .theme-dark .references-item small { color: #b7c6bb; }
+.theme-dark .references-item { border-color: #46564c; }
+.theme-dark .references-item a, .theme-dark .references-item strong { color: #c9e4d0; }
+.theme-dark .references-local { color: #f0d4af; background: #483b2c; }
+@media (max-width: 480px) {
+  .references-stats { gap: 6px; }
+  .references-stats > div { padding: 10px; }
+  .references-stats strong { font-size: 23px; }
+}

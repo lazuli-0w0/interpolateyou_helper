@@ -68,6 +68,12 @@ PORT=3001 npm start  # 前端在 http://localhost:3001
 
 ## 5) 資料來源
 
+網站「設定 → References」由 `src/data/references.js` 的來源目錄自動列出並統計。
+新增資料來源時只需在該目錄登記一次；頁面內的引用以 `referenceUrl(id)` 讀取同一網址，
+不要在各頁重複寫來源 URL。64 卦的逐卦參考連結由卦序和 `src/data/ichingSources.js`
+的文章對照表自動產生。站長自行整理的《I Ching.pages》與詞牌個人經驗沒有公開網址，
+因此在清單中標作站長整理，而不捏造外部連結。
+
 系統已載入 `eng_index.json` (149,131 筆英語-粵語音韻對照資料)。API 啟動時會自動載入 `my-app/data/` 下的所有 `.json` 檔案。
 
 ### 教育部辭典詞語索引

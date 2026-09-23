@@ -24,8 +24,8 @@
 
 .result-modal-close {
   display: grid;
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   top: 16px !important;
   right: 18px !important;
   place-items: center;
@@ -358,12 +358,17 @@
 .cipou-main-badge { color: #9f552f; }
 .cipou-variant-size { flex: 0 0 auto; color: #777970; font-size: 13px; }
 .cipou-variant-intro { margin: 0 0 14px; color: #676d68; font-size: 14px; line-height: 1.65; }
+.cipou-variant-intro .formatted-prose-text p,
+.cipou-description .formatted-prose-text p { margin: 0 0 10px; }
+.cipou-variant-intro .formatted-prose-sentence,
+.cipou-description .formatted-prose-sentence { display: block; }
 .cipou-section-label { color: #303632; }
 .cipou-legend { margin: 7px 0 9px; color: #6f746f; font-size: 12px; line-height: 1.8; }
 .cipou-description { margin: 7px 0 0; color: #656c67; font-size: 14px; line-height: 1.75; }
 .cipou-score { margin-top: 16px !important; color: #686e69 !important; }
 .tone-pattern { padding: 13px !important; border-radius: 9px !important; }
 .cipou-example { padding: 18px !important; border-radius: 9px !important; font-family: 'Noto Serif TC', 'Songti TC', serif; }
+.cipou-example .formatted-poetry-text { gap: 8px; }
 
 .theme-dark .result-modal-panel {
   color: #e0dbd1;

@@ -40,7 +40,7 @@ export function FoundersWhyPage({ locale }) {
 
       <article className="founders-why-inner">
         <header className="founders-why-hero">
-          <p className="founders-why-eyebrow">IL MOTIVO DEL FONDATORE · {localize('創辦人的話')}</p>
+          <p className="founders-why-eyebrow">LA VISIONE DEL FONDATORE</p>
           <h1>
             <span>FOUNDER’S</span>
             <span>WHY</span>

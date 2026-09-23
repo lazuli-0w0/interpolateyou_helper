@@ -133,7 +133,7 @@
 
 .theme-dark .settings-card {
   color: #e7e1d5;
-  border-color: #3c4944;
+  border-color: #4b5852;
   background: #17211e;
   box-shadow: 0 34px 80px rgba(0, 0, 0, 0.46);
 }
@@ -147,6 +147,10 @@
   background: #1d2925;
 }
 .theme-dark .settings-option-list button:hover { border-color: #b77d69; background: #24322d; }
+.theme-dark .settings-option-list button:focus-visible {
+  outline: 2px solid #c7d5cc;
+  outline-offset: 3px;
+}
 .theme-dark .settings-option-list button.selected {
   border-color: #b77d69;
   background: #332827;

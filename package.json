@@ -2,7 +2,7 @@
   "name": "interpolateyou_helper",
   "version": "2.5.1",
   "private": false,
-  "homepage": "./",
+  "homepage": "/",
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
@@ -20,11 +20,12 @@
     "data:moedict": "node scripts/build-moedict-index.js",
     "data:literature": "node scripts/build-literature-index.js && node scripts/build-featured-poems.js",
     "data:featured-poems": "node scripts/build-featured-poems.js",
+    "data:routes": "node scripts/build-route-slugs.js",
     "eject": "react-scripts eject",
     "predeploy": "npm run set-gh-homepage && npm run build",
     "deploy": "gh-pages -d build",
     "set-gh-homepage": "npm pkg set homepage=https://lazuli-0w0.github.io/interpolateyou_helper",
-    "set-local-homepage": "npm pkg set homepage=./",
+    "set-local-homepage": "npm pkg set homepage=/",
     "postdeploy": "npm run set-local-homepage"
   },
   "eslintConfig": {

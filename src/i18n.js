@@ -37,6 +37,10 @@ export const LOCALE_OPTIONS = [
 
 const MESSAGES = {
   'zh-Hant': {
+    'entry.close': '關閉閱讀視窗',
+    'search.requestFailed': '搜尋暫時失敗，原有結果已保留。請重試。',
+    'search.retry': '重試搜尋',
+    'history.clearConfirm': '確定清除這部裝置上的 {{count}} 項閱讀紀錄嗎？此操作無法復原。',
     'brand.name': '覺知 你',
     'nav.main': '主選單',
     'nav.tools': '工具',
@@ -227,6 +231,11 @@ const MESSAGES = {
     'search.loading': '搜尋中...',
     'search.action': '🔍 搜尋',
     'search.rhymeFilter': '🎵 韻格分類篩選（可多選）：',
+    'search.cipouSort': '字數排序',
+    'search.cipouSortDefault': '原始次序',
+    'search.cipouSortAscending': '字數由少至多',
+    'search.cipouSortDescending': '字數由多至少',
+    'search.cipouWordCount': '{{count}} 字',
     'search.clearFilters': '清除所有篩選',
     'search.clear': '✕ 清除',
     'search.selectedFilters': '已選擇 {{count}} 個韻格分類',
@@ -256,6 +265,10 @@ const MESSAGES = {
     ,'entry.readingLayout': '閱讀排版', 'entry.original': '原文', 'entry.readable': '易讀', 'entry.translation': '翻譯', 'entry.vernacularTitle': '白話文翻譯', 'entry.vernacularLine': '白話', 'entry.systemGenerated': '系統生成', 'entry.generatingTranslation': '正在生成白話文…', 'entry.translationUnavailable': '暫時無法生成白話文，請稍後再試。', 'entry.translationSetupRequired': '即時翻譯尚未啟用：請先在 Vercel AI Gateway 完成付款驗證。', 'entry.retry': '重試', 'entry.pronunciation': '拼音', 'entry.hidden': '隱藏', 'entry.loading': '載入中…', 'entry.back': '返回上一頁'
   },
   'zh-Hans': {
+    'entry.close': '关闭阅读窗口',
+    'search.requestFailed': '搜索暂时失败，原有结果已保留。请重试。',
+    'search.retry': '重试搜索',
+    'history.clearConfirm': '确定清除这部设备上的 {{count}} 项阅读记录吗？此操作无法恢复。',
     'brand.name': '覺知 你',
     'nav.main': '主菜单',
     'nav.tools': '工具',
@@ -446,6 +459,11 @@ const MESSAGES = {
     'search.loading': '搜索中...',
     'search.action': '🔍 搜索',
     'search.rhymeFilter': '🎵 韵格分类筛选（可多选）：',
+    'search.cipouSort': '字数排序',
+    'search.cipouSortDefault': '原始次序',
+    'search.cipouSortAscending': '字数由少至多',
+    'search.cipouSortDescending': '字数由多至少',
+    'search.cipouWordCount': '{{count}} 字',
     'search.clearFilters': '清除所有筛选',
     'search.clear': '✕ 清除',
     'search.selectedFilters': '已选择 {{count}} 个韵格分类',
@@ -478,6 +496,10 @@ const MESSAGES = {
 
 Object.assign(MESSAGES, {
   en: {
+    'entry.close': 'Close reading window',
+    'search.requestFailed': 'Search failed. Your previous results are still here. Please try again.',
+    'search.retry': 'Retry search',
+    'history.clearConfirm': 'Clear all {{count}} reading history items on this device? This cannot be undone.',
     'brand.name': 'Interpolate You', 'nav.main': 'Main menu', 'nav.tools': 'Tools', 'nav.products': 'Products', 'nav.settings': 'Settings', 'nav.forum': 'Forum', 'nav.records': 'record di lettura salvato', 'nav.foundersWhy': 'Founder’s Why', 'nav.credentials': 'Open Interpolate You links',
     'forum.eyebrow': 'FORUM · CONVERSATION SPACE', 'forum.title': 'Forum', 'forum.placeholder': 'PLACEHOLDER',
     'nav.tools.eyebrow': 'TOOLS · Classical Chinese', 'nav.tools.title': 'Where would you like to begin?', 'nav.tools.description': 'Search words and works, read classic fiction, and rediscover Chinese through sound.',
@@ -498,10 +520,15 @@ Object.assign(MESSAGES, {
     'landing.kicker': 'INTERPOLATE YOU · 覺知 你', 'landing.titleLineOne': 'Meet the next character', 'landing.titleLineTwo': 'inside a line of poetry.', 'landing.lead': 'Search words, read poetry and fiction, and rediscover Chinese through its sound.', 'landing.startPoetry': 'Find a poem', 'landing.anotherPoem': 'Another poem', 'landing.featured': 'Featured poem', 'landing.openPoem': 'Open {{title}}', 'landing.featuredFooter': 'Meet a different work from 500 featured classics', 'landing.openFull': 'Read in full', 'landing.showAnother': 'Show another poem', 'landing.menuLabel': 'Feature menu', 'landing.menuTitle': 'Where would you like to begin?', 'landing.menuSubtitle': 'Four ways into classical Chinese',
     'settings.feature.mark': '文', 'settings.feature.label': 'Language', 'settings.feature.description': 'Choose the interface and entry language', 'settings.appearance.mark': '明', 'settings.appearance.label': 'Appearance', 'settings.appearance.featureDescription': 'Choose light or dark display', 'settings.page.eyebrow': 'PERSONAL SETTINGS', 'settings.page.title': 'Settings', 'settings.page.intro': 'One choice, shared across every tool.', 'settings.language.eyebrow': 'LANGUAGE', 'settings.language.title': 'Language', 'settings.language.description': 'Choose the interface language. Entries retain the original alongside a live translation.', 'settings.language.groupLabel': 'Interface language', 'settings.language.traditionalDescription': 'Display the interface and search content in Traditional Chinese.', 'settings.language.simplifiedDescription': 'Display the interface and search content in Simplified Chinese.', 'settings.language.englishDescription': 'Display the interface in English and translate entries live.', 'settings.language.italianDescription': 'Display the interface in Italian and translate entries live.',
     'settings.appearance.eyebrow': 'APPEARANCE & THEME', 'settings.appearance.title': 'Appearance & theme', 'settings.appearance.description': 'Choose the light level best suited to your reading environment.', 'settings.appearance.groupLabel': 'Interface theme', 'settings.theme.light.label': 'Light', 'settings.theme.light.secondaryLabel': 'Light', 'settings.theme.light.description': 'Bright paper and clear ink for daytime reading.', 'settings.theme.dark.label': 'Dark', 'settings.theme.dark.secondaryLabel': 'Dark', 'settings.theme.dark.description': 'A darker paper with softer text for low light.',
+    'search.cipouSort': 'Character count order', 'search.cipouSortDefault': 'Original order', 'search.cipouSortAscending': 'Shortest first', 'search.cipouSortDescending': 'Longest first', 'search.cipouWordCount': '{{count}} characters',
     'search.loading': 'Searching…', 'search.action': 'Search', 'search.rhymeFilter': 'Rhyme pattern filters:', 'search.clearFilters': 'Clear filters', 'search.clear': 'Clear', 'search.selectedFilters': '{{count}} rhyme patterns selected', 'search.progress': 'Search progress: {{progress}}%', 'search.statusUnavailable': 'Data is temporarily unavailable', 'search.statusQuery': '“{{query}}” found {{count}} results', 'search.statusFiltered': 'Category filters found {{count}} results', 'search.statusLoaded': '{{total}} items loaded, showing {{count}}', 'search.statusPreloaded': 'Only {{total}} items are currently preloaded, showing {{count}}; this is not the full collection.', 'search.statusLoading': 'Loading data…', 'search.autoLoadMore': 'Automatically showing {{count}} more near the end; {{remaining}} remaining', 'search.browseTitle': 'Browse lists', 'search.browseDescription': 'Select multiple filters; they are applied with your text when you search.', 'search.browseAuthor': 'Authors', 'search.browseDynasty': 'Dynasties', 'search.browseCommon': 'Common words', 'search.browseCount': '{{count}} options', 'search.browseValue': 'Select {{category}} “{{value}}”', 'search.browseSelected': '{{count}} selected', 'search.viewMode': 'Search result display', 'search.viewDetailed': 'Details', 'search.viewTitles': 'Titles only', 'search.openTitle': 'Open “{{title}}”',
     'translation.original': 'Original Chinese', 'translation.live': 'Live English translation', 'translation.loading': 'Translating…', 'translation.unavailable': 'Live translation is unavailable right now. Please try again.', 'translation.retry': 'Try again', 'translation.note': 'Generated when opened; not stored by Interpolate You.', 'entry.readingLayout': 'Reading layout', 'entry.original': 'Original', 'entry.readable': 'Easy read', 'entry.translation': 'Translation', 'entry.vernacularTitle': 'Vernacular Chinese', 'entry.vernacularLine': 'Vernacular', 'entry.systemGenerated': 'SYSTEM GENERATED', 'entry.generatingTranslation': 'Generating vernacular Chinese…', 'entry.translationUnavailable': 'Vernacular translation is temporarily unavailable. Please try again.', 'entry.translationSetupRequired': 'Live translation is not enabled yet: complete billing verification in Vercel AI Gateway.', 'entry.retry': 'Retry', 'entry.pronunciation': 'Pronunciation', 'entry.hidden': 'Hidden', 'entry.loading': 'Loading…', 'entry.back': 'Back to previous page'
   },
   it: {
+    'entry.close': 'Chiudi la finestra di lettura',
+    'search.requestFailed': 'Ricerca non riuscita. I risultati precedenti sono ancora disponibili. Riprova.',
+    'search.retry': 'Riprova la ricerca',
+    'history.clearConfirm': 'Cancellare tutte le {{count}} voci della cronologia su questo dispositivo? Non è possibile annullare.',
     'brand.name': 'Interpolate You', 'nav.main': 'Menu principale', 'nav.tools': 'Strumenti', 'nav.products': 'Prodotti', 'nav.settings': 'Impostazioni', 'nav.forum': 'Forum', 'nav.records': 'record di lettura salvato', 'nav.foundersWhy': 'Il motivo del fondatore', 'nav.credentials': 'Apri i link di Interpolate You',
     'forum.eyebrow': 'FORUM · SPAZIO DI DIALOGO', 'forum.title': 'Forum', 'forum.placeholder': 'PLACEHOLDER',
     'nav.tools.eyebrow': 'STRUMENTI · Cinese classico', 'nav.tools.title': 'Da dove vuoi iniziare?', 'nav.tools.description': 'Cerca parole e opere, leggi narrativa classica e riscopri il cinese attraverso il suono.',
@@ -522,10 +549,282 @@ Object.assign(MESSAGES, {
     'landing.kicker': 'INTERPOLATE YOU · 覺知 你', 'landing.titleLineOne': 'Incontra il carattere successivo', 'landing.titleLineTwo': 'dentro un verso.', 'landing.lead': 'Cerca parole, leggi poesia e narrativa, e riscopri il cinese attraverso il suono.', 'landing.startPoetry': 'Trova una poesia', 'landing.anotherPoem': 'Un’altra poesia', 'landing.featured': 'Poesia in evidenza', 'landing.openPoem': 'Apri {{title}}', 'landing.featuredFooter': 'Incontra un’opera diversa fra 500 classici selezionati', 'landing.openFull': 'Leggi tutto', 'landing.showAnother': 'Mostra un’altra poesia', 'landing.menuLabel': 'Menu funzioni', 'landing.menuTitle': 'Da dove vuoi iniziare?', 'landing.menuSubtitle': 'Quattro modi per entrare nel cinese classico',
     'settings.feature.mark': '文', 'settings.feature.label': 'Lingua', 'settings.feature.description': 'Scegli la lingua dell’interfaccia e delle voci', 'settings.appearance.mark': '明', 'settings.appearance.label': 'Aspetto', 'settings.appearance.featureDescription': 'Scegli il tema chiaro o scuro', 'settings.page.eyebrow': 'IMPOSTAZIONI PERSONALI', 'settings.page.title': 'Impostazioni', 'settings.page.intro': 'Una scelta, condivisa da tutti gli strumenti.', 'settings.language.eyebrow': 'LINGUA', 'settings.language.title': 'Lingua', 'settings.language.description': 'Scegli la lingua dell’interfaccia. Le voci mantengono l’originale accanto a una traduzione dal vivo.', 'settings.language.groupLabel': 'Lingua dell’interfaccia', 'settings.language.traditionalDescription': 'Mostra interfaccia e contenuti di ricerca in cinese tradizionale.', 'settings.language.simplifiedDescription': 'Mostra interfaccia e contenuti di ricerca in cinese semplificato.', 'settings.language.englishDescription': 'Mostra l’interfaccia in inglese e traduce le voci dal vivo.', 'settings.language.italianDescription': 'Mostra l’interfaccia in italiano e traduce le voci dal vivo.',
     'settings.appearance.eyebrow': 'ASPETTO E TEMA', 'settings.appearance.title': 'Aspetto e tema', 'settings.appearance.description': 'Scegli la luce più adatta al tuo ambiente di lettura.', 'settings.appearance.groupLabel': 'Tema dell’interfaccia', 'settings.theme.light.label': 'Chiaro', 'settings.theme.light.secondaryLabel': 'Light', 'settings.theme.light.description': 'Carta luminosa e inchiostro nitido per il giorno.', 'settings.theme.dark.label': 'Scuro', 'settings.theme.dark.secondaryLabel': 'Dark', 'settings.theme.dark.description': 'Carta scura e testo più morbido per luce bassa.',
+    'search.cipouSort': 'Ordine per numero di caratteri', 'search.cipouSortDefault': 'Ordine originale', 'search.cipouSortAscending': 'Dal più breve', 'search.cipouSortDescending': 'Dal più lungo', 'search.cipouWordCount': '{{count}} caratteri',
     'search.loading': 'Ricerca…', 'search.action': 'Cerca', 'search.rhymeFilter': 'Filtri di rima:', 'search.clearFilters': 'Cancella filtri', 'search.clear': 'Cancella', 'search.selectedFilters': '{{count}} schemi di rima selezionati', 'search.progress': 'Avanzamento ricerca: {{progress}}%', 'search.statusUnavailable': 'I dati non sono disponibili al momento', 'search.statusQuery': '“{{query}}” ha trovato {{count}} risultati', 'search.statusFiltered': 'I filtri hanno trovato {{count}} risultati', 'search.statusLoaded': '{{total}} elementi caricati, {{count}} mostrati', 'search.statusPreloaded': 'Solo {{total}} elementi sono precaricati, {{count}} mostrati; non è la raccolta completa.', 'search.statusLoading': 'Caricamento dati…', 'search.autoLoadMore': 'Mostra automaticamente altri {{count}} elementi vicino alla fine; {{remaining}} rimanenti', 'search.browseTitle': 'Sfoglia elenchi', 'search.browseDescription': 'Seleziona più filtri; verranno applicati insieme al testo della ricerca.', 'search.browseAuthor': 'Autori', 'search.browseDynasty': 'Dinastie', 'search.browseCommon': 'Parole comuni', 'search.browseCount': '{{count}} opzioni', 'search.browseValue': 'Seleziona {{category}} “{{value}}”', 'search.browseSelected': '{{count}} selezionati', 'search.viewMode': 'Visualizzazione risultati', 'search.viewDetailed': 'Dettagli', 'search.viewTitles': 'Solo titoli', 'search.openTitle': 'Apri “{{title}}”',
     'translation.original': 'Cinese originale', 'translation.live': 'Traduzione italiana dal vivo', 'translation.loading': 'Traduzione in corso…', 'translation.unavailable': 'La traduzione dal vivo non è disponibile ora. Riprova.', 'translation.retry': 'Riprova', 'translation.note': 'Generata all’apertura; Interpolate You non la memorizza.', 'entry.readingLayout': 'Layout di lettura', 'entry.original': 'Originale', 'entry.readable': 'Lettura facile', 'entry.translation': 'Traduzione', 'entry.vernacularTitle': 'Cinese moderno', 'entry.vernacularLine': 'Lingua moderna', 'entry.systemGenerated': 'GENERATO DAL SISTEMA', 'entry.generatingTranslation': 'Generazione del cinese moderno…', 'entry.translationUnavailable': 'La traduzione in cinese moderno non è disponibile al momento. Riprova.', 'entry.translationSetupRequired': 'La traduzione dal vivo non è ancora attiva: completa la verifica di fatturazione in Vercel AI Gateway.', 'entry.retry': 'Riprova', 'entry.pronunciation': 'Pronuncia', 'entry.hidden': 'Nascondi', 'entry.loading': 'Caricamento…', 'entry.back': 'Torna alla pagina precedente'
   }
 });
+
+const ICHING_MESSAGES = {
+  'zh-Hant': {
+    'iching.mark': '易', 'iching.eyebrow': '易經 · 三枚通寶起卦', 'iching.title': '通寶起卦',
+    'iching.menuDescription': '逐枚設定或隨機擲幣，記錄六爻',
+    'iching.description': '先由下而上記錄六爻的陰陽與動靜，再由六爻得出本卦和變卦。',
+    'iching.castTitle': '擲三枚通寶', 'iching.castInstructions': '按錢幣切換通寶字面（陰）與滿文面（陽），或隨機擲三枚；確認後記錄當前一爻。',
+    'iching.threeCoins': '三枚通寶', 'iching.coinToggle': '第 {{number}} 枚：{{face}}，按下切換',
+    'iching.coinHintTitle': '通寶可以點選', 'iching.coinHintBody': '點一下通寶即可切換「通寶・陰」與「滿文・陽」。關閉提示即表示知悉，此裝置不會再顯示。',
+    'iching.coinHintClose': '關閉提示', 'iching.coinHintGotIt': '知道了',
+    'iching.textFace': '通寶 · 陰', 'iching.reverseFace': '滿文 · 陽', 'iching.nextLine': '準備記錄{{position}}爻',
+    'iching.castComplete': '六爻已記錄，請看下面的本卦、變卦與爻辭。',
+    'iching.value.6': '老陰 X · 動爻', 'iching.value.7': '少陽 ‘', 'iching.value.8': '少陰 ‘’', 'iching.value.9': '老陽 O · 動爻',
+    'iching.random': '隨機擲三枚', 'iching.confirm': '確認此爻', 'iching.randomUnavailable': '此瀏覽器暫時無法提供安全隨機數；仍可手動設定通寶。',
+    'iching.method': '三通寶＝老陰 X；兩通寶＝少陰；兩滿文＝少陽；三滿文＝老陽 O。隨機擲幣時，動爻機率為 1/4。',
+    'iching.recordTitle': '六爻紀錄', 'iching.recordInstructions': '由下往上記錄；初爻在最下，上爻在最上。少陰 ‘’、少陽 ‘、老陰 X、老陽 O。',
+    'iching.position.initial': '初', 'iching.position.second': '二', 'iching.position.third': '三', 'iching.position.fourth': '四', 'iching.position.fifth': '五', 'iching.position.top': '上',
+    'iching.yang': '陽', 'iching.yin': '陰', 'iching.undo': '撤回上一爻', 'iching.restart': '重新起卦',
+    'iching.resultTitle': '本卦與變卦', 'iching.resultNote': '六爻記滿後，按上下卦找出本卦；老陰 X、老陽 O 變爻後得到變卦。',
+    'iching.original': '本卦', 'iching.changed': '變卦', 'iching.hexagramName': '{{number}} · {{name}}',
+    'iching.movingLines': '動爻：{{positions}}', 'iching.noMovingLines': '無動爻。',
+    'iching.readingTitle': '解卦', 'iching.readingNote': '未動爻列本卦爻辭，動爻列變卦同位爻辭。可切換查看白話語譯。',
+    'iching.readingIntro': '可選擇逐爻記錄或朱熹變占的取辭方式；也可切換原文與白話語譯。',
+    'iching.methodMode': '取辭方法', 'iching.recordMethod': '逐爻記錄', 'iching.zhuMethod': '朱熹變占',
+    'iching.zhuRule.0': '無動爻：取本卦卦辭。',
+    'iching.zhuRule.1': '一爻動：取本卦該動爻爻辭。',
+    'iching.zhuRule.2': '兩爻動：取本卦兩條動爻爻辭，以上爻為主。',
+    'iching.zhuRule.3': '三爻動：並列本卦與變卦卦辭；本卦為貞、變卦為悔。依原書圖序，初爻動則本卦為主，否則變卦為主。',
+    'iching.zhuRule.4': '四爻動：取變卦兩條未動爻爻辭，以下爻為主。',
+    'iching.zhuRule.5': '五爻動：取變卦唯一未動爻爻辭。',
+    'iching.zhuRule.6': '六爻全動：乾坤取用九或用六；其他卦取變卦卦辭。',
+    'iching.primaryText': '為主', 'iching.special': '用九／用六',
+    'iching.zhuSource': '取辭規則：', 'iching.zhuSourceLink': '《易學啓蒙通釋・考變占第四》',
+    'iching.displayMode': '閱讀方式', 'iching.textMode': '原文', 'iching.paraphraseMode': '語譯', 'iching.paraphrase': '白話語譯', 'iching.judgement': '卦辭',
+    'iching.reference': '參考來源', 'iching.referenceNamed': '第 {{number}} 卦{{position}}爻語譯參考來源',
+    'iching.supplemental': '此爻原文補自易學界，非原文件內容。', 'iching.translationNote': '語譯由本站依古文重新撰寫，只幫助理解文字，不作現實預測或建議。',
+    'iching.sourceMissing': '原文件未載此爻；暫不補寫。', 'iching.sourceNote': '卦辭與爻辭取自你提供的《I Ching.pages》；噬嗑初九另註來源。原文字句照來源保留。'
+  },
+  'zh-Hans': {
+    'iching.mark': '易', 'iching.eyebrow': '易经 · 三枚通宝起卦', 'iching.title': '通宝起卦',
+    'iching.menuDescription': '逐枚设置或随机掷币，记录六爻',
+    'iching.description': '先由下而上记录六爻的阴阳与动静，再由六爻得出本卦和变卦。',
+    'iching.castTitle': '掷三枚通宝', 'iching.castInstructions': '按钱币切换通宝字面（阴）与满文面（阳），或随机掷三枚；确认后记录当前一爻。',
+    'iching.threeCoins': '三枚通宝', 'iching.coinToggle': '第 {{number}} 枚：{{face}}，按下切换',
+    'iching.coinHintTitle': '通宝可以点选', 'iching.coinHintBody': '点一下通宝即可切换「通宝・阴」与「满文・阳」。关闭提示即表示知悉，此设备不会再显示。',
+    'iching.coinHintClose': '关闭提示', 'iching.coinHintGotIt': '知道了',
+    'iching.textFace': '通宝 · 阴', 'iching.reverseFace': '满文 · 阳', 'iching.nextLine': '准备记录{{position}}爻',
+    'iching.castComplete': '六爻已记录，请看下面的本卦、变卦与爻辞。',
+    'iching.value.6': '老阴 X · 动爻', 'iching.value.7': '少阳 ‘', 'iching.value.8': '少阴 ‘’', 'iching.value.9': '老阳 O · 动爻',
+    'iching.random': '随机掷三枚', 'iching.confirm': '确认此爻', 'iching.randomUnavailable': '此浏览器暂时无法提供安全随机数；仍可手动设置通宝。',
+    'iching.method': '三通宝＝老阴 X；两通宝＝少阴；两满文＝少阳；三满文＝老阳 O。随机掷币时，动爻概率为 1/4。',
+    'iching.recordTitle': '六爻记录', 'iching.recordInstructions': '由下往上记录；初爻在最下，上爻在最上。少阴 ‘’、少阳 ‘、老阴 X、老阳 O。',
+    'iching.position.initial': '初', 'iching.position.second': '二', 'iching.position.third': '三', 'iching.position.fourth': '四', 'iching.position.fifth': '五', 'iching.position.top': '上',
+    'iching.yang': '阳', 'iching.yin': '阴', 'iching.undo': '撤回上一爻', 'iching.restart': '重新起卦',
+    'iching.resultTitle': '本卦与变卦', 'iching.resultNote': '六爻记满后，按上下卦找出本卦；老阴 X、老阳 O 变爻后得到变卦。',
+    'iching.original': '本卦', 'iching.changed': '变卦', 'iching.hexagramName': '{{number}} · {{name}}',
+    'iching.movingLines': '动爻：{{positions}}', 'iching.noMovingLines': '无动爻。',
+    'iching.readingTitle': '解卦', 'iching.readingNote': '未动爻列本卦爻辞，动爻列变卦同位爻辞。可切换查看白话语译。',
+    'iching.readingIntro': '可选择逐爻记录或朱熹变占的取辞方式；也可切换原文与白话语译。',
+    'iching.methodMode': '取辞方法', 'iching.recordMethod': '逐爻记录', 'iching.zhuMethod': '朱熹变占',
+    'iching.zhuRule.0': '无动爻：取本卦卦辞。',
+    'iching.zhuRule.1': '一爻动：取本卦该动爻爻辞。',
+    'iching.zhuRule.2': '两爻动：取本卦两条动爻爻辞，以上爻为主。',
+    'iching.zhuRule.3': '三爻动：并列本卦与变卦卦辞；本卦为贞、变卦为悔。依原书图序，初爻动则本卦为主，否则变卦为主。',
+    'iching.zhuRule.4': '四爻动：取变卦两条未动爻爻辞，以下爻为主。',
+    'iching.zhuRule.5': '五爻动：取变卦唯一未动爻爻辞。',
+    'iching.zhuRule.6': '六爻全动：乾坤取用九或用六；其他卦取变卦卦辞。',
+    'iching.primaryText': '为主', 'iching.special': '用九／用六',
+    'iching.zhuSource': '取辞规则：', 'iching.zhuSourceLink': '《易学启蒙通释・考变占第四》',
+    'iching.displayMode': '阅读方式', 'iching.textMode': '原文', 'iching.paraphraseMode': '语译', 'iching.paraphrase': '白话语译', 'iching.judgement': '卦辞',
+    'iching.reference': '参考来源', 'iching.referenceNamed': '第 {{number}} 卦{{position}}爻语译参考来源',
+    'iching.supplemental': '此爻原文补自易学界，并非原文件内容。', 'iching.translationNote': '语译由本站依据古文重新撰写，只帮助理解文字，不作现实预测或建议。',
+    'iching.sourceMissing': '原文件未载此爻；暂不补写。', 'iching.sourceNote': '卦辞与爻辞取自你提供的《I Ching.pages》；噬嗑初九另注来源。原文字句照来源保留。'
+  },
+  en: {
+    'iching.mark': '易', 'iching.eyebrow': 'I CHING · THREE-COIN CAST', 'iching.title': 'Coin casting',
+    'iching.menuDescription': 'Set each coin or cast randomly to record six lines',
+    'iching.description': 'Cast three coins for each line, six times from bottom to top, to form the original and changed hexagrams.',
+    'iching.castTitle': 'Cast three coins', 'iching.castInstructions': 'Tap a coin to switch between the Tongbao face (yin) and Manchu face (yang), or cast all three randomly; confirm to record the line.',
+    'iching.threeCoins': 'Three coins', 'iching.coinToggle': 'Coin {{number}}: {{face}}. Press to flip',
+    'iching.coinHintTitle': 'Tap the coins', 'iching.coinHintBody': 'Tap a coin to switch between its Tongbao and Manchu faces. Closing this tip acknowledges it; it will not appear again on this device.',
+    'iching.coinHintClose': 'Close tip', 'iching.coinHintGotIt': 'Got it',
+    'iching.textFace': 'Tongbao · yin', 'iching.reverseFace': 'Manchu · yang', 'iching.nextLine': 'Ready for the {{position}} line',
+    'iching.castComplete': 'All six lines are recorded. See the hexagrams and line texts below.',
+    'iching.value.6': 'Old yin X · moving', 'iching.value.7': 'Young yang ‘', 'iching.value.8': 'Young yin ‘’', 'iching.value.9': 'Old yang O · moving',
+    'iching.random': 'Cast randomly', 'iching.confirm': 'Confirm this line', 'iching.randomUnavailable': 'Secure randomness is unavailable in this browser. You can still set the coins manually.',
+    'iching.method': 'Three Tongbao = old yin X; two Tongbao = young yin; two Manchu = young yang; three Manchu = old yang O. A random cast has a 1/4 chance of a moving line.',
+    'iching.recordTitle': 'Six-line record', 'iching.recordInstructions': 'Cast from bottom to top; the initial line stays at the bottom and the top line stays at the top. Young yin ‘’, young yang ‘, old yin X, old yang O.',
+    'iching.position.initial': 'Initial', 'iching.position.second': 'Second', 'iching.position.third': 'Third', 'iching.position.fourth': 'Fourth', 'iching.position.fifth': 'Fifth', 'iching.position.top': 'Top',
+    'iching.yang': 'Yang', 'iching.yin': 'Yin', 'iching.undo': 'Undo last line', 'iching.restart': 'Start again',
+    'iching.resultTitle': 'Original and changed hexagrams', 'iching.resultNote': 'The lower and upper trigrams identify the original hexagram; changing X and O lines yields the changed hexagram.',
+    'iching.original': 'Original', 'iching.changed': 'Changed', 'iching.hexagramName': '{{number}} · {{name}}',
+    'iching.movingLines': 'Moving lines: {{positions}}', 'iching.noMovingLines': 'No moving lines.',
+    'iching.readingTitle': 'Reading the hexagram', 'iching.readingNote': 'Unchanged lines use the original text; moving lines use the same position in the changed hexagram. A plain-language Chinese reading is optional.',
+    'iching.readingIntro': 'Choose a full six-line record or Zhu Xi’s text-selection method. Original text and Chinese paraphrases can be toggled separately.',
+    'iching.methodMode': 'Text selection', 'iching.recordMethod': 'Six-line record', 'iching.zhuMethod': 'Zhu Xi’s method',
+    'iching.zhuRule.0': 'No moving lines: use the original hexagram judgement.',
+    'iching.zhuRule.1': 'One moving line: use that line in the original hexagram.',
+    'iching.zhuRule.2': 'Two moving lines: use both original-hexagram lines, with the upper line primary.',
+    'iching.zhuRule.3': 'Three moving lines: show both judgements. In the source’s figure order, the original is primary if the initial line moves; otherwise the changed is primary.',
+    'iching.zhuRule.4': 'Four moving lines: use the two unchanged lines in the changed hexagram, with the lower line primary.',
+    'iching.zhuRule.5': 'Five moving lines: use the only unchanged line in the changed hexagram.',
+    'iching.zhuRule.6': 'Six moving lines: use the special text for Qian or Kun; otherwise use the changed judgement.',
+    'iching.primaryText': 'Primary', 'iching.special': 'Use Nine / Use Six',
+    'iching.zhuSource': 'Selection rule:', 'iching.zhuSourceLink': 'Yixue Qimeng Tongshi, “Examining Change and Divination”',
+    'iching.displayMode': 'Reading format', 'iching.textMode': 'Original', 'iching.paraphraseMode': 'Paraphrase', 'iching.paraphrase': 'Plain-language reading', 'iching.judgement': 'judgement',
+    'iching.reference': 'Reference', 'iching.referenceNamed': 'Reference for hexagram {{number}}, line {{position}}',
+    'iching.supplemental': 'This original line was supplemented from Yilusoso; it was absent from the supplied document.', 'iching.translationNote': 'The Chinese paraphrases were newly written to explain the classical text, not to predict or advise.',
+    'iching.sourceMissing': 'This line is absent from the supplied document; no text has been invented.', 'iching.sourceNote': 'Original texts come from the supplied I Ching.pages document; the first line of hexagram 21 is separately sourced.'
+  },
+  it: {
+    'iching.mark': '易', 'iching.eyebrow': 'I CHING · TRE MONETE', 'iching.title': 'Lancio delle monete',
+    'iching.menuDescription': 'Imposta le monete o lanciale a caso per sei linee',
+    'iching.description': 'Lancia tre monete per ogni linea, sei volte dal basso verso l’alto, per formare i due esagrammi.',
+    'iching.castTitle': 'Lancia tre monete', 'iching.castInstructions': 'Tocca una moneta per passare dalla faccia Tongbao (yin) a quella manciù (yang), oppure lancia tutte e tre a caso; conferma la linea.',
+    'iching.threeCoins': 'Tre monete', 'iching.coinToggle': 'Moneta {{number}}: {{face}}. Premi per girarla',
+    'iching.coinHintTitle': 'Tocca le monete', 'iching.coinHintBody': 'Tocca una moneta per cambiare tra il lato Tongbao e il lato manciù. Chiudendo questo avviso confermi di aver letto; non comparirà più su questo dispositivo.',
+    'iching.coinHintClose': 'Chiudi avviso', 'iching.coinHintGotIt': 'Ho capito',
+    'iching.textFace': 'Tongbao · yin', 'iching.reverseFace': 'Manciù · yang', 'iching.nextLine': 'Pronto per la linea {{position}}',
+    'iching.castComplete': 'Le sei linee sono registrate. Gli esagrammi e i testi sono qui sotto.',
+    'iching.value.6': 'Vecchio yin X · mobile', 'iching.value.7': 'Giovane yang ‘', 'iching.value.8': 'Giovane yin ‘’', 'iching.value.9': 'Vecchio yang O · mobile',
+    'iching.random': 'Lancia a caso', 'iching.confirm': 'Conferma la linea', 'iching.randomUnavailable': 'La casualità sicura non è disponibile in questo browser. Puoi impostare le monete manualmente.',
+    'iching.method': 'Tre Tongbao = vecchio yin X; due Tongbao = giovane yin; due facce manciù = giovane yang; tre = vecchio yang O. Un lancio casuale ha una probabilità di 1/4 di ottenere una linea mobile.',
+    'iching.recordTitle': 'Registro delle sei linee', 'iching.recordInstructions': 'Registra dal basso verso l’alto; la linea iniziale resta in basso e la superiore in alto. Giovane yin ‘’, giovane yang ‘, vecchio yin X, vecchio yang O.',
+    'iching.position.initial': 'Iniziale', 'iching.position.second': 'Seconda', 'iching.position.third': 'Terza', 'iching.position.fourth': 'Quarta', 'iching.position.fifth': 'Quinta', 'iching.position.top': 'Superiore',
+    'iching.yang': 'Yang', 'iching.yin': 'Yin', 'iching.undo': 'Annulla l’ultima linea', 'iching.restart': 'Ricomincia',
+    'iching.resultTitle': 'Esagrammi originale e mutato', 'iching.resultNote': 'I trigrammi inferiore e superiore identificano l’esagramma originale; le linee X e O formano quello mutato.',
+    'iching.original': 'Originale', 'iching.changed': 'Mutato', 'iching.hexagramName': '{{number}} · {{name}}',
+    'iching.movingLines': 'Linee mobili: {{positions}}', 'iching.noMovingLines': 'Nessuna linea mobile.',
+    'iching.readingTitle': 'Lettura dell’esagramma', 'iching.readingNote': 'Le linee ferme usano il testo originale; quelle mobili usano la posizione corrispondente nell’esagramma mutato. È disponibile una parafrasi in cinese.',
+    'iching.readingIntro': 'Scegli il registro completo delle sei linee oppure la selezione dei testi secondo Zhu Xi. Originale e parafrasi si possono cambiare separatamente.',
+    'iching.methodMode': 'Selezione dei testi', 'iching.recordMethod': 'Sei linee', 'iching.zhuMethod': 'Metodo di Zhu Xi',
+    'iching.zhuRule.0': 'Nessuna linea mobile: testo dell’esagramma originale.',
+    'iching.zhuRule.1': 'Una linea mobile: quella linea nell’esagramma originale.',
+    'iching.zhuRule.2': 'Due linee mobili: entrambe nell’originale; prevale quella superiore.',
+    'iching.zhuRule.3': 'Tre linee mobili: entrambi i testi. Secondo l’ordine delle figure, prevale l’originale se cambia la prima linea; altrimenti prevale il mutato.',
+    'iching.zhuRule.4': 'Quattro linee mobili: le due linee ferme nel mutato; prevale quella inferiore.',
+    'iching.zhuRule.5': 'Cinque linee mobili: l’unica linea ferma nel mutato.',
+    'iching.zhuRule.6': 'Sei linee mobili: testo speciale di Qian o Kun; negli altri casi, testo del mutato.',
+    'iching.primaryText': 'Prevalente', 'iching.special': 'Uso del Nove / Uso del Sei',
+    'iching.zhuSource': 'Regola di selezione:', 'iching.zhuSourceLink': 'Yixue Qimeng Tongshi, “Esame dei mutamenti”',
+    'iching.displayMode': 'Modalità di lettura', 'iching.textMode': 'Originale', 'iching.paraphraseMode': 'Parafrasi', 'iching.paraphrase': 'Parafrasi in cinese', 'iching.judgement': 'testo dell’esagramma',
+    'iching.reference': 'Fonte', 'iching.referenceNamed': 'Fonte per l’esagramma {{number}}, linea {{position}}',
+    'iching.supplemental': 'Questa linea originale è stata integrata da Yilusoso; non era nel documento fornito.', 'iching.translationNote': 'Le parafrasi in cinese sono state riscritte per spiegare il testo classico, senza previsioni o consigli.',
+    'iching.sourceMissing': 'Questa linea manca nel documento fornito; non viene inventato alcun testo.', 'iching.sourceNote': 'I testi originali provengono dal documento I Ching.pages; la prima linea dell’esagramma 21 ha una fonte separata.'
+  }
+};
+
+Object.entries(ICHING_MESSAGES).forEach(([locale, messages]) => Object.assign(MESSAGES[locale], messages));
+
+const REFERENCES_MESSAGES = {
+  'zh-Hant': {
+    'references.mark': '引', 'references.title': 'References', 'references.menuDescription': '集中查看網站的資料來源與引用',
+    'references.eyebrow': 'SOURCES & REFERENCES', 'references.intro': '本站使用的資料、古籍與整理來源，集中列在這裡。',
+    'references.heading': '來源總覽', 'references.catalogueNote': '引用從同一份來源目錄產生；社交與聯絡連結不計入。',
+    'references.statsLabel': '來源統計', 'references.total': '項來源', 'references.linked': '個網上連結', 'references.localCount': '項站長整理',
+    'references.group.words': '詞語與讀音', 'references.group.literature': '詩詞、小說與詞牌', 'references.group.iching': '易經', 'references.group.services': '翻譯服務',
+    'references.use.meanings': '詞語搜尋 · 詞義', 'references.use.cantonese': '詞語搜尋 · 粵音與粵語釋義',
+    'references.use.fanqie': '詞語搜尋 · 反切', 'references.use.poetry': '詩詞搜尋', 'references.use.novel': '小說閱讀',
+    'references.use.cipou': '詞牌搜尋 · 格律資料與整理', 'references.use.ichingText': '通寶起卦 · 卦辭與爻辭',
+    'references.use.ichingParaphrase': '通寶起卦 · 白話語譯參考', 'references.use.ichingRules': '通寶起卦 · 朱熹變占取辭規則',
+    'references.use.liveTranslation': '英語及意大利語即時翻譯', 'references.local': '站長整理',
+    'references.articles': '展開 {{count}} 卦逐卦參考連結', 'references.articlesNote': '以下連結按卦序自動產生；語譯由本站另行撰寫，並非轉載外站文字。'
+  },
+  'zh-Hans': {
+    'references.mark': '引', 'references.title': 'References', 'references.menuDescription': '集中查看网站的资料来源与引用',
+    'references.eyebrow': 'SOURCES & REFERENCES', 'references.intro': '本站使用的资料、古籍与整理来源，集中列在这里。',
+    'references.heading': '来源总览', 'references.catalogueNote': '引用从同一份来源目录产生；社交与联系链接不计入。',
+    'references.statsLabel': '来源统计', 'references.total': '项来源', 'references.linked': '个网上链接', 'references.localCount': '项站长整理',
+    'references.group.words': '词语与读音', 'references.group.literature': '诗词、小说与词牌', 'references.group.iching': '易经', 'references.group.services': '翻译服务',
+    'references.use.meanings': '词语搜索 · 词义', 'references.use.cantonese': '词语搜索 · 粤音与粤语释义',
+    'references.use.fanqie': '词语搜索 · 反切', 'references.use.poetry': '诗词搜索', 'references.use.novel': '小说阅读',
+    'references.use.cipou': '词牌搜索 · 格律资料与整理', 'references.use.ichingText': '通宝起卦 · 卦辞与爻辞',
+    'references.use.ichingParaphrase': '通宝起卦 · 白话语译参考', 'references.use.ichingRules': '通宝起卦 · 朱熹变占取辞规则',
+    'references.use.liveTranslation': '英语及意大利语实时翻译', 'references.local': '站长整理',
+    'references.articles': '展开 {{count}} 卦逐卦参考链接', 'references.articlesNote': '以下链接按卦序自动生成；语译由本站另行撰写，并非转载外站文字。'
+  },
+  en: {
+    'references.mark': '引', 'references.title': 'References', 'references.menuDescription': 'Browse the site’s data and text sources',
+    'references.eyebrow': 'SOURCES & REFERENCES', 'references.intro': 'A single catalogue of the data, classical texts and editorial sources used on this site.',
+    'references.heading': 'Source catalogue', 'references.catalogueNote': 'Citations draw from this catalogue. Social and contact links are not counted.',
+    'references.statsLabel': 'Reference totals', 'references.total': 'sources', 'references.linked': 'online links', 'references.localCount': 'editorial sources',
+    'references.group.words': 'Words and pronunciation', 'references.group.literature': 'Poetry, fiction and ci patterns', 'references.group.iching': 'I Ching', 'references.group.services': 'Translation service',
+    'references.use.meanings': 'Word search · meanings', 'references.use.cantonese': 'Word search · Cantonese readings and meanings',
+    'references.use.fanqie': 'Word search · fanqie', 'references.use.poetry': 'Poetry search', 'references.use.novel': 'Fiction reader',
+    'references.use.cipou': 'Ci patterns · metrics and editorial work', 'references.use.ichingText': 'Coin casting · hexagram and line texts',
+    'references.use.ichingParaphrase': 'Coin casting · paraphrase reference', 'references.use.ichingRules': 'Coin casting · Zhu Xi text-selection rules',
+    'references.use.liveTranslation': 'Live English and Italian translation', 'references.local': 'Editor’s work',
+    'references.articles': 'Show {{count}} individual hexagram links', 'references.articlesNote': 'These links are generated by hexagram order. This site writes its own paraphrases rather than reproducing the linked translations.'
+  },
+  it: {
+    'references.mark': '引', 'references.title': 'References', 'references.menuDescription': 'Consulta le fonti dei dati e dei testi',
+    'references.eyebrow': 'FONTI E RIFERIMENTI', 'references.intro': 'Un catalogo delle fonti, dei testi classici e del lavoro editoriale usati dal sito.',
+    'references.heading': 'Catalogo delle fonti', 'references.catalogueNote': 'Le citazioni usano questo catalogo. I link social e di contatto non sono contati.',
+    'references.statsLabel': 'Totale delle fonti', 'references.total': 'fonti', 'references.linked': 'link online', 'references.localCount': 'fonti redazionali',
+    'references.group.words': 'Parole e pronuncia', 'references.group.literature': 'Poesia, narrativa e schemi ci', 'references.group.iching': 'I Ching', 'references.group.services': 'Servizio di traduzione',
+    'references.use.meanings': 'Ricerca parole · significati', 'references.use.cantonese': 'Ricerca parole · letture e significati cantonesi',
+    'references.use.fanqie': 'Ricerca parole · fanqie', 'references.use.poetry': 'Ricerca poesie', 'references.use.novel': 'Lettura narrativa',
+    'references.use.cipou': 'Schemi ci · metrica e lavoro editoriale', 'references.use.ichingText': 'Lancio delle monete · testi degli esagrammi e delle linee',
+    'references.use.ichingParaphrase': 'Lancio delle monete · riferimento per la parafrasi', 'references.use.ichingRules': 'Lancio delle monete · regole di Zhu Xi',
+    'references.use.liveTranslation': 'Traduzione dal vivo in inglese e italiano', 'references.local': 'Lavoro redazionale',
+    'references.articles': 'Mostra {{count}} link ai singoli esagrammi', 'references.articlesNote': 'I link sono generati in ordine degli esagrammi. Le parafrasi sono scritte dal sito e non copiate dalle fonti.'
+  }
+};
+
+Object.entries(REFERENCES_MESSAGES).forEach(([locale, messages]) => Object.assign(MESSAGES[locale], messages));
+
+const ICHING_REPORT_MESSAGES = {
+  'zh-Hant': {
+    'iching.reportTitle': '下載直欄報告',
+    'iching.reportDescription': '仿照手寫直欄，最右一欄分段列出本卦、變卦的爻名、卦象與卦名；其餘七欄是卦辭與六爻原文。',
+    'iching.reportContents': '單頁報告只採逐爻記錄的原文，不輸出語譯；不受上方閱讀方式切換影響。',
+    'iching.reportPdf': '下載 PDF', 'iching.reportPng': '下載 PNG',
+    'iching.reportBusy': '製作報告中…', 'iching.reportError': '報告未能生成，請稍後再試。',
+    'iching.reportTextTitle': '卦辭與爻辭', 'iching.reportSummary': '卦象摘要'
+  },
+  'zh-Hans': {
+    'iching.reportTitle': '下载竖栏报告',
+    'iching.reportDescription': '仿照手写竖栏，最右一栏分段列出本卦、变卦的爻名、卦象与卦名；其余七栏是卦辞与六爻原文。',
+    'iching.reportContents': '单页报告只采用逐爻记录的原文，不输出语译；不受上方阅读方式切换影响。',
+    'iching.reportPdf': '下载 PDF', 'iching.reportPng': '下载 PNG',
+    'iching.reportBusy': '正在制作报告…', 'iching.reportError': '报告生成失败，请稍后重试。',
+    'iching.reportTextTitle': '卦辞与爻辞', 'iching.reportSummary': '卦象摘要'
+  },
+  en: {
+    'iching.reportTitle': 'Download vertical report',
+    'iching.reportDescription': 'A handwritten-style sheet: the rightmost column gives the original and changed line names, figures and hexagram names; the other seven hold the classical texts.',
+    'iching.reportContents': 'One-page original-text report using the full six-line record; no paraphrase is included, regardless of the reading toggle above.',
+    'iching.reportPdf': 'Download PDF', 'iching.reportPng': 'Download PNG',
+    'iching.reportBusy': 'Preparing report…', 'iching.reportError': 'The report could not be created. Please try again.',
+    'iching.reportTextTitle': 'Hexagram and line texts', 'iching.reportSummary': 'Hexagrams'
+  },
+  it: {
+    'iching.reportTitle': 'Scarica il rapporto verticale',
+    'iching.reportDescription': 'Un foglio in stile manoscritto: la colonna destra mostra i nomi delle linee, le figure e i nomi dei due esagrammi; le altre sette contengono i testi classici.',
+    'iching.reportContents': 'Una pagina di testo originale e sei linee; nessuna parafrasi, qualunque sia la modalità di lettura sopra.',
+    'iching.reportPdf': 'Scarica PDF', 'iching.reportPng': 'Scarica PNG',
+    'iching.reportBusy': 'Preparazione…', 'iching.reportError': 'Impossibile creare il rapporto. Riprova.',
+    'iching.reportTextTitle': 'Testi degli esagrammi', 'iching.reportSummary': 'Esagrammi'
+  }
+};
+
+Object.entries(ICHING_REPORT_MESSAGES).forEach(([locale, messages]) => Object.assign(MESSAGES[locale], messages));
+
+// The small overline above each page title is Italian in every interface locale.
+// Main titles and body copy continue to follow the selected locale.
+const ITALIAN_OVERLINES = {
+  'nav.tools.eyebrow': 'STRUMENTI · CINESE CLASSICO',
+  'nav.records.eyebrow': 'RECORD DI LETTURA SALVATO',
+  'nav.settings.eyebrow': 'IMPOSTAZIONI PERSONALI',
+  'nav.foundersWhy.eyebrow': 'LA VISIONE DEL FONDATORE',
+  'nav.products.eyebrow': 'PRODOTTI · COLLEZIONE',
+  'product.readingNotes.eyebrow': 'SPIEGAZIONE DELLE FRASI SELEZIONATE',
+  'product.page.eyebrow': 'PRODOTTI · IN ARRIVO',
+  'product.cards.eyebrow': 'CARTE DA GIOCO · SHIJING',
+  'forum.eyebrow': 'FORUM · SPAZIO DI DIALOGO',
+  'tool.words.eyebrow': 'LINGUISTICA · SUONI E SIGNIFICATI',
+  'tool.poetry.eyebrow': 'POESIA · OPERE CLASSICHE',
+  'tool.novels.eyebrow': 'NARRATIVA · CAPITOLI CLASSICI',
+  'tool.cipou.eyebrow': 'SCHEMI CI · METRICA',
+  'history.eyebrow': 'LEGGERE LA STORIA',
+  'notes.eyebrow': 'LEGGERE LE NOTE',
+  'landing.kicker': 'INTERPOLATE YOU · POESIA E PAROLE',
+  'settings.page.eyebrow': 'IMPOSTAZIONI PERSONALI',
+  'settings.language.eyebrow': 'LINGUA E SCRITTURA',
+  'settings.appearance.eyebrow': 'ASPETTO E TEMA',
+  'iching.eyebrow': 'I Ching · TRE MONETE METODO',
+  'references.eyebrow': 'FONTI E RIFERIMENTI'
+};
+
+Object.values(MESSAGES).forEach(messages => Object.assign(messages, ITALIAN_OVERLINES));
 
 export function normalizeLocale(value) {
   if (value === 'simplified') return 'zh-Hans';

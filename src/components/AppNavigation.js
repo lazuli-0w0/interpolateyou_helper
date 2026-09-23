@@ -13,7 +13,8 @@ const NAV_TABS = [
       { view: 'words', markKey: 'tool.words.mark', labelKey: 'tool.words.title', descriptionKey: 'tool.words.menuDescription' },
       { view: 'poetry', markKey: 'tool.poetry.mark', labelKey: 'tool.poetry.title', descriptionKey: 'tool.poetry.menuDescription' },
       { view: 'novels', markKey: 'tool.novels.mark', labelKey: 'tool.novels.title', descriptionKey: 'tool.novels.menuDescription' },
-      { view: 'cipou', markKey: 'tool.cipou.mark', labelKey: 'tool.cipou.title', descriptionKey: 'tool.cipou.menuDescription' }
+      { view: 'cipou', markKey: 'tool.cipou.mark', labelKey: 'tool.cipou.title', descriptionKey: 'tool.cipou.menuDescription' },
+      { view: 'iching', markKey: 'iching.mark', labelKey: 'iching.title', descriptionKey: 'iching.menuDescription' }
     ]
   },
   {
@@ -54,7 +55,8 @@ const NAV_TABS = [
     descriptionKey: 'nav.settings.description',
     features: [
       { view: 'settings-language', markKey: 'settings.feature.mark', labelKey: 'settings.feature.label', descriptionKey: 'settings.feature.description' },
-      { view: 'settings-appearance', markKey: 'settings.appearance.mark', labelKey: 'settings.appearance.label', descriptionKey: 'settings.appearance.featureDescription' }
+      { view: 'settings-appearance', markKey: 'settings.appearance.mark', labelKey: 'settings.appearance.label', descriptionKey: 'settings.appearance.featureDescription' },
+      { view: 'settings-references', markKey: 'references.mark', labelKey: 'references.title', descriptionKey: 'references.menuDescription' }
     ]
   },
   {

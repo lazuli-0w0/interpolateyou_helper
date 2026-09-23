@@ -4,6 +4,7 @@ import { getPrimaryPronunciation } from '../utils/pronunciation.js';
 import { supportsLiveTranslation, translateEntryLive } from '../services/liveTranslation.js';
 import { getPreferredMeanings, getSecondaryMeanings } from '../utils/search.js';
 import { splitReadingParagraphs } from '../utils/readingFormat.js';
+import { referenceUrl } from '../data/references.js';
 import { SelectionAssistant } from './SelectionAssistant.js';
 import './ResultModal.css';
 
@@ -193,6 +194,8 @@ export function ResultModal({
   onSaveReadingNote
 }) {
   const contentRef = useRef(null);
+  const panelRef = useRef(null);
+  const closeButtonRef = useRef(null);
   const [readingMode, setReadingMode] = useState('original');
   const [pronunciationMode, setPronunciationMode] = useState('none');
   const [pronunciations, setPronunciations] = useState({});
@@ -200,6 +203,42 @@ export function ResultModal({
   const selectedItemKey = selectedItem?.id || selectedItem?.title || null;
   const isPoetry = selectedItem?.type === 'poetry' || type === 'poetry';
   const translationSource = selectedItem ? getEntryTranslationSource(selectedItem, type) : '';
+  const isOpen = Boolean(selectedItem);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const previousFocus = document.activeElement;
+    closeButtonRef.current?.focus();
+
+    const handleDialogKeyDown = event => {
+      if (event.key === 'Escape') {
+        if (panelRef.current?.querySelector('.selection-assistant-panel')) return;
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if (event.key !== 'Tab' || !panelRef.current) return;
+      const focusable = Array.from(panelRef.current.querySelectorAll(
+        'button:not(:disabled), a[href], input:not(:disabled), textarea:not(:disabled), select:not(:disabled), [tabindex]:not([tabindex="-1"])'
+      )).filter(element => element.getClientRects().length > 0);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && (document.activeElement === first || !panelRef.current.contains(document.activeElement))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !panelRef.current.contains(document.activeElement))) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleDialogKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleDialogKeyDown);
+      if (previousFocus?.isConnected) previousFocus.focus();
+    };
+  }, [isOpen, onClose]);
 
   useEffect(() => {
     setReadingMode('original');
@@ -249,7 +288,13 @@ export function ResultModal({
           alignItems: 'center',
           zIndex: 1000
         }}>
-          <div className={`result-modal-panel ${selectedItem.type || type}`} style={{
+          <div
+            ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={convertText(selectedItem.title || selectedItem.name || selectedItem.text || '')}
+            className={`result-modal-panel ${selectedItem.type || type}`}
+            style={{
             background: '#fff',
             padding: '30px',
             borderRadius: '12px',
@@ -260,6 +305,9 @@ export function ResultModal({
             position: 'relative'
           }}>
             <button
+              ref={closeButtonRef}
+              type="button"
+              aria-label={t('entry.close')}
               className="result-modal-close"
               onClick={() => setSelectedItem(null)}
               style={{
@@ -309,7 +357,7 @@ export function ResultModal({
                     />
                   </div>
                   <p style={{ marginTop: '16px', fontSize: '12px', color: '#888' }}>
-                    {convertText('資料來源')}：<a href="https://github.com/chinese-poetry/chinese-poetry" target="_blank" rel="noreferrer" style={{ color: '#3f80ff' }}>chinese-poetry</a>
+                    {convertText('資料來源')}：<a href={referenceUrl('chinesePoetry')} target="_blank" rel="noreferrer" style={{ color: '#3f80ff' }}>chinese-poetry</a>
                   </p>
                 </div>
               )}
@@ -335,7 +383,7 @@ export function ResultModal({
                     ))}
                   </div>
                   <p style={{ marginTop: '16px', fontSize: '12px', color: '#888' }}>
-                    {convertText('資料來源')}：<a href="https://github.com/luoxuhai/chinese-novel" target="_blank" rel="noreferrer" style={{ color: '#8a5a2b' }}>chinese-novel</a>
+                    {convertText('資料來源')}：<a href={referenceUrl('chineseNovel')} target="_blank" rel="noreferrer" style={{ color: '#8a5a2b' }}>chinese-novel</a>
                   </p>
                 </div>
               )}
@@ -353,7 +401,7 @@ export function ResultModal({
                     <ReadingText content={selectedItem.content} kind="prose" mode={readingMode} convertText={convertText} />
                   </article>
                   <p style={{ marginTop: '16px', fontSize: '12px', color: '#888' }}>
-                    {convertText('資料來源')}：<a href="https://github.com/luoxuhai/chinese-novel" target="_blank" rel="noreferrer" style={{ color: '#8a5a2b' }}>chinese-novel</a>
+                    {convertText('資料來源')}：<a href={referenceUrl('chineseNovel')} target="_blank" rel="noreferrer" style={{ color: '#8a5a2b' }}>chinese-novel</a>
                   </p>
                 </div>
               )}
@@ -410,7 +458,7 @@ export function ResultModal({
                       {convertText('資料來源')}：{' '}
                       {selectedItem.hasCantoneseBooksData && (
                         <a
-                          href="https://github.com/jyutnet/cantonese-books-data"
+                          href={referenceUrl('cantoneseBooks')}
                           target="_blank"
                           rel="noreferrer"
                           style={{ color: '#0b6b53', marginRight: '10px' }}
@@ -420,7 +468,7 @@ export function ResultModal({
                       )}
                       {Array.isArray(selectedItem.meanings) && selectedItem.meanings.length > 0 && (
                         <a
-                          href="https://github.com/g0v/moedict-data"
+                          href={referenceUrl('moedict')}
                           target="_blank"
                           rel="noreferrer"
                           style={{ color: '#3f80ff' }}
@@ -440,6 +488,7 @@ export function ResultModal({
               {(selectedItem.type === 'cipou' || type === 'cipou') && (
                 <div className="result-modal-section cipou-detail">
                   <h2 style={{ color: '#ffcc7b', marginBottom: '15px' }}>{convertText(selectedItem.name)}</h2>
+                  <ReadingFormatTabs mode={readingMode} onChange={setReadingMode} t={t} />
 
                   {selectedItem.variants && selectedItem.variants.map((variant, index) => (
                     <div className={`cipou-variant ${variant.isMain ? 'main' : ''}`} key={index} style={{
@@ -458,9 +507,14 @@ export function ResultModal({
                         </span>
                       </div>
 
-                      <p className="cipou-variant-intro">
-                        {convertText(variant.introduction)}
-                      </p>
+                      <div className="cipou-variant-intro">
+                        <ReadingText
+                          content={variant.introduction}
+                          kind="prose"
+                          mode={readingMode}
+                          convertText={convertText}
+                        />
+                      </div>
 
                       {/* 平仄譜 */}
                       <div style={{ marginBottom: '15px' }}>
@@ -512,9 +566,18 @@ export function ResultModal({
                           textAlign: 'center',
                           color: '#333'
                         }}>
-                          {variant.example.split('|').map((line, i) => (
-                            <div key={i} style={{ margin: '5px 0' }}>{convertText(line)}</div>
-                          ))}
+                          {readingMode === 'original'
+                            ? variant.example.split('|').map((line, i) => (
+                              <div key={i} style={{ margin: '5px 0' }}>{convertText(line)}</div>
+                            ))
+                            : (
+                              <ReadingText
+                                content={variant.example.split('|').join('')}
+                                kind="poetry"
+                                mode="readable"
+                                convertText={convertText}
+                              />
+                            )}
                         </div>
                       </div>
 
@@ -522,9 +585,14 @@ export function ResultModal({
                       {variant.description && (
                         <div>
                           <strong className="cipou-section-label">{convertText('說明')}：</strong>
-                          <p className="cipou-description">
-                            {convertText(variant.description)}
-                          </p>
+                          <div className="cipou-description">
+                            <ReadingText
+                              content={variant.description}
+                              kind="prose"
+                              mode={readingMode}
+                              convertText={convertText}
+                            />
+                          </div>
                         </div>
                       )}
                     </div>

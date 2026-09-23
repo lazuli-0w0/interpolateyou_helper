@@ -1,11 +1,13 @@
-import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { AppNavigation } from './components/AppNavigation.js';
 import { LandingPage } from './components/LandingPage.js';
 import { ResultModal } from './components/ResultModal.js';
 import { SettingsPage } from './components/SettingsPage.js';
+import { ReferencesPage } from './components/ReferencesPage.js';
 import { FoundersWhyPage } from './components/FoundersWhyPage.js';
 import { ProductPage } from './components/ProductPage.js';
 import { ForumPage } from './components/ForumPage.js';
+import { IChingPage } from './components/IChingPage.js';
 import { ReadingHistoryPage } from './components/ReadingHistoryPage.js';
 import { ReadingNotesPage } from './components/ReadingNotesPage.js';
 import { chineseConverter } from './utils/ChineseConverter.js';
@@ -25,6 +27,7 @@ import {
   saveReadingHistory
 } from './services/readingHistory.js';
 import { addReadingNote, loadReadingNotes, saveReadingNotes } from './services/readingNotes.js';
+import { idForEntry, pathForEntry, pathForView, routeFromPath } from './utils/routes.js';
 import './App.css';
 
 const VIEW_CONFIG = {
@@ -126,6 +129,25 @@ async function resolveSavedEntry(snapshot) {
   return snapshot;
 }
 
+async function resolveRouteEntry(view, entry) {
+  if (!entry) return null;
+  const { kind } = entry;
+  const id = await idForEntry(view, entry);
+  if (id == null) return null;
+  if (kind === 'poesia' || kind === 'capitolo') {
+    const [record] = await dataManager.loadLiteratureRecords([Number(id)]);
+    if (record && (kind === 'poesia' ? record.type === 'poetry' : record.type === 'novel-chapter')) {
+      return dataManager.loadLiteratureBody(record);
+    }
+    return null;
+  }
+
+  const data = kind === 'parola' ? await dataManager.loadWordsData()
+    : kind === 'libro' ? await dataManager.loadNovelsData()
+      : kind === 'schema' ? await dataManager.loadCipouData() : [];
+  return data.find(item => String(item.id) === String(id)) || null;
+}
+
 const STORAGE_KEYS = {
   locale: 'interpolateyou:locale',
   legacyLocale: 'interpolateyou:language',
@@ -138,13 +160,45 @@ export function getSearchResultTitle(item, type) {
   return item?.title || item?.name || item?.text || '';
 }
 
-function collectFacetValues(items, valueSelector) {
+export function getCipouWordCount(item) {
+  const variants = Array.isArray(item?.variants) ? item.variants : [];
+  const validSize = variant => {
+    const size = Number(variant?.size);
+    return Number.isFinite(size) && size > 0 ? size : null;
+  };
+  const mainSize = validSize(variants.find(variant => variant?.isMain));
+  if (mainSize !== null) return mainSize;
+
+  const availableSizes = variants.map(validSize).filter(size => size !== null);
+  return availableSizes.length ? Math.min(...availableSizes) : null;
+}
+
+export function sortCipouResults(items, order = 'default') {
+  if (order === 'default') return items;
+
+  const direction = order === 'characters-desc' ? -1 : 1;
+  return items
+    .map((item, index) => ({ item, index, count: getCipouWordCount(item) }))
+    .sort((left, right) => {
+      if (left.count === null && right.count === null) return left.index - right.index;
+      if (left.count === null) return 1;
+      if (right.count === null) return -1;
+      return (left.count - right.count) * direction || left.index - right.index;
+    })
+    .map(entry => entry.item);
+}
+
+function normalizeAuthorFacet(value) {
+  return String(value || '').trim().replace(/([\u3400-\u9fff])\d+$/, '$1');
+}
+
+function collectFacetValues(items, valueSelector, normalize = value => value) {
   const counts = new Map();
 
   items.forEach(item => {
     const values = valueSelector(item);
     (Array.isArray(values) ? values : [values]).forEach(value => {
-      const normalized = typeof value === 'string' ? value.trim() : '';
+      const normalized = typeof value === 'string' ? normalize(value.trim()) : '';
       if (!normalized || normalized === '未知') return;
       counts.set(normalized, (counts.get(normalized) || 0) + 1);
     });
@@ -187,7 +241,7 @@ export function getSearchBrowseGroups(type, data) {
     type === 'cipou'
       ? (item.variants || []).map(variant => variant.author)
       : item.author
-  ));
+  ), normalizeAuthorFacet);
   const dynastyValues = type === 'cipou' ? [] : collectFacetValues(data, item => item.dynasty);
   const commonPoetryTerms = type === 'poetry' ? collectCommonPoetryTerms(data) : [];
 
@@ -214,7 +268,12 @@ function AdvancedSearch({
   initialSelectedItem,
   onInitialItemHandled,
   onEntryOpened,
-  onSaveReadingNote
+  onEntryClosed,
+  onEntryUnavailable,
+  routeEntry,
+  onSaveReadingNote,
+  initialSession,
+  onSessionSave
 }) {
   const viewConfig = VIEW_CONFIG[type];
   const presentation = {
@@ -224,25 +283,39 @@ function AdvancedSearch({
     mark: t(viewConfig.markKey),
     placeholder: t(viewConfig.placeholderKey)
   };
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState([]);
-  const [allData, setAllData] = useState([]);
+  const [query, setQuery] = useState(initialSession?.query || '');
+  const [appliedQuery, setAppliedQuery] = useState(initialSession?.appliedQuery || '');
+  const [appliedBrowseCount, setAppliedBrowseCount] = useState(initialSession?.appliedBrowseCount || 0);
+  const [searchError, setSearchError] = useState(false);
+  const [results, setResults] = useState(initialSession?.results || []);
+  const [allData, setAllData] = useState(initialSession?.allData || []);
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [selectedItem, setSelectedItem] = useState(initialSelectedItem || null);
   const [previousNovelItem, setPreviousNovelItem] = useState(null);
-  const [dataLoaded, setDataLoaded] = useState(false);
-  const [loadError, setLoadError] = useState('');
-  const [displayCount, setDisplayCount] = useState(20); // 當前顯示的項目數量
-  const [resultView, setResultView] = useState('detailed');
-  const [browseCategory, setBrowseCategory] = useState('author');
-  const [selectedBrowseValues, setSelectedBrowseValues] = useState({});
-  const [selectedRhymePatterns, setSelectedRhymePatterns] = useState(new Set()); // 詞牌韻格篩選
+  const [dataLoaded, setDataLoaded] = useState(initialSession?.dataLoaded || false);
+  const [loadError, setLoadError] = useState(initialSession?.loadError || '');
+  const [displayCount, setDisplayCount] = useState(initialSession?.displayCount || 20);
+  const [resultView, setResultView] = useState(initialSession?.resultView || 'detailed');
+  const [browseCategory, setBrowseCategory] = useState(initialSession?.browseCategory || 'author');
+  const [browseExpanded, setBrowseExpanded] = useState(initialSession?.browseExpanded || false);
+  const [selectedBrowseValues, setSelectedBrowseValues] = useState(initialSession?.selectedBrowseValues || {});
+  const [selectedRhymePatterns, setSelectedRhymePatterns] = useState(initialSession?.selectedRhymePatterns || new Set());
+  const [cipouSort, setCipouSort] = useState(initialSession?.cipouSort || 'default');
   const loadMoreSentinelRef = useRef(null);
+  const sessionSnapshotRef = useRef(null);
 
   // 詩詞動態載入相關狀態
-  const [poetryOverLimit, setPoetryOverLimit] = useState(false); // 是否超過1000項
-  const [hasMorePoetry, setHasMorePoetry] = useState(true); // 是否還有更多詩詞可載入
+  const [poetryOverLimit, setPoetryOverLimit] = useState(initialSession?.poetryOverLimit || false);
+  const [hasMorePoetry, setHasMorePoetry] = useState(initialSession?.hasMorePoetry ?? true);
+  const restoredDataLoaded = Boolean(initialSession?.dataLoaded);
+
+  sessionSnapshotRef.current = {
+    query, appliedQuery, appliedBrowseCount, results, allData, dataLoaded, loadError,
+    displayCount, resultView, browseCategory, browseExpanded, selectedBrowseValues,
+    selectedRhymePatterns, cipouSort, poetryOverLimit, hasMorePoetry
+  };
+
+  useEffect(() => () => onSessionSave(type, sessionSnapshotRef.current), [onSessionSave, type]);
 
   const itemsPerPage = 20;
 
@@ -256,21 +329,42 @@ function AdvancedSearch({
     }
   }, [initialSelectedItem, onEntryOpened, onInitialItemHandled, type]);
 
+  useEffect(() => {
+    if (initialSelectedItem) return undefined;
+    if (!routeEntry) {
+      setSelectedItem(null);
+      setPreviousNovelItem(null);
+      return undefined;
+    }
+    let cancelled = false;
+    setLoading(true);
+    resolveRouteEntry(type, routeEntry).then(item => {
+      if (cancelled) return;
+      if (!item) {
+        onEntryUnavailable(type);
+        return;
+      }
+      if (selectedItem && String(selectedItem.literatureId ?? selectedItem.id) === String(item.literatureId ?? item.id)) return;
+      setSelectedItem(item);
+      setPreviousNovelItem(null);
+      onEntryOpened(item, type, { replace: true });
+    }).catch(() => {
+      if (!cancelled) onEntryUnavailable(type);
+    }).finally(() => {
+      if (!cancelled) setLoading(false);
+    });
+    return () => { cancelled = true; };
+  }, [initialSelectedItem, onEntryOpened, onEntryUnavailable, routeEntry, selectedItem, type]);
+
   // 加载数据
   useEffect(() => {
+    if (restoredDataLoaded) return undefined;
     const loadData = async () => {
       setLoading(true);
-      setProgress(0);
       setLoadError('');
 
       try {
         let data = [];
-
-        // 模拟加载进度
-        for (let i = 0; i <= 30; i += 10) {
-          setProgress(i);
-          await new Promise(resolve => setTimeout(resolve, 100));
-        }
 
         if (type === 'words') {
           data = await dataManager.loadWordsData();
@@ -280,12 +374,6 @@ function AdvancedSearch({
           data = await dataManager.loadNovelsData();
         } else if (type === 'cipou') {
           data = await dataManager.loadCipouData();
-        }
-
-        // 完成加载进度
-        for (let i = 40; i <= 100; i += 20) {
-          setProgress(i);
-          await new Promise(resolve => setTimeout(resolve, 100));
         }
 
         setAllData(data);
@@ -303,12 +391,11 @@ function AdvancedSearch({
         setLoadError(error.message || '載入失敗');
       } finally {
         setLoading(false);
-        setProgress(100);
       }
     };
 
     loadData();
-  }, [type, staticData]);
+  }, [type, staticData, restoredDataLoaded]);
 
   // 應用篩選邏輯
   const applyFilters = useCallback((data) => {
@@ -326,6 +413,7 @@ function AdvancedSearch({
 
   // AI搜索函数
   const handleAdvancedSearch = useCallback(async (searchQuery = query, additionalLoad = 0) => {
+    setSearchError(false);
     let baseData = allData;
     const browseSelections = Object.entries(selectedBrowseValues)
       .map(([category, values]) => ({ category, values: Array.from(values) }))
@@ -337,11 +425,12 @@ function AdvancedSearch({
 
     if (!searchQuery.trim() && !hasBrowseSelections) {
       setResults(baseData); // 無搜索時顯示所有篩選後的數據
+      setAppliedQuery('');
+      setAppliedBrowseCount(0);
       return;
     }
 
     setLoading(true);
-    setProgress(0);
 
     try {
       let searchResults = [];
@@ -360,7 +449,6 @@ function AdvancedSearch({
         if (!queryGroups.length && authorValues.length) queryGroups.push(authorValues);
         if (!queryGroups.length && dynastyValues.length) queryGroups.push(dynastyValues);
 
-        setProgress(30);
         const groupResults = await Promise.all(queryGroups.map(async terms => {
           const searches = await Promise.all(terms.map(term => searchLiterature(term, 0, 5000)));
           return searches.reduce((combined, result) => mergeUniqueResults(combined, result.results), []);
@@ -373,7 +461,7 @@ function AdvancedSearch({
           searchResults = searchResults.filter(item => allowed.has(resultKey(item)));
         });
         if (authorValues.length) {
-          searchResults = searchResults.filter(item => authorValues.includes(item.author));
+          searchResults = searchResults.filter(item => authorValues.includes(normalizeAuthorFacet(item.author)));
         }
         if (dynastyValues.length) {
           searchResults = searchResults.filter(item => dynastyValues.includes(item.dynasty));
@@ -385,7 +473,6 @@ function AdvancedSearch({
         const currentResultsCount = additionalLoad > 0 ? results.length : 0;
         const maxLoad = currentResultsCount + (additionalLoad || 1000);
 
-        setProgress(30);
         const poetrySearchResult = type === 'novels'
           ? await dataManager.searchNovelData(searchQuery, currentResultsCount, maxLoad)
           : await dataManager.searchPoetryData(searchQuery, currentResultsCount, maxLoad);
@@ -404,7 +491,6 @@ function AdvancedSearch({
 
       } else {
         const searchVariants = dataManager.generateSearchVariants(searchQuery.toLowerCase());
-        setProgress(70);
         if (type === 'words') {
           searchResults = baseData
             .filter(item => matchesWordSearch(item, searchVariants, searchQuery))
@@ -427,18 +513,19 @@ function AdvancedSearch({
         if (authorValues.length) {
           searchResults = searchResults.filter(item => (
             item.variants || []
-          ).some(variant => authorValues.includes(variant.author)));
+          ).some(variant => authorValues.includes(normalizeAuthorFacet(variant.author))));
         }
       }
 
       setResults(searchResults);
+      setAppliedQuery(searchQuery.trim());
+      setAppliedBrowseCount(browseSelections.reduce((count, selection) => count + selection.values.length, 0));
 
     } catch (error) {
       console.error('搜索出错:', error);
-      setResults([]);
+      setSearchError(true);
     } finally {
       setLoading(false);
-      setProgress(100);
     }
   }, [allData, applyFilters, query, results, selectedBrowseValues, type]);
 
@@ -446,7 +533,11 @@ function AdvancedSearch({
 
 
   // 顯示項目計算
-  const currentItems = results.slice(0, displayCount); // 顯示從開頭到當前顯示數量的項目
+  const sortedResults = useMemo(
+    () => type === 'cipou' ? sortCipouResults(results, cipouSort) : results,
+    [cipouSort, results, type]
+  );
+  const currentItems = sortedResults.slice(0, displayCount); // 顯示從開頭到當前顯示數量的項目
   const browseGroups = useMemo(() => getSearchBrowseGroups(type, allData), [allData, type]);
   const activeBrowseGroup = browseGroups.find(group => group.id === browseCategory) || browseGroups[0];
   const selectedBrowseCount = Object.values(selectedBrowseValues)
@@ -494,8 +585,8 @@ function AdvancedSearch({
 
       // 使用當前已載入的數量作為起始點，載入更多詩詞
       const searchResults = type === 'novels'
-        ? await dataManager.searchNovelData(query, currentCount, currentCount + additionalLoad)
-        : await dataManager.searchPoetryData(query, currentCount, currentCount + additionalLoad);
+        ? await dataManager.searchNovelData(appliedQuery, currentCount, currentCount + additionalLoad)
+        : await dataManager.searchPoetryData(appliedQuery, currentCount, currentCount + additionalLoad);
 
       if (searchResults && searchResults.results) {
         // 合併新結果到現有結果
@@ -512,6 +603,7 @@ function AdvancedSearch({
       }
     } catch (error) {
       console.error('載入更多詩詞失敗:', error);
+      setSearchError(true);
     } finally {
       setLoading(false);
     }
@@ -520,20 +612,24 @@ function AdvancedSearch({
   // 重置搜索時重置顯示數量
   useEffect(() => {
     setDisplayCount(20);
-  }, [results]);
+  }, [results, cipouSort]);
 
   // 篩選條件改變時重新應用篩選到當前結果
   useEffect(() => {
-    if (dataLoaded && allData.length > 0) {
+    if (type === 'cipou' && dataLoaded && allData.length > 0) {
       const filteredData = applyFilters(allData);
-      if (!query.trim()) {
+      if (!appliedQuery.trim() && appliedBrowseCount === 0) {
         setResults(filteredData);
-      } else if (type === 'cipou') {
-        const searchVariants = dataManager.generateSearchVariants(query.toLowerCase());
-        setResults(filteredData.filter(item => matchesCipouSearch(item, searchVariants)));
+      } else if (appliedQuery.trim()) {
+        const searchVariants = dataManager.generateSearchVariants(appliedQuery.toLowerCase());
+        const authorValues = Array.from(selectedBrowseValues.author || []);
+        setResults(filteredData.filter(item => (
+          matchesCipouSearch(item, searchVariants) &&
+          (!authorValues.length || (item.variants || []).some(variant => authorValues.includes(normalizeAuthorFacet(variant.author))))
+        )));
       }
     }
-  }, [selectedRhymePatterns, allData, dataLoaded, query, applyFilters, type]);
+  }, [selectedRhymePatterns, allData, dataLoaded, appliedQuery, appliedBrowseCount, applyFilters, selectedBrowseValues, type]);
 
   // 韻格篩選處理函數
   const handleRhymePatternToggle = (pattern) => {
@@ -582,12 +678,14 @@ function AdvancedSearch({
   const closeSelectedItem = useCallback(() => {
     setSelectedItem(null);
     setPreviousNovelItem(null);
-  }, []);
+    onEntryClosed(type);
+  }, [onEntryClosed, type]);
 
   const returnFromNovelChapter = useCallback(() => {
     setSelectedItem(previousNovelItem);
     setPreviousNovelItem(null);
-  }, [previousNovelItem]);
+    if (previousNovelItem) onEntryOpened(previousNovelItem, type);
+  }, [onEntryOpened, previousNovelItem, type]);
 
   return (
     <main className={`search-page search-page-${type}`}>
@@ -744,36 +842,38 @@ function AdvancedSearch({
                 {t('search.selectedFilters', { count: selectedRhymePatterns.size })}
               </div>
             )}
+
+            <div className="cipou-sort-control">
+              <label htmlFor={`cipou-sort-${type}`}>{t('search.cipouSort')}</label>
+              <select
+                id={`cipou-sort-${type}`}
+                value={cipouSort}
+                onChange={event => setCipouSort(event.target.value)}
+              >
+                <option value="default">{t('search.cipouSortDefault')}</option>
+                <option value="characters-asc">{t('search.cipouSortAscending')}</option>
+                <option value="characters-desc">{t('search.cipouSortDescending')}</option>
+              </select>
+            </div>
           </div>
         )}
 
         {/* 进度条 */}
-        {loading && (
-          <div className="search-progress">
-            <div className="search-progress-track" style={{
-              width: '100%',
-              height: '4px',
-              background: '#f0f0f0',
-              borderRadius: '2px',
-              overflow: 'hidden'
-            }}>
-              <div className="search-progress-value" style={{
-                width: `${progress}%`,
-                height: '100%',
-                background: 'linear-gradient(90deg, #90ffbb, #90ffcc)',
-                transition: 'width 0.3s ease'
-              }} />
-            </div>
-            <div className="search-progress-label">
-              {t('search.progress', { progress: Math.round(progress) })}
-            </div>
+        {loading && <div className="search-progress" role="status">{t('search.loading')}</div>}
+
+        {searchError && (
+          <div className="search-alert" role="alert">
+            <span>{t('search.requestFailed')}</span>
+            <button type="button" onClick={() => handleAdvancedSearch(query)} disabled={loading}>
+              {t('search.retry')}
+            </button>
           </div>
         )}
 
         {/* 结果统计 */}
         <div className="search-status" aria-live="polite">
-          {loadError ? t('search.statusUnavailable') : query ? t('search.statusQuery', { query, count: results.length }) :
-           selectedBrowseCount ? t('search.statusFiltered', { count: results.length }) :
+          {loadError ? t('search.statusUnavailable') : appliedQuery ? t('search.statusQuery', { query: appliedQuery, count: results.length }) :
+           appliedBrowseCount ? t('search.statusFiltered', { count: results.length }) :
            dataLoaded ? t(type === 'poetry' ? 'search.statusPreloaded' : 'search.statusLoaded', { total: allData.length, count: results.length }) :
            t('search.statusLoading')}
         </div>
@@ -800,6 +900,16 @@ function AdvancedSearch({
 
       {activeBrowseGroup && (
         <section className="search-browse search-browse-panel" aria-labelledby={`search-browse-title-${type}`}>
+          <button
+            type="button"
+            className="search-browse-toggle"
+            aria-expanded={browseExpanded}
+            aria-controls={`search-browse-content-${type}`}
+            onClick={() => setBrowseExpanded(expanded => !expanded)}
+          >
+            <span>{t('search.browseTitle')}{selectedBrowseCount > 0 ? ` · ${t('search.browseSelected', { count: selectedBrowseCount })}` : ''}</span>
+            <span aria-hidden="true">{browseExpanded ? '−' : '+'}</span>
+          </button>
           <div className="search-browse-heading">
             <div>
               <strong id={`search-browse-title-${type}`}>{t('search.browseTitle')}</strong>
@@ -807,6 +917,7 @@ function AdvancedSearch({
             </div>
             <span>{t('search.browseCount', { count: activeBrowseGroup.values.length })}</span>
           </div>
+          <div id={`search-browse-content-${type}`} className={`search-browse-content${browseExpanded ? ' expanded' : ''}`}>
           <div className="search-browse-tabs-row">
             <div className="search-browse-tabs" role="tablist" aria-label={t('search.browseTitle')}>
               {browseGroups.map(group => (
@@ -834,19 +945,21 @@ function AdvancedSearch({
           <div className="search-browse-values" role="tabpanel" aria-label={t(activeBrowseGroup.labelKey)}>
             {activeBrowseGroup.values.map(value => {
               const isSelected = selectedBrowseValues[activeBrowseGroup.id]?.has(value) || false;
+              const displayValue = convertText(value);
               return (
                 <button
                   type="button"
                   key={`${activeBrowseGroup.id}-${value}`}
                   className={isSelected ? 'active' : ''}
                   aria-pressed={isSelected}
-                  aria-label={t('search.browseValue', { category: t(activeBrowseGroup.labelKey), value: convertText(value) })}
+                  aria-label={t('search.browseValue', { category: t(activeBrowseGroup.labelKey), value: displayValue })}
                   onClick={() => handleBrowseToggle(value, activeBrowseGroup.id)}
                 >
-                  {convertText(value)}
+                  {displayValue}
                 </button>
               );
             })}
+          </div>
           </div>
         </section>
       )}
@@ -946,6 +1059,7 @@ function AdvancedSearch({
               ? convertText(item.author)
               : '';
             const accessibleTitle = author ? `${title} · ${author}` : title;
+            const wordCount = type === 'cipou' ? getCipouWordCount(item) : null;
             return (
               <li key={`title-${item.type || type}-${item.id}-${index}`}>
                 <button
@@ -958,6 +1072,7 @@ function AdvancedSearch({
                   <span className="result-title-main">
                     <strong>{title}</strong>
                     {author && <small>{author}</small>}
+                    {wordCount !== null && <small>{t('search.cipouWordCount', { count: wordCount })}</small>}
                   </span>
                   <span className="result-title-arrow" aria-hidden="true">↗</span>
                 </button>
@@ -971,6 +1086,14 @@ function AdvancedSearch({
           <div
             key={`${item.type || type}-${item.id}-${index}`}
             onClick={() => loadItemDetails(item)}
+            onKeyDown={event => {
+              if (event.key !== 'Enter' && event.key !== ' ') return;
+              event.preventDefault();
+              loadItemDetails(item);
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label={t('search.openTitle', { title: convertText(getSearchResultTitle(item, type)) })}
             className={`result-card ${item.type || type}`}
             style={{
               background: '#fff',
@@ -1042,6 +1165,11 @@ function AdvancedSearch({
             {/* 詞牌類型 */}
             {(item.type === 'cipou' || type === 'cipou') && (
               <div>
+                {getCipouWordCount(item) !== null && (
+                  <div className="cipou-word-count">
+                    {t('search.cipouWordCount', { count: getCipouWordCount(item) })}
+                  </div>
+                )}
                 <div className="result-card-heading" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <strong className="result-card-title" style={{ fontSize: '18px', color: '#ffcc7b' }}>{convertText(item.name)}</strong>
                   <div className="result-card-tags" style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
@@ -1154,7 +1282,7 @@ function AdvancedSearch({
       />
 
       {/* 詩詞模式專用提示 */}
-      {!loading && results.length === 0 && !query && type === 'poetry' && (
+      {!loading && !searchError && results.length === 0 && !appliedQuery && type === 'poetry' && (
         <div className="search-empty-state" style={{
           textAlign: 'center',
           padding: '60px 20px',
@@ -1166,7 +1294,7 @@ function AdvancedSearch({
         </div>
       )}
 
-      {!loading && results.length === 0 && !query && type === 'novels' && (
+      {!loading && !searchError && results.length === 0 && !appliedQuery && type === 'novels' && (
         <div className="search-empty-state" style={{ textAlign: 'center', padding: '60px 20px', color: '#666' }}>
           <div style={{ fontSize: '48px', marginBottom: '20px' }}>📚</div>
           <h3>{convertText('正在載入小說書庫')}</h3>
@@ -1175,14 +1303,14 @@ function AdvancedSearch({
       )}
 
       {/* 无结果提示 */}
-      {!loading && results.length === 0 && query && (
+      {!loading && !searchError && results.length === 0 && appliedQuery && (
         <div className="search-empty-state" style={{
           textAlign: 'center',
           padding: '60px 20px',
           color: '#666'
         }}>
           <div style={{ fontSize: '48px', marginBottom: '20px' }}>🔍</div>
-          <h3>{convertText('找不到')} "{query}" {convertText('的相關結果')}</h3>
+          <h3>{convertText('找不到')} "{appliedQuery}" {convertText('的相關結果')}</h3>
           <p style={{ marginTop: '10px' }}>{convertText('請嘗試其他關鍵字')}</p>
         </div>
       )}
@@ -1193,8 +1321,42 @@ function AdvancedSearch({
 }
 
 function App() {
-  const [view, setView] = useState('home');
+  const [route, setRoute] = useState(() => routeFromPath(window.location.pathname));
+  const view = route.view;
+  const searchSessionsRef = useRef({});
+  const entryNavigationRef = useRef(0);
+  const lastRestoredViewRef = useRef(null);
+  const saveSearchSession = useCallback((searchView, session) => {
+    searchSessionsRef.current[searchView] = { ...searchSessionsRef.current[searchView], ...session };
+  }, []);
+  const navigateToView = useCallback(nextView => {
+    entryNavigationRef.current += 1;
+    const path = pathForView(nextView);
+    if (nextView === view && window.location.pathname === path) return;
+    if (VIEW_CONFIG[view]) {
+      searchSessionsRef.current[view] = { ...searchSessionsRef.current[view], scrollY: window.scrollY };
+    }
+    window.history.pushState(null, '', path);
+    setRoute(routeFromPath(path));
+    if (window.scrollY > 0) window.scrollTo(0, 0);
+  }, [view]);
   const [openingEntry, setOpeningEntry] = useState(null);
+
+  useEffect(() => {
+    if (route.unknown) {
+      window.history.replaceState(null, '', pathForView('home'));
+      setRoute({ view: 'home', entry: null });
+    } else if (route.canonicalPath && route.canonicalPath !== window.location.pathname) {
+      window.history.replaceState(null, '', route.canonicalPath);
+    }
+    const handlePopState = () => {
+      entryNavigationRef.current += 1;
+      setRoute(routeFromPath(window.location.pathname));
+      setOpeningEntry(null);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [route.unknown, route.canonicalPath]);
   const [readingHistory, setReadingHistory] = useState(loadReadingHistory);
   const [readingNotes, setReadingNotes] = useState(loadReadingNotes);
   const [theme, setTheme] = useState(() => {
@@ -1216,7 +1378,16 @@ function App() {
   const [, setConverterReady] = useState(chineseConverter.isLoaded);
   const t = useMemo(() => createTranslator(locale), [locale]);
   const viewConfig = VIEW_CONFIG[view];
+  const staticData = useMemo(() => viewConfig?.getStaticData() || [], [viewConfig]);
   const product = PRODUCT_VIEW_BY_ROUTE[view];
+
+  useLayoutEffect(() => {
+    if (lastRestoredViewRef.current === view) return;
+    lastRestoredViewRef.current = view;
+    if (!VIEW_CONFIG[view] || openingEntry) return;
+    const savedY = searchSessionsRef.current[view]?.scrollY;
+    if (typeof savedY === 'number' && window.scrollY !== savedY) window.scrollTo(0, savedY);
+  }, [view, openingEntry]);
   const recordReading = useCallback((item, fallbackView) => {
     setReadingHistory(currentHistory => {
       const nextHistory = addReadingHistoryEntry(currentHistory, item, fallbackView);
@@ -1224,10 +1395,35 @@ function App() {
       return nextHistory;
     });
   }, []);
+  const handleEntryOpened = useCallback((item, searchView, options = {}) => {
+    recordReading(item, searchView);
+    const navigation = ++entryNavigationRef.current;
+    pathForEntry(searchView, item).then(path => {
+      if (navigation !== entryNavigationRef.current) return;
+      if (path && window.location.pathname !== path) {
+        window.history[options.replace ? 'replaceState' : 'pushState'](null, '', path);
+        setRoute(routeFromPath(path));
+      }
+    }).catch(() => {});
+  }, [recordReading]);
+  const handleEntryClosed = useCallback(searchView => {
+    entryNavigationRef.current += 1;
+    const path = pathForView(searchView);
+    if (window.location.pathname !== path) {
+      window.history.pushState(null, '', path);
+      setRoute(routeFromPath(path));
+    }
+  }, []);
+  const handleEntryUnavailable = useCallback(searchView => {
+    entryNavigationRef.current += 1;
+    const path = pathForView(searchView);
+    window.history.replaceState(null, '', path);
+    setRoute(routeFromPath(path));
+  }, []);
   const openFeaturedPoem = useCallback((poemEntry) => {
     setOpeningEntry({ view: 'poetry', item: poemEntry });
-    setView('poetry');
-  }, []);
+    navigateToView('poetry');
+  }, [navigateToView]);
   const clearOpeningEntry = useCallback(() => setOpeningEntry(null), []);
   const clearReadingHistory = useCallback(() => {
     setReadingHistory([]);
@@ -1251,8 +1447,8 @@ function App() {
     const item = await resolveSavedEntry(snapshot);
     if (!item || !targetView) return;
     setOpeningEntry({ view: targetView, item });
-    setView(targetView);
-  }, []);
+    navigateToView(targetView);
+  }, [navigateToView]);
   const openHistoryEntry = useCallback(entry => (
     openStoredEntry(entry.item, entry.view)
   ), [openStoredEntry]);
@@ -1295,10 +1491,10 @@ function App() {
 
   return (
     <div className={`app-shell theme-${theme}`}>
-      <AppNavigation view={view} onViewChange={setView} t={t} />
+      <AppNavigation view={view} onViewChange={navigateToView} t={t} />
 
       {view === 'home' ? (
-        <LandingPage onNavigate={setView} onOpenPoem={openFeaturedPoem} locale={locale} t={t} />
+        <LandingPage onNavigate={navigateToView} onOpenPoem={openFeaturedPoem} locale={locale} t={t} />
       ) : view === 'settings-language' ? (
         <SettingsPage
           section="language"
@@ -1317,10 +1513,14 @@ function App() {
           onThemeChange={updateTheme}
           t={t}
         />
+      ) : view === 'settings-references' ? (
+        <ReferencesPage t={t} />
       ) : view === 'founders-why' ? (
         <FoundersWhyPage locale={locale} />
       ) : view === 'forum' ? (
         <ForumPage t={t} />
+      ) : view === 'iching' ? (
+        <IChingPage t={t} />
       ) : view === 'reading-history' ? (
         <ReadingHistoryPage
           history={readingHistory}
@@ -1343,16 +1543,21 @@ function App() {
         <AdvancedSearch
           key={view}
           type={view}
-          staticData={viewConfig.getStaticData()}
+          staticData={staticData}
           locale={locale}
           t={t}
           initialSelectedItem={openingEntry?.view === view ? openingEntry.item : null}
           onInitialItemHandled={clearOpeningEntry}
-          onEntryOpened={recordReading}
+          onEntryOpened={handleEntryOpened}
+          onEntryClosed={handleEntryClosed}
+          onEntryUnavailable={handleEntryUnavailable}
+          routeEntry={route.entry}
           onSaveReadingNote={saveReadingNote}
+          initialSession={searchSessionsRef.current[view]}
+          onSessionSave={saveSearchSession}
         />
       ) : (
-        <LandingPage onNavigate={setView} onOpenPoem={openFeaturedPoem} locale={locale} t={t} />
+        <LandingPage onNavigate={navigateToView} onOpenPoem={openFeaturedPoem} locale={locale} t={t} />
       )}
     </div>
   );

@@ -33,6 +33,25 @@ test('six unchanged lines show only the original hexagram', () => {
   expect(screen.getAllByText('無動爻。')).toHaveLength(1);
 });
 
+test('hexagram 21 shows the supplemented first line without a source note in the reading', () => {
+  render(<IChingPage t={t} />);
+  // 噬嗑 from bottom to top: yang, yin, yin, yang, yin, yang.
+  [2, 1, 1, 2, 1, 2].forEach(reverseCount => {
+    for (let coin = 1; coin <= reverseCount; coin += 1) {
+      fireEvent.click(screen.getByRole('button', { name: new RegExp(`第 ${coin} 枚：通寶`) }));
+    }
+    fireEvent.click(screen.getByRole('button', { name: '確認此爻' }));
+  });
+  expect(screen.getByText('屨校滅趾，無咎。')).not.toBeNull();
+  expect(screen.queryByText(/此爻原文補自/)).toBeNull();
+  expect(screen.queryByRole('link')).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: '朱熹變占' }));
+  expect(screen.queryByRole('link')).toBeNull();
+  fireEvent.click(screen.getByRole('tab', { name: '語譯' }));
+  expect(screen.queryByRole('link')).toBeNull();
+  expect(screen.queryByText(/語譯由本站依古文/)).toBeNull();
+});
+
 test('manual coin flips record lines from bottom to top and reveal both figures after six lines', () => {
   render(<IChingPage t={t} />);
   const firstCoin = screen.getByRole('button', { name: /第 1 枚：通寶 · 陰/ });

@@ -1,4 +1,4 @@
-import { allReferences, BASE_REFERENCES, referenceStats, referenceUrl } from './references.js';
+import { allReferences, BASE_REFERENCES, referenceStats } from './references.js';
 
 test('the central catalogue lists distinct sources without 64 repeated article links', () => {
   const references = allReferences();
@@ -13,9 +13,10 @@ test('the central catalogue lists distinct sources without 64 repeated article l
   expect(references.find(reference => reference.id === 'cipouExperience').local).toBe(true);
 });
 
-test('inline citations resolve through the same catalogue as the References page', () => {
-  expect(referenceUrl('chinesePoetry')).toBe('https://github.com/chinese-poetry/chinese-poetry');
-  expect(referenceUrl('ichingArticle', { hexagramNumber: 21 })).toBe('https://www.yilusoso.com/lssg/82/');
-  expect(referenceUrl('zhuXiRules')).toContain('shidianguji.com');
-  expect(referenceUrl('ichingPages')).toBeNull();
+test('source links live in the References catalogue', () => {
+  const reference = id => allReferences().find(item => item.id === id);
+  expect(reference('chinesePoetry').url).toBe('https://github.com/chinese-poetry/chinese-poetry');
+  expect(reference('ichingSupplementalLine').url).toBe('https://www.yilusoso.com/lssg/82/');
+  expect(reference('zhuXiRules').url).toContain('shidianguji.com');
+  expect(reference('ichingPages').url).toBeNull();
 });

@@ -8,7 +8,6 @@ import {
 } from '../utils/iching.js';
 import { readingFromValues, zhuXiSelections } from '../utils/ichingTexts.js';
 import { ichingParaphrase } from '../data/ichingParaphrases.js';
-import { referenceUrl } from '../data/references.js';
 import { downloadIChingReport } from '../utils/ichingReport.js';
 import { TongbaoCoinButton } from './TongbaoCoinButton.js';
 import './IChingPage.css';
@@ -73,10 +72,6 @@ function ZhuXiEntry({ entry, showParaphrase, t }) {
       {entry.primary && <span className="iching-zhu-primary">{t('iching.primaryText')}</span>}
     </div>
     <p>{entry.kind === 'judgement' ? entry.text : entry.line?.text || t('iching.sourceMissing')}</p>
-    {entry.line?.supplemental && <a className="iching-supplemental"
-      href={referenceUrl('ichingArticle', { hexagramNumber: entry.hexagramNumber })} target="_blank" rel="noopener noreferrer">
-      {t('iching.supplemental')} ↗
-    </a>}
     {showParaphrase && <Paraphrase hexagramNumber={entry.hexagramNumber} position={entry.position} t={t} />}
   </article>;
 }
@@ -368,20 +363,13 @@ export function IChingPage({ t }) {
                 <span>{selected.moving ? t('iching.changed') : t('iching.original')} · {selected.hexagramName}</span>
               </div>
               <p>{selected.line?.text || t('iching.sourceMissing')}</p>
-              {selected.line?.supplemental && <a className="iching-supplemental"
-                href={referenceUrl('ichingArticle', { hexagramNumber: selected.hexagramNumber })} target="_blank" rel="noopener noreferrer">
-                {t('iching.supplemental')} ↗
-              </a>}
               {showParaphrase && <Paraphrase hexagramNumber={selected.hexagramNumber} position={selected.position} t={t} />}
             </div>
           </li>)}
         </ul></> : <div className="iching-zhu-list">
           {zhuXi.entries.map(entry => <ZhuXiEntry key={`${entry.kind}-${entry.source}-${entry.position}`}
             entry={entry} showParaphrase={showParaphrase} t={t} />)}
-          <p className="iching-zhu-source">{t('iching.zhuSource')} <a href={referenceUrl('zhuXiRules')}
-            target="_blank" rel="noopener noreferrer">{t('iching.zhuSourceLink')} ↗</a></p>
         </div>}
-        {showParaphrase && <p className="iching-translation-note">{t('iching.translationNote')}</p>}
       </section>}
 
       {result && <section className="iching-paper iching-report" aria-labelledby="iching-report-title">

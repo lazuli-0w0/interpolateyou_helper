@@ -1,7 +1,8 @@
 import React from 'react';
+import { siteLinkUrl } from '../data/references.js';
 import './ProductPage.css';
 
-const READING_NOTES_PDF = encodeURI('/輕文釋註—短寓其一.pdf');
+const READING_NOTES_PDF = siteLinkUrl('readingNotesPdf');
 
 function PlayingCardsProduct({ t }) {
   return (
@@ -30,14 +31,6 @@ function PlayingCardsProduct({ t }) {
 
           <footer className="product-purchase-row">
             <strong>{t('product.cards.price')}</strong>
-            <div className="product-purchase-actions" aria-label={t('product.cards.purchaseVia')}>
-              <a href="https://wa.me/68993141" target="_blank" rel="noreferrer">
-                {t('product.cards.whatsapp')} <span aria-hidden="true">↗</span>
-              </a>
-              <a href="https://www.instagram.com/shadow_lazuli" target="_blank" rel="noreferrer">
-                {t('product.cards.instagram')} <span aria-hidden="true">↗</span>
-              </a>
-            </div>
           </footer>
         </div>
       </article>
@@ -57,9 +50,6 @@ function ReadingNotesProduct({ t }) {
             <p className="product-page-eyebrow">{t('product.readingNotes.eyebrow')}</p>
             <h1 id="reading-notes-title">{t('product.readingNotes.title')}</h1>
           </div>
-          <a href={READING_NOTES_PDF} target="_blank" rel="noreferrer">
-            {t('product.readingNotes.openOriginal')} <span aria-hidden="true">↗</span>
-          </a>
         </header>
 
         <object
@@ -68,9 +58,7 @@ function ReadingNotesProduct({ t }) {
           type="application/pdf"
           aria-label={t('product.readingNotes.viewerLabel')}
         >
-          <p>
-            {t('product.readingNotes.viewerFallback')} <a href={READING_NOTES_PDF}>{t('product.readingNotes.openOriginal')}</a>
-          </p>
+          <p>{t('product.readingNotes.viewerFallback')}</p>
         </object>
       </section>
     </main>

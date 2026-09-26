@@ -116,13 +116,9 @@
 .iching-zhu-entry h3 { margin: 0; font: 600 19px/1.4 'Noto Serif TC', 'Songti TC', serif; }
 .iching-zhu-entry > p { margin: 12px 0 0; line-height: 1.8; }
 .iching-zhu-primary { padding: 2px 8px; border-radius: 999px; background: #e9dfcf; color: #6d4c35; font-size: 12px; font-weight: 700; }
-.iching-zhu-source { margin: 4px 0 0; color: #626e66; font-size: 13px; line-height: 1.7; }
-.iching-zhu-source a { color: #38584a; text-underline-offset: 3px; }
 .iching-paraphrase { margin-top: 16px; padding: 14px 16px; border-left: 3px solid #b99271; border-radius: 0 8px 8px 0; background: #f6f0e4; }
 .iching-paraphrase-label { color: #835b43; font-size: 12px; font-weight: 700; letter-spacing: .1em; }
 .iching-paraphrase p { margin: 6px 0 8px; line-height: 1.8; }
-.iching-supplemental { display: inline-block; margin-top: 8px; color: #8a604b; font-size: 12px; }
-.iching-translation-note { margin: 22px 0 0; color: #626e66; font-size: 13px; line-height: 1.7; }
 .iching-report { margin-top: 20px; }
 .iching-report-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
 .iching-report-actions .iching-button { min-width: 170px; }
@@ -142,15 +138,13 @@
 .theme-dark .iching-judgements article { border-color: #526056; background: #1b2922; }
 .theme-dark .iching-zhu-entry { border-color: #526056; background: #1b2922; }
 .theme-dark .iching-zhu-primary { background: #4d4637; color: #f0d5b3; }
-.theme-dark .iching-zhu-source { color: #bac9bc; }
-.theme-dark .iching-zhu-source a { color: #c7e4d0; }
 .theme-dark .iching-reading-lines li { border-color: #526056; }
-.theme-dark .iching-translation-toolbar > span, .theme-dark .iching-translation-note { color: #bac9bc; }
+.theme-dark .iching-translation-toolbar > span { color: #bac9bc; }
 .theme-dark .iching-translation-tabs { border-color: #526056; background: #1b2922; }
 .theme-dark .iching-translation-tabs button { color: #bac9bc; }
 .theme-dark .iching-translation-tabs button.active { background: #c6d3cb; color: #17211e; }
 .theme-dark .iching-paraphrase { background: #31433a; border-left-color: #d3a77a; }
-.theme-dark .iching-paraphrase-label, .theme-dark .iching-supplemental { color: #e7c29b; }
+.theme-dark .iching-paraphrase-label { color: #e7c29b; }
 @media (max-width: 760px) {
   .iching-workspace { grid-template-columns: 1fr; }
   .iching-coins { gap: 8px; }

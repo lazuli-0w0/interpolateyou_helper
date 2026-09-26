@@ -586,11 +586,8 @@ const ICHING_MESSAGES = {
     'iching.zhuRule.5': '五爻動：取變卦唯一未動爻爻辭。',
     'iching.zhuRule.6': '六爻全動：乾坤取用九或用六；其他卦取變卦卦辭。',
     'iching.primaryText': '為主', 'iching.special': '用九／用六',
-    'iching.zhuSource': '取辭規則：', 'iching.zhuSourceLink': '《易學啓蒙通釋・考變占第四》',
     'iching.displayMode': '閱讀方式', 'iching.textMode': '原文', 'iching.paraphraseMode': '語譯', 'iching.paraphrase': '白話語譯', 'iching.judgement': '卦辭',
-    'iching.reference': '參考來源', 'iching.referenceNamed': '第 {{number}} 卦{{position}}爻語譯參考來源',
-    'iching.supplemental': '此爻原文補自易學界，非原文件內容。', 'iching.translationNote': '語譯由本站依古文重新撰寫，只幫助理解文字，不作現實預測或建議。',
-    'iching.sourceMissing': '原文件未載此爻；暫不補寫。', 'iching.sourceNote': '卦辭與爻辭取自你提供的《I Ching.pages》；噬嗑初九另註來源。原文字句照來源保留。'
+    'iching.sourceMissing': '原文件未載此爻；暫不補寫。'
   },
   'zh-Hans': {
     'iching.mark': '易', 'iching.eyebrow': '易经 · 三枚通宝起卦', 'iching.title': '通宝起卦',
@@ -622,11 +619,8 @@ const ICHING_MESSAGES = {
     'iching.zhuRule.5': '五爻动：取变卦唯一未动爻爻辞。',
     'iching.zhuRule.6': '六爻全动：乾坤取用九或用六；其他卦取变卦卦辞。',
     'iching.primaryText': '为主', 'iching.special': '用九／用六',
-    'iching.zhuSource': '取辞规则：', 'iching.zhuSourceLink': '《易学启蒙通释・考变占第四》',
     'iching.displayMode': '阅读方式', 'iching.textMode': '原文', 'iching.paraphraseMode': '语译', 'iching.paraphrase': '白话语译', 'iching.judgement': '卦辞',
-    'iching.reference': '参考来源', 'iching.referenceNamed': '第 {{number}} 卦{{position}}爻语译参考来源',
-    'iching.supplemental': '此爻原文补自易学界，并非原文件内容。', 'iching.translationNote': '语译由本站依据古文重新撰写，只帮助理解文字，不作现实预测或建议。',
-    'iching.sourceMissing': '原文件未载此爻；暂不补写。', 'iching.sourceNote': '卦辞与爻辞取自你提供的《I Ching.pages》；噬嗑初九另注来源。原文字句照来源保留。'
+    'iching.sourceMissing': '原文件未载此爻；暂不补写。'
   },
   en: {
     'iching.mark': '易', 'iching.eyebrow': 'I CHING · THREE-COIN CAST', 'iching.title': 'Coin casting',
@@ -658,11 +652,8 @@ const ICHING_MESSAGES = {
     'iching.zhuRule.5': 'Five moving lines: use the only unchanged line in the changed hexagram.',
     'iching.zhuRule.6': 'Six moving lines: use the special text for Qian or Kun; otherwise use the changed judgement.',
     'iching.primaryText': 'Primary', 'iching.special': 'Use Nine / Use Six',
-    'iching.zhuSource': 'Selection rule:', 'iching.zhuSourceLink': 'Yixue Qimeng Tongshi, “Examining Change and Divination”',
     'iching.displayMode': 'Reading format', 'iching.textMode': 'Original', 'iching.paraphraseMode': 'Paraphrase', 'iching.paraphrase': 'Plain-language reading', 'iching.judgement': 'judgement',
-    'iching.reference': 'Reference', 'iching.referenceNamed': 'Reference for hexagram {{number}}, line {{position}}',
-    'iching.supplemental': 'This original line was supplemented from Yilusoso; it was absent from the supplied document.', 'iching.translationNote': 'The Chinese paraphrases were newly written to explain the classical text, not to predict or advise.',
-    'iching.sourceMissing': 'This line is absent from the supplied document; no text has been invented.', 'iching.sourceNote': 'Original texts come from the supplied I Ching.pages document; the first line of hexagram 21 is separately sourced.'
+    'iching.sourceMissing': 'This line is absent from the supplied document; no text has been invented.'
   },
   it: {
     'iching.mark': '易', 'iching.eyebrow': 'I CHING · TRE MONETE', 'iching.title': 'Lancio delle monete',
@@ -694,11 +685,8 @@ const ICHING_MESSAGES = {
     'iching.zhuRule.5': 'Cinque linee mobili: l’unica linea ferma nel mutato.',
     'iching.zhuRule.6': 'Sei linee mobili: testo speciale di Qian o Kun; negli altri casi, testo del mutato.',
     'iching.primaryText': 'Prevalente', 'iching.special': 'Uso del Nove / Uso del Sei',
-    'iching.zhuSource': 'Regola di selezione:', 'iching.zhuSourceLink': 'Yixue Qimeng Tongshi, “Esame dei mutamenti”',
     'iching.displayMode': 'Modalità di lettura', 'iching.textMode': 'Originale', 'iching.paraphraseMode': 'Parafrasi', 'iching.paraphrase': 'Parafrasi in cinese', 'iching.judgement': 'testo dell’esagramma',
-    'iching.reference': 'Fonte', 'iching.referenceNamed': 'Fonte per l’esagramma {{number}}, linea {{position}}',
-    'iching.supplemental': 'Questa linea originale è stata integrata da Yilusoso; non era nel documento fornito.', 'iching.translationNote': 'Le parafrasi in cinese sono state riscritte per spiegare il testo classico, senza previsioni o consigli.',
-    'iching.sourceMissing': 'Questa linea manca nel documento fornito; non viene inventato alcun testo.', 'iching.sourceNote': 'I testi originali provengono dal documento I Ching.pages; la prima linea dell’esagramma 21 ha una fonte separata.'
+    'iching.sourceMissing': 'Questa linea manca nel documento fornito; non viene inventato alcun testo.'
   }
 };
 
@@ -714,9 +702,11 @@ const REFERENCES_MESSAGES = {
     'references.use.meanings': '詞語搜尋 · 詞義', 'references.use.cantonese': '詞語搜尋 · 粵音與粵語釋義',
     'references.use.fanqie': '詞語搜尋 · 反切', 'references.use.poetry': '詩詞搜尋', 'references.use.novel': '小說閱讀',
     'references.use.cipou': '詞牌搜尋 · 格律資料與整理', 'references.use.ichingText': '通寶起卦 · 卦辭與爻辭',
-    'references.use.ichingParaphrase': '通寶起卦 · 白話語譯參考', 'references.use.ichingRules': '通寶起卦 · 朱熹變占取辭規則',
+    'references.use.ichingParaphrase': '通寶起卦 · 白話語譯參考', 'references.use.ichingSupplementalLine': '通寶起卦 · 噬嗑卦初九原文補錄', 'references.use.ichingRules': '通寶起卦 · 朱熹變占取辭規則',
     'references.use.liveTranslation': '英語及意大利語即時翻譯', 'references.local': '站長整理',
-    'references.articles': '展開 {{count}} 卦逐卦參考連結', 'references.articlesNote': '以下連結按卦序自動產生；語譯由本站另行撰寫，並非轉載外站文字。'
+    'references.articles': '展開 {{count}} 卦逐卦參考連結', 'references.articlesNote': '以下連結按卦序自動產生；語譯由本站另行撰寫，並非轉載外站文字。',
+    'references.linksHeading': '其他連結', 'references.link.profile': '個人連結', 'references.link.patreon': '會員內容',
+    'references.link.instagram': '影片日記及詩經啤牌聯絡', 'references.link.whatsapp': '詩經啤牌聯絡', 'references.link.document': '產品頁原始 PDF'
   },
   'zh-Hans': {
     'references.mark': '引', 'references.title': 'References', 'references.menuDescription': '集中查看网站的资料来源与引用',
@@ -727,9 +717,11 @@ const REFERENCES_MESSAGES = {
     'references.use.meanings': '词语搜索 · 词义', 'references.use.cantonese': '词语搜索 · 粤音与粤语释义',
     'references.use.fanqie': '词语搜索 · 反切', 'references.use.poetry': '诗词搜索', 'references.use.novel': '小说阅读',
     'references.use.cipou': '词牌搜索 · 格律资料与整理', 'references.use.ichingText': '通宝起卦 · 卦辞与爻辞',
-    'references.use.ichingParaphrase': '通宝起卦 · 白话语译参考', 'references.use.ichingRules': '通宝起卦 · 朱熹变占取辞规则',
+    'references.use.ichingParaphrase': '通宝起卦 · 白话语译参考', 'references.use.ichingSupplementalLine': '通宝起卦 · 噬嗑卦初九原文补录', 'references.use.ichingRules': '通宝起卦 · 朱熹变占取辞规则',
     'references.use.liveTranslation': '英语及意大利语实时翻译', 'references.local': '站长整理',
-    'references.articles': '展开 {{count}} 卦逐卦参考链接', 'references.articlesNote': '以下链接按卦序自动生成；语译由本站另行撰写，并非转载外站文字。'
+    'references.articles': '展开 {{count}} 卦逐卦参考链接', 'references.articlesNote': '以下链接按卦序自动生成；语译由本站另行撰写，并非转载外站文字。',
+    'references.linksHeading': '其他链接', 'references.link.profile': '个人链接', 'references.link.patreon': '会员内容',
+    'references.link.instagram': '影片日记及诗经啤牌联络', 'references.link.whatsapp': '诗经啤牌联络', 'references.link.document': '产品页原始 PDF'
   },
   en: {
     'references.mark': '引', 'references.title': 'References', 'references.menuDescription': 'Browse the site’s data and text sources',
@@ -740,9 +732,11 @@ const REFERENCES_MESSAGES = {
     'references.use.meanings': 'Word search · meanings', 'references.use.cantonese': 'Word search · Cantonese readings and meanings',
     'references.use.fanqie': 'Word search · fanqie', 'references.use.poetry': 'Poetry search', 'references.use.novel': 'Fiction reader',
     'references.use.cipou': 'Ci patterns · metrics and editorial work', 'references.use.ichingText': 'Coin casting · hexagram and line texts',
-    'references.use.ichingParaphrase': 'Coin casting · paraphrase reference', 'references.use.ichingRules': 'Coin casting · Zhu Xi text-selection rules',
+    'references.use.ichingParaphrase': 'Coin casting · paraphrase reference', 'references.use.ichingSupplementalLine': 'Coin casting · supplementary text for hexagram 21, first line', 'references.use.ichingRules': 'Coin casting · Zhu Xi text-selection rules',
     'references.use.liveTranslation': 'Live English and Italian translation', 'references.local': 'Editor’s work',
-    'references.articles': 'Show {{count}} individual hexagram links', 'references.articlesNote': 'These links are generated by hexagram order. This site writes its own paraphrases rather than reproducing the linked translations.'
+    'references.articles': 'Show {{count}} individual hexagram links', 'references.articlesNote': 'These links are generated by hexagram order. This site writes its own paraphrases rather than reproducing the linked translations.',
+    'references.linksHeading': 'Other links', 'references.link.profile': 'Profile links', 'references.link.patreon': 'Membership content',
+    'references.link.instagram': 'Video diary and playing-card contact', 'references.link.whatsapp': 'Playing-card contact', 'references.link.document': 'Original product PDF'
   },
   it: {
     'references.mark': '引', 'references.title': 'References', 'references.menuDescription': 'Consulta le fonti dei dati e dei testi',
@@ -753,9 +747,11 @@ const REFERENCES_MESSAGES = {
     'references.use.meanings': 'Ricerca parole · significati', 'references.use.cantonese': 'Ricerca parole · letture e significati cantonesi',
     'references.use.fanqie': 'Ricerca parole · fanqie', 'references.use.poetry': 'Ricerca poesie', 'references.use.novel': 'Lettura narrativa',
     'references.use.cipou': 'Schemi ci · metrica e lavoro editoriale', 'references.use.ichingText': 'Lancio delle monete · testi degli esagrammi e delle linee',
-    'references.use.ichingParaphrase': 'Lancio delle monete · riferimento per la parafrasi', 'references.use.ichingRules': 'Lancio delle monete · regole di Zhu Xi',
+    'references.use.ichingParaphrase': 'Lancio delle monete · riferimento per la parafrasi', 'references.use.ichingSupplementalLine': 'Lancio delle monete · testo integrativo della prima linea dell’esagramma 21', 'references.use.ichingRules': 'Lancio delle monete · regole di Zhu Xi',
     'references.use.liveTranslation': 'Traduzione dal vivo in inglese e italiano', 'references.local': 'Lavoro redazionale',
-    'references.articles': 'Mostra {{count}} link ai singoli esagrammi', 'references.articlesNote': 'I link sono generati in ordine degli esagrammi. Le parafrasi sono scritte dal sito e non copiate dalle fonti.'
+    'references.articles': 'Mostra {{count}} link ai singoli esagrammi', 'references.articlesNote': 'I link sono generati in ordine degli esagrammi. Le parafrasi sono scritte dal sito e non copiate dalle fonti.',
+    'references.linksHeading': 'Altri link', 'references.link.profile': 'Collegamenti personali', 'references.link.patreon': 'Contenuti per membri',
+    'references.link.instagram': 'Diario video e contatto per le carte', 'references.link.whatsapp': 'Contatto per le carte', 'references.link.document': 'PDF originale del prodotto'
   }
 };
 

@@ -181,16 +181,9 @@
   display: flex;
   margin-left: 8px;
   align-items: center;
-  border-radius: 4px;
-}
-
-.app-navigation-logo-link:focus-visible {
-  outline: 2px solid #efe8d8;
-  outline-offset: 4px;
 }
 
 .app-navigation-logo { display: block; width: auto; height: 34px; opacity: 0.72; filter: invert(1) grayscale(1); transition: opacity 160ms ease; }
-.app-navigation-logo-link:hover .app-navigation-logo { opacity: 0.84; }
 
 @media (max-width: 720px) {
   .app-navigation-inner { width: min(100% - 28px, 1120px); min-height: 68px; padding: 0; gap: 0; }

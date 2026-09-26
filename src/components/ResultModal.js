@@ -4,7 +4,6 @@ import { getPrimaryPronunciation } from '../utils/pronunciation.js';
 import { supportsLiveTranslation, translateEntryLive } from '../services/liveTranslation.js';
 import { getPreferredMeanings, getSecondaryMeanings } from '../utils/search.js';
 import { splitReadingParagraphs } from '../utils/readingFormat.js';
-import { referenceUrl } from '../data/references.js';
 import { SelectionAssistant } from './SelectionAssistant.js';
 import './ResultModal.css';
 
@@ -356,9 +355,6 @@ export function ResultModal({
                       pronunciations={pronunciations}
                     />
                   </div>
-                  <p style={{ marginTop: '16px', fontSize: '12px', color: '#888' }}>
-                    {convertText('資料來源')}：<a href={referenceUrl('chinesePoetry')} target="_blank" rel="noreferrer" style={{ color: '#3f80ff' }}>chinese-poetry</a>
-                  </p>
                 </div>
               )}
 
@@ -382,9 +378,6 @@ export function ResultModal({
                       </button>
                     ))}
                   </div>
-                  <p style={{ marginTop: '16px', fontSize: '12px', color: '#888' }}>
-                    {convertText('資料來源')}：<a href={referenceUrl('chineseNovel')} target="_blank" rel="noreferrer" style={{ color: '#8a5a2b' }}>chinese-novel</a>
-                  </p>
                 </div>
               )}
 
@@ -400,9 +393,6 @@ export function ResultModal({
                   <article className="novel-reading-paper" style={{ background: '#fffaf2', padding: '22px', borderRadius: '8px', lineHeight: 2, fontSize: '17px', color: '#332a20', whiteSpace: 'pre-wrap', textAlign: 'left' }}>
                     <ReadingText content={selectedItem.content} kind="prose" mode={readingMode} convertText={convertText} />
                   </article>
-                  <p style={{ marginTop: '16px', fontSize: '12px', color: '#888' }}>
-                    {convertText('資料來源')}：<a href={referenceUrl('chineseNovel')} target="_blank" rel="noreferrer" style={{ color: '#8a5a2b' }}>chinese-novel</a>
-                  </p>
                 </div>
               )}
 
@@ -453,31 +443,7 @@ export function ResultModal({
                       </ol>
                     </div>
                   )}
-                  {getPreferredMeanings(selectedItem).length > 0 ? (
-                    <p style={{ marginTop: '18px', fontSize: '12px', color: '#888' }}>
-                      {convertText('資料來源')}：{' '}
-                      {selectedItem.hasCantoneseBooksData && (
-                        <a
-                          href={referenceUrl('cantoneseBooks')}
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{ color: '#0b6b53', marginRight: '10px' }}
-                        >
-                          {convertText('《粵音資料集叢》典籍資料')}
-                        </a>
-                      )}
-                      {Array.isArray(selectedItem.meanings) && selectedItem.meanings.length > 0 && (
-                        <a
-                          href={referenceUrl('moedict')}
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{ color: '#3f80ff' }}
-                        >
-                          {convertText('教育部《重編國語辭典修訂本》資料')}
-                        </a>
-                      )}
-                    </p>
-                  ) : (
+                  {getPreferredMeanings(selectedItem).length === 0 && (
                     <p style={{ color: '#95a5a6', fontStyle: 'italic', marginTop: '20px' }}>
                       {convertText('此詞語在現有典籍及辭典資料中暫無釋義')}
                     </p>

@@ -136,26 +136,6 @@
   border-top: 1px solid rgba(239, 232, 216, 0.17);
 }
 .product-purchase-row strong { color: #f2c57f; font-family: Georgia, serif; font-size: 25px; font-style: italic; }
-.product-purchase-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
-.product-purchase-actions a {
-  padding: 11px 15px;
-  color: #d9e0dc;
-  border: 1px solid rgba(239, 232, 216, 0.2);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.045);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.055em;
-  text-decoration: none;
-  transition: color 160ms ease, border-color 160ms ease, background 160ms ease, transform 160ms ease;
-}
-.product-purchase-actions a:hover {
-  color: #17211e;
-  border-color: #efe8d8;
-  background: #efe8d8;
-  transform: translateY(-2px);
-}
-.product-purchase-actions a span { margin-left: 5px; }
 
 .product-document-page { padding-top: 48px; }
 .product-document-shell {
@@ -185,20 +165,6 @@
   font-size: clamp(28px, 4vw, 48px);
   font-weight: 500;
 }
-.product-document-header a {
-  flex: none;
-  padding: 10px 14px;
-  color: #e9dfcb;
-  border: 1px solid rgba(239, 232, 216, 0.24);
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-decoration: none;
-  transition: color 160ms ease, background 160ms ease, transform 160ms ease;
-}
-.product-document-header a:hover { color: #17211e; background: #efe8d8; transform: translateY(-2px); }
-.product-document-header a span { margin-left: 5px; }
 .product-document-viewer {
   display: block;
   width: 100%;
@@ -211,8 +177,6 @@
 .theme-light .product-document-shell { background: rgba(255, 253, 247, 0.92); border-color: #d8cdbb; }
 .theme-light .product-document-header { border-color: #ded3c1; }
 .theme-light .product-document-header h1 { color: #26312d; }
-.theme-light .product-document-header a { color: #50655b; border-color: #b8ad9b; }
-.theme-light .product-document-header a:hover { color: #f8f3e7; background: #334a40; }
 
 @media (max-width: 620px) {
   .product-page { padding: 48px 16px 72px; }
@@ -232,5 +196,4 @@
   .product-detail-page { padding-top: 36px; }
   .product-creator-story { margin-top: 38px; }
   .product-purchase-row { align-items: flex-start; flex-direction: column; }
-  .product-purchase-actions { width: 100%; justify-content: flex-start; }
 }

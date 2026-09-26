@@ -1,5 +1,5 @@
 import React from 'react';
-import { allReferences, referenceStats } from '../data/references.js';
+import { allReferences, referenceStats, SITE_LINKS } from '../data/references.js';
 import './SettingsPage.css';
 import './ReferencesPage.css';
 
@@ -52,6 +52,11 @@ export function ReferencesPage({ t }) {
           <ul>{references.filter(reference => reference.group === group).map(reference =>
             <ReferenceItem key={reference.id} reference={reference} t={t} />)}</ul>
         </section>)}
+
+        <section className="references-group" aria-labelledby="references-links">
+          <h3 id="references-links">{t('references.linksHeading')}</h3>
+          <ul>{SITE_LINKS.map(link => <ReferenceItem key={link.id} reference={link} t={t} />)}</ul>
+        </section>
 
       </section>
     </div>

@@ -11,5 +11,8 @@ test('References shows a compact central inventory without 64 individual links',
   expect(screen.getByText('站長個人經驗與整理')).not.toBeNull();
   expect(screen.getAllByText('FONTI E RIFERIMENTI')).toHaveLength(2);
   expect(screen.queryByText(/逐卦參考連結/)).toBeNull();
-  expect(screen.getAllByRole('listitem')).toHaveLength(11);
+  expect(screen.getAllByRole('listitem')).toHaveLength(17);
+  expect(screen.getByRole('link', { name: /易學界 · 噬嗑初九/ }).getAttribute('href')).toBe('https://www.yilusoso.com/lssg/82/');
+  expect(screen.getByRole('link', { name: /Interpolate You · Linktree/ }).getAttribute('href')).toBe('https://linktr.ee/interpolateyou');
+  expect(screen.getByRole('link', { name: /輕文釋註.*PDF/ }).getAttribute('href')).toContain('.pdf');
 });

@@ -13,6 +13,22 @@ const chapter = {
 };
 
 describe('ResultModal novel navigation', () => {
+  test('reading dialogs contain no inline reference text or links', () => {
+    const props = {
+      type: 'poetry', locale: 'zh-Hant', t: createTranslator('zh-Hant'),
+      convertText: text => text, onClose: jest.fn(), onBack: jest.fn(),
+      onLoadNovelChapter: jest.fn(), onSaveReadingNote: jest.fn()
+    };
+    const { rerender } = render(<ResultModal {...props}
+      selectedItem={{ type: 'poetry', title: '靜夜思', author: '李白', content: '床前明月光。' }} />);
+    expect(screen.queryByText('資料來源')).toBeNull();
+    expect(screen.queryByRole('link')).toBeNull();
+    rerender(<ResultModal {...props} type="novels" selectedItem={chapter} />);
+    expect(screen.queryByRole('link')).toBeNull();
+    rerender(<ResultModal {...props} type="words" selectedItem={{ type: 'word', text: '山麓', meanings: ['山腳。'] }} />);
+    expect(screen.queryByRole('link')).toBeNull();
+  });
+
   test('returns from a novel chapter to the previous page', () => {
     const onBack = jest.fn();
 

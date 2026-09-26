@@ -24,8 +24,6 @@ const NAV_TABS = [
     titleKey: 'nav.products.title',
     descriptionKey: 'nav.products.description',
     features: [
-      { href: 'https://patreon.com/interpolateyou', markKey: 'product.patreon.mark', labelKey: 'product.patreon.label', descriptionKey: 'product.patreon.menuDescription' },
-      { href: 'https://www.instagram.com/shadow_lazuli', markKey: 'product.videoDiary.mark', labelKey: 'product.videoDiary.label', descriptionKey: 'product.videoDiary.menuDescription' },
       { view: 'product-bookmark', markKey: 'product.bookmark.mark', labelKey: 'product.bookmark.label', descriptionKey: 'product.bookmark.menuDescription' },
       { view: 'product-cards', markKey: 'product.cards.mark', labelKey: 'product.cards.label', descriptionKey: 'product.cards.menuDescription' },
       { view: 'product-reading-notes', markKey: 'product.readingNotes.mark', labelKey: 'product.readingNotes.label', descriptionKey: 'product.readingNotes.menuDescription' }
@@ -66,8 +64,7 @@ const NAV_TABS = [
     titleKey: 'nav.foundersWhy.title',
     descriptionKey: 'nav.foundersWhy.description',
     features: [
-      { view: 'founders-why', markKey: 'nav.foundersWhy.mark', labelKey: 'nav.foundersWhy', descriptionKey: 'nav.foundersWhy.menuDescription' },
-      { href: 'https://linktr.ee/interpolateyou', markKey: 'nav.linktree.mark', labelKey: 'nav.linktree.label', descriptionKey: 'nav.linktree.description' }
+      { view: 'founders-why', markKey: 'nav.foundersWhy.mark', labelKey: 'nav.foundersWhy', descriptionKey: 'nav.foundersWhy.menuDescription' }
     ]
   }
 ];
@@ -150,15 +147,9 @@ export function AppNavigation({ view, onViewChange, t }) {
           ))}
         </div>
 
-        <a
-          className="app-navigation-logo-link"
-          href="https://linktr.ee/interpolateyou"
-          target="_blank"
-          rel="noreferrer"
-          aria-label={t('nav.credentials')}
-        >
+        <div className="app-navigation-logo-link">
           <img src="/logo-header.png" alt="Interpolate You Logo" className="app-navigation-logo" />
-        </a>
+        </div>
       </div>
 
       {openTab && (
@@ -181,21 +172,7 @@ export function AppNavigation({ view, onViewChange, t }) {
                 </>
               );
 
-              return feature.href ? (
-                <a
-                  key={feature.href}
-                  href={feature.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={closeMenus}
-                >
-                  {content}
-                </a>
-              ) : (
-                <button key={feature.view} type="button" onClick={() => navigateTo(feature.view)}>
-                  {content}
-                </button>
-              );
+              return <button key={feature.view} type="button" onClick={() => navigateTo(feature.view)}>{content}</button>;
             })}
           </div>
         </div>

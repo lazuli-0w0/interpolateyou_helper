@@ -38,10 +38,6 @@ if (typeof module !== 'undefined' && module.exports) {
 fs.writeFileSync('./src/complete_cipai_names.js', fileContent);
 console.log('✅ 已生成 src/complete_cipai_names.js');
 
-// 同時複製到 public 目錄（供瀏覽器直接使用）
-fs.writeFileSync('./public/complete_cipai_names.js', fileContent);
-console.log('✅ 已生成 public/complete_cipai_names.js');
-
 console.log(`\n📊 統計信息:`);
 console.log(`- 總共包含 ${ciPaiData.length} 個詞牌名稱`);
 console.log(`- ID 範圍: ${Math.min(...ciPaiData.map(x=>x.id))} - ${Math.max(...ciPaiData.map(x=>x.id))}`);

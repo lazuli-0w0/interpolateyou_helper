@@ -102,3 +102,31 @@ PORT=3001 npm start  # 前端在 http://localhost:3001
 - 只重建精選集：`npm run data:featured-poems`
 
 首頁會從 500 首名家優先精選詩詞中加權隨機展示一首，並避免連續重複；詩詞搜尋在未輸入關鍵字時預顯示同一精選集。詩詞結果可按題目、作者、作品名和正文搜尋並開啟全文。小說頁面可按書名、作者、章回或正文搜尋，先顯示完全匹配的書籍，再顯示相關章回；書籍詳情提供目錄和逐回全文閱讀。
+
+
+## 典籍搜尋
+
+入口：`/strumenti/testi-classici`。書目先讀取輕量 JSON；《宋論》和《三朝北盟會編》
+的正文在 `public/data/classics/classics.sqlite`，NiuTrans 的 97 部雙語典籍則各有一個
+`public/data/classics/niutrans/*.sqlite`。選擇書籍後才載入該書的資料檔，以 Web Worker
+執行 SQLite 查詢。全書目模式搜尋書名、章名和原有兩部正文；97 部正文需選書搜尋，
+避免一次下載約 486 MB 的資料。原文與未譯的 null 值完整保留，搜尋使用另一組繁簡及異體正規化欄位。
+
+把逐句 JSON 放到 `data-sources/classics/`，執行 `pnpm data:classics` 重建資料庫。
+也可執行 `python3 scripts/build-classics-db.py --source /absolute/path/book.json`，
+同時在輸入 JSON 旁輸出 `.sqlite` 檔。`data-sources/` 依 `.gitignore` 不會提交；
+新增書籍會一起匯入，語譯更新後需重建並保留來源備份。
+
+驗證：`pnpm test:classics-db` 以真實 SQLite 引擎測試 Worker 的查詢、繁簡對照、
+分頁、語譯篩選和參數化查詢；介面測試位於 `ClassicsPage.test.js`。
+
+NiuTrans 匯入使用 `NiuTrans/Classical-Modern` 的 commit
+`4e746ea9fa99c3c0d7051c45397330bef7b0962d`，來源 checkout 須包含 `双语数据`：
+`python3 scripts/build-niutrans-shards.py /absolute/path/to/Classical-Modern`。
+匯入器要求 97 部、972,467 組句對；完成後執行 `python3 scripts/verify-niutrans-shards.py`。
+原始庫說明這批資料取自多個外部網站；結構、句對與資料庫完整性已有自動驗證，
+但這不等於逐句譯文交叉校核，也不等於取得所有第三方譯文的再發布權。
+對外發布前應另外釐清來源權利。網站來源連結只放在 References 頁。
+
+SQLite 執行引擎為 sql.js 1.13.0，WASM、JavaScript 和 MIT 授權一起部署，
+不依賴第三方 CDN，也不需要額外的資料庫服務。

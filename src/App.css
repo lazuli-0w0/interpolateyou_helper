@@ -112,6 +112,12 @@
   border-bottom: 1px solid #dcd3c4;
 }
 
+.classic-book-filter { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; color: #43554a; font-size: 14px; }
+.classic-book-filter select { flex: 1; min-width: 0; max-width: 360px; min-height: 42px; padding: 8px 12px; border: 1px solid #cfc6b6; border-radius: 10px; background: #fffdf8; color: #24302c; font: inherit; }
+.classic-book-filter select:focus-visible { outline: 3px solid #b88952; outline-offset: 2px; }
+.theme-dark .classic-book-filter { color: #c7d4c9; }
+.theme-dark .classic-book-filter select { background: #24332c; border-color: #526457; color: #f4f0e5; }
+
 .search-controls {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) auto;

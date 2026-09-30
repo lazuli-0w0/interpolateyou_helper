@@ -6,6 +6,8 @@ const ROUTE_BY_ITEM_TYPE = {
   poetry: 'poetry',
   'novel-book': 'novels',
   'novel-chapter': 'novels',
+  'classic-book': 'classics',
+  'classic-chapter': 'classics',
   cipou: 'cipou'
 };
 
@@ -27,6 +29,8 @@ export function createReadingHistoryEntry(item, fallbackView) {
     item: {
       id: item.id,
       literatureId: item.literatureId,
+      bookId: item.bookId,
+      volume: item.volume,
       type: itemType,
       text: item.text,
       title: item.title,

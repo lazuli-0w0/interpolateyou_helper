@@ -20,6 +20,8 @@ export function createReadingNote({ text, annotation = '', source = {} }) {
     source: {
       id: source.id,
       literatureId: source.literatureId,
+      bookId: source.bookId,
+      volume: source.volume,
       type: source.type,
       text: source.text,
       name: source.name,

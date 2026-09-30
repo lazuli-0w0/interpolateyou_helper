@@ -22,6 +22,73 @@
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
 }
 
+.landing-nebula {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.landing-nebula-haze,
+.landing-nebula-stars {
+  position: absolute;
+  inset: -18%;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.landing-nebula-haze {
+  opacity: 0.35;
+  background:
+    radial-gradient(ellipse at 62% 28%, rgba(89, 143, 146, 0.2), transparent 35%),
+    radial-gradient(ellipse at 34% 72%, rgba(86, 128, 106, 0.16), transparent 42%);
+  animation: landing-nebula-haze 24s ease-in-out infinite alternate;
+}
+
+.landing-nebula-stars {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transform-origin: center;
+}
+
+.landing-nebula-far {
+  opacity: 0.48;
+  animation: landing-nebula-breathe 23s ease-in-out infinite alternate;
+}
+
+.landing-nebula-mid {
+  opacity: 0.4;
+  animation: landing-nebula-drift 18s ease-in-out infinite alternate;
+}
+
+.landing-nebula-near {
+  opacity: 0.32;
+  filter: drop-shadow(0 0 3px rgba(205, 240, 235, 0.55));
+  animation: landing-nebula-near 14s ease-in-out infinite alternate;
+}
+
+@keyframes landing-nebula-breathe {
+  from { transform: scale(1) translate3d(0, 0, 0); }
+  to { transform: scale(1.34) translate3d(-1.2%, 0.8%, 0); }
+}
+
+@keyframes landing-nebula-drift {
+  from { transform: scale(1.02) translate3d(1%, -0.8%, 0); }
+  to { transform: scale(1.22) translate3d(-1.3%, 1.1%, 0); }
+}
+
+@keyframes landing-nebula-near {
+  from { transform: scale(1.04) translate3d(-1.2%, 0.6%, 0); opacity: 0.22; }
+  to { transform: scale(1.26) translate3d(1%, -1.2%, 0); opacity: 0.42; }
+}
+
+@keyframes landing-nebula-haze {
+  from { transform: scale(1) translate3d(0, 0, 0); }
+  to { transform: scale(1.1) translate3d(-2%, 1.5%, 0); }
+}
+
 .landing-orb {
   position: absolute;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -172,5 +239,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .landing-orb,
-  .featured-poem::after { animation: none; }
+  .featured-poem::after,
+  .landing-nebula-haze,
+  .landing-nebula-stars { animation: none; }
 }

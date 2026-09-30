@@ -42,6 +42,9 @@ importers:
       gh-pages:
         specifier: ^6.3.0
         version: 6.3.0
+      sql.js:
+        specifier: 1.13.0
+        version: 1.13.0
       tshet-uinh:
         specifier: ^0.15.4
         version: 0.15.4
@@ -4862,6 +4865,9 @@ packages:
 
   sprintf-js@1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
+
+  sql.js@1.13.0:
+    resolution: {integrity: sha512-RJbVP1HRDlUUXahJ7VMTcu9Rm1Nzw+EBpoPr94vnbD4LwR715F3CcxE2G2k45PewcaZ57pjetYa+LoSJLAASgA==}
 
   stable@0.1.8:
     resolution: {integrity: sha512-ji9qxRnOVfcuLDySj9qzhGSEFVobyt1kIOSkj1qZzYLzq7Tos/oUUWvotUPQLlrsidqsK6tBH89Bc9kL5zHA6w==}
@@ -11385,6 +11391,8 @@ snapshots:
       - supports-color
 
   sprintf-js@1.0.3: {}
+
+  sql.js@1.13.0: {}
 
   stable@0.1.8: {}
 

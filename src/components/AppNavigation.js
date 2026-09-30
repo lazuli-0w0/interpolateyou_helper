@@ -14,6 +14,7 @@ const NAV_TABS = [
       { view: 'poetry', markKey: 'tool.poetry.mark', labelKey: 'tool.poetry.title', descriptionKey: 'tool.poetry.menuDescription' },
       { view: 'novels', markKey: 'tool.novels.mark', labelKey: 'tool.novels.title', descriptionKey: 'tool.novels.menuDescription' },
       { view: 'cipou', markKey: 'tool.cipou.mark', labelKey: 'tool.cipou.title', descriptionKey: 'tool.cipou.menuDescription' },
+      { view: 'classics', markKey: 'classics.mark', labelKey: 'classics.title', descriptionKey: 'classics.menuDescription' },
       { view: 'iching', markKey: 'iching.mark', labelKey: 'iching.title', descriptionKey: 'iching.menuDescription' }
     ]
   },

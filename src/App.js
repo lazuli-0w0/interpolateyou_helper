@@ -7,6 +7,7 @@ import { ReferencesPage } from './components/ReferencesPage.js';
 import { FoundersWhyPage } from './components/FoundersWhyPage.js';
 import { ProductPage } from './components/ProductPage.js';
 import { ForumPage } from './components/ForumPage.js';
+import { loadClassicBooks, searchClassicLiterature, loadClassicEntry } from './services/classicsLiterature.js';
 import { IChingPage } from './components/IChingPage.js';
 import { ReadingHistoryPage } from './components/ReadingHistoryPage.js';
 import { ReadingNotesPage } from './components/ReadingNotesPage.js';
@@ -55,6 +56,11 @@ const VIEW_CONFIG = {
     placeholderKey: 'tool.novels.placeholder',
     getStaticData: () => []
   },
+  classics: {
+    eyebrowKey: 'classics.eyebrow', titleKey: 'classics.title',
+    descriptionKey: 'classics.menuDescription', markKey: 'classics.mark',
+    placeholderKey: 'classics.placeholder', getStaticData: () => []
+  },
   cipou: {
     eyebrowKey: 'tool.cipou.eyebrow',
     titleKey: 'tool.cipou.title',
@@ -76,11 +82,15 @@ const VIEW_BY_ENTRY_TYPE = {
   poetry: 'poetry',
   'novel-book': 'novels',
   'novel-chapter': 'novels',
+  'classic-book': 'classics',
+  'classic-chapter': 'classics',
   cipou: 'cipou'
 };
 
 async function resolveSavedEntry(snapshot) {
   if (!snapshot) return null;
+
+  if (snapshot.type === 'classic-book' || snapshot.type === 'classic-chapter') return loadClassicEntry(snapshot);
 
   if (snapshot.literatureId != null) {
     const [record] = await dataManager.loadLiteratureRecords([snapshot.literatureId]);
@@ -260,7 +270,7 @@ export function matchesCipouSearch(item, searchVariants) {
   });
 }
 
-function AdvancedSearch({
+export function AdvancedSearch({
   type,
   staticData,
   locale,
@@ -284,6 +294,7 @@ function AdvancedSearch({
     placeholder: t(viewConfig.placeholderKey)
   };
   const [query, setQuery] = useState(initialSession?.query || '');
+  const [classicBookFilter, setClassicBookFilter] = useState(initialSession?.classicBookFilter || '*');
   const [appliedQuery, setAppliedQuery] = useState(initialSession?.appliedQuery || '');
   const [appliedBrowseCount, setAppliedBrowseCount] = useState(initialSession?.appliedBrowseCount || 0);
   const [searchError, setSearchError] = useState(false);
@@ -312,7 +323,7 @@ function AdvancedSearch({
   sessionSnapshotRef.current = {
     query, appliedQuery, appliedBrowseCount, results, allData, dataLoaded, loadError,
     displayCount, resultView, browseCategory, browseExpanded, selectedBrowseValues,
-    selectedRhymePatterns, cipouSort, poetryOverLimit, hasMorePoetry
+    selectedRhymePatterns, cipouSort, poetryOverLimit, hasMorePoetry, classicBookFilter
   };
 
   useEffect(() => () => onSessionSave(type, sessionSnapshotRef.current), [onSessionSave, type]);
@@ -330,7 +341,7 @@ function AdvancedSearch({
   }, [initialSelectedItem, onEntryOpened, onInitialItemHandled, type]);
 
   useEffect(() => {
-    if (initialSelectedItem) return undefined;
+    if (initialSelectedItem || type === 'classics') return undefined;
     if (!routeEntry) {
       setSelectedItem(null);
       setPreviousNovelItem(null);
@@ -372,19 +383,27 @@ function AdvancedSearch({
           data = await dataManager.loadPoetryData();
         } else if (type === 'novels') {
           data = await dataManager.loadNovelsData();
+        } else if (type === 'classics') {
+          data = await loadClassicBooks();
         } else if (type === 'cipou') {
           data = await dataManager.loadCipouData();
         }
 
         setAllData(data);
 
-        setResults(data);
+        const requestedTitle = type === 'classics' ? new URLSearchParams(window.location.search).get('book') : null;
+        const requested = data.find(book => book.title === requestedTitle);
+        setResults(requested ? [requested] : data);
+        if (requested) {
+          setSelectedBrowseValues({ author: new Set([requested.author]) });
+          setAppliedBrowseCount(1);
+        }
 
         setDataLoaded(true);
 
       } catch (error) {
         console.error('載入數據出錯:', error);
-        const fallback = ['poetry', 'novels'].includes(type) ? [] : staticData;
+        const fallback = ['poetry', 'novels', 'classics'].includes(type) ? [] : staticData;
         setAllData(fallback);
         setResults(fallback);
         setDataLoaded(true);
@@ -424,7 +443,8 @@ function AdvancedSearch({
     baseData = applyFilters(baseData);
 
     if (!searchQuery.trim() && !hasBrowseSelections) {
-      setResults(baseData); // 無搜索時顯示所有篩選後的數據
+      setResults(type === 'classics' && classicBookFilter !== '*'
+        ? baseData.filter(book => book.bookId === classicBookFilter) : baseData);
       setAppliedQuery('');
       setAppliedBrowseCount(0);
       return;
@@ -435,8 +455,8 @@ function AdvancedSearch({
     try {
       let searchResults = [];
 
-      if ((type === 'poetry' || type === 'novels') && hasBrowseSelections) {
-        const searchLiterature = type === 'novels'
+      if ((type === 'poetry' || type === 'novels' || type === 'classics') && hasBrowseSelections) {
+        const searchLiterature = type === 'classics' ? (term, start, end) => searchClassicLiterature(term, start, end, classicBookFilter) : type === 'novels'
           ? dataManager.searchNovelData.bind(dataManager)
           : dataManager.searchPoetryData.bind(dataManager);
         const authorValues = browseSelections.find(selection => selection.category === 'author')?.values || [];
@@ -468,12 +488,14 @@ function AdvancedSearch({
         }
         setPoetryOverLimit(false);
         setHasMorePoetry(false);
-      } else if (type === 'poetry' || type === 'novels') {
+      } else if (type === 'poetry' || type === 'novels' || type === 'classics') {
         // 詩詞與小說均使用分片文學索引。
         const currentResultsCount = additionalLoad > 0 ? results.length : 0;
         const maxLoad = currentResultsCount + (additionalLoad || 1000);
 
-        const poetrySearchResult = type === 'novels'
+        const poetrySearchResult = type === 'classics'
+          ? await searchClassicLiterature(searchQuery, currentResultsCount, maxLoad, classicBookFilter)
+          : type === 'novels'
           ? await dataManager.searchNovelData(searchQuery, currentResultsCount, maxLoad)
           : await dataManager.searchPoetryData(searchQuery, currentResultsCount, maxLoad);
 
@@ -527,7 +549,7 @@ function AdvancedSearch({
     } finally {
       setLoading(false);
     }
-  }, [allData, applyFilters, query, results, selectedBrowseValues, type]);
+  }, [allData, applyFilters, query, results, selectedBrowseValues, type, classicBookFilter]);
 
   // 僅用於篩選條件改變的搜索函數
 
@@ -576,7 +598,7 @@ function AdvancedSearch({
 
   // 載入更多詩詞 (1000項或全部)
   const loadMorePoetry = async (loadAll = false) => {
-    if (!['poetry', 'novels'].includes(type) || loading) return;
+    if (!['poetry', 'novels', 'classics'].includes(type) || loading) return;
 
     try {
       setLoading(true);
@@ -584,7 +606,9 @@ function AdvancedSearch({
       const additionalLoad = loadAll ? 999999 : 1000;
 
       // 使用當前已載入的數量作為起始點，載入更多詩詞
-      const searchResults = type === 'novels'
+      const searchResults = type === 'classics'
+        ? await searchClassicLiterature(appliedQuery, currentCount, currentCount + additionalLoad, classicBookFilter)
+        : type === 'novels'
         ? await dataManager.searchNovelData(appliedQuery, currentCount, currentCount + additionalLoad)
         : await dataManager.searchPoetryData(appliedQuery, currentCount, currentCount + additionalLoad);
 
@@ -647,10 +671,10 @@ function AdvancedSearch({
   // 加载项目详情 (按需加载)
   const loadItemDetails = useCallback(async (item) => {
     setPreviousNovelItem(null);
-    if (item.type === 'poetry' || item.type === 'novel-chapter') {
+    if (item.type === 'poetry' || item.type === 'novel-chapter' || item.type === 'classic-chapter') {
       setLoading(true);
       try {
-        const loadedItem = await dataManager.loadLiteratureBody(item);
+        const loadedItem = item.type === 'classic-chapter' ? await loadClassicEntry(item) : await dataManager.loadLiteratureBody(item);
         setSelectedItem(loadedItem);
         onEntryOpened(loadedItem, type);
       } finally {
@@ -663,11 +687,13 @@ function AdvancedSearch({
   }, [onEntryOpened, type]);
 
   const loadNovelChapter = useCallback(async (chapterId) => {
-    setPreviousNovelItem(selectedItem?.type === 'novel-book' ? selectedItem : null);
+    setPreviousNovelItem(['novel-book', 'classic-book'].includes(selectedItem?.type) ? selectedItem : null);
     setLoading(true);
     try {
-      const [chapter] = await dataManager.loadLiteratureRecords([chapterId]);
-      const loadedChapter = await dataManager.loadLiteratureBody(chapter);
+      const chapter = type === 'classics'
+        ? selectedItem.chapters.find(item => item.id === chapterId)
+        : (await dataManager.loadLiteratureRecords([chapterId]))[0];
+      const loadedChapter = type === 'classics' ? await loadClassicEntry(chapter) : await dataManager.loadLiteratureBody(chapter);
       setSelectedItem(loadedChapter);
       onEntryOpened(loadedChapter, type);
     } finally {
@@ -688,7 +714,7 @@ function AdvancedSearch({
   }, [onEntryOpened, previousNovelItem, type]);
 
   return (
-    <main className={`search-page search-page-${type}`}>
+    <main className={`search-page search-page-${type === 'classics' ? 'novels' : type}`}>
       <div className="search-page-orb search-page-orb-one" aria-hidden="true" />
       <div className="search-page-orb search-page-orb-two" aria-hidden="true" />
       <div className="search-page-inner">
@@ -704,13 +730,24 @@ function AdvancedSearch({
         <section className="search-workspace" aria-label={presentation.title}>
       {/* 搜索区域 */}
       <div className="search-controls-panel">
+        {type === 'classics' && <label className="classic-book-filter">
+          <span>{t('classics.bookFilter')}</span>
+          <select value={classicBookFilter} onChange={event => {
+            setClassicBookFilter(event.target.value);
+            setResults(event.target.value === '*' ? allData : allData.filter(book => book.bookId === event.target.value));
+            setAppliedQuery('');
+          }}>
+            <option value="*">{t('classics.allBooks')}</option>
+            {allData.map(book => <option key={book.bookId} value={book.bookId}>{convertText(book.title)}</option>)}
+          </select>
+        </label>}
         <div className="search-controls">
           <input
             className="search-input"
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={presentation.placeholder}
+            placeholder={type === 'classics' && classicBookFilter === '*' ? t('classics.catalogPlaceholder') : presentation.placeholder}
             onKeyDown={(e) => {
               if (e.key !== 'Enter') return;
               handleAdvancedSearch(query);
@@ -974,7 +1011,7 @@ function AdvancedSearch({
       )}
 
       {/* 詩詞超過1000項提示 - 移到頂部 */}
-      {(type === 'poetry' || type === 'novels') && poetryOverLimit && (
+      {(type === 'poetry' || type === 'novels' || type === 'classics') && poetryOverLimit && (
         <div className="search-limit-notice" style={{
           background: 'linear-gradient(135deg, #fff3cd, #ffeaa7)',
           border: '2px solid #ffc107',
@@ -1147,16 +1184,16 @@ function AdvancedSearch({
               </div>
             )}
 
-            {(item.type === 'novel-book' || item.type === 'novel-chapter') && (
+            {(['novel-book', 'novel-chapter', 'classic-book', 'classic-chapter'].includes(item.type)) && (
               <div>
                 <div className="result-card-heading" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px' }}>
                   <strong className="result-card-title" style={{ fontSize: '18px', color: '#8a5a2b' }}>{convertText(item.title)}</strong>
                   <span className="result-tag" style={{ background: '#fff0d8', color: '#8a5a2b', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>
-                    {convertText(item.type === 'novel-book' ? `${item.chapters.length} 章` : '小說章回')}
+                    {convertText(item.chapters ? `${item.chapters.length} 章` : item.type === 'classic-chapter' ? '典籍卷次' : '小說章回')}
                   </span>
                 </div>
                 <div className="result-card-meta" style={{ color: '#7f8c8d', marginTop: '4px' }}>
-                  {[item.dynasty, item.author, item.type === 'novel-chapter' ? item.work : item.category].filter(Boolean).map(convertText).join(' · ')}
+                  {[item.dynasty, item.author, ['novel-chapter', 'classic-chapter'].includes(item.type) ? item.work : item.category].filter(Boolean).map(convertText).join(' · ')}
                 </div>
                 {item.preview && <div className="result-card-preview" style={{ color: '#777', marginTop: '8px', fontSize: '14px', lineHeight: 1.6 }}>{convertText(item.preview)}...</div>}
               </div>

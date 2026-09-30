@@ -27,7 +27,9 @@
     "deploy": "gh-pages -d build",
     "set-gh-homepage": "npm pkg set homepage=https://lazuli-0w0.github.io/interpolateyou_helper",
     "set-local-homepage": "npm pkg set homepage=/",
-    "postdeploy": "npm run set-local-homepage"
+    "postdeploy": "npm run set-local-homepage",
+    "data:classics": "python3 scripts/build-classics-db.py",
+    "test:classics-db": "node scripts/verify-classics-db.cjs"
   },
   "eslintConfig": {
     "extends": [
@@ -50,6 +52,7 @@
   "devDependencies": {
     "eslint-config-react-app": "^7.0.1",
     "gh-pages": "^6.3.0",
+    "sql.js": "1.13.0",
     "tshet-uinh": "^0.15.4",
     "tshet-uinh-examples": "^20260629.0.1"
   }

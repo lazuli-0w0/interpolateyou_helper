@@ -16,6 +16,7 @@ test('the central catalogue lists distinct sources without 64 repeated article l
 test('source links live in the References catalogue', () => {
   const reference = id => allReferences().find(item => item.id === id);
   expect(reference('chinesePoetry').url).toBe('https://github.com/chinese-poetry/chinese-poetry');
+  expect(reference('niutransClassics').url).toBe('https://github.com/NiuTrans/Classical-Modern');
   expect(reference('ichingSupplementalLine').url).toBe('https://www.yilusoso.com/lssg/82/');
   expect(reference('zhuXiRules').url).toContain('shidianguji.com');
   expect(reference('ichingPages').url).toBeNull();

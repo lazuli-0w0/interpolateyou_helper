@@ -6,6 +6,7 @@ export const VIEW_PATHS = Object.freeze({
   novels: '/strumenti/finzione-del-lessico',
   cipou: '/strumenti/prosa-del-lessico',
   iching: '/strumenti/i-ching',
+  classics: '/strumenti/testi-classici',
   forum: '/forum',
   'reading-notes': '/letture/leggere-le-note',
   'reading-history': '/letture/leggere-la-storia',

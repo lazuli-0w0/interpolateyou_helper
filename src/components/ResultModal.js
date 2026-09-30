@@ -195,6 +195,7 @@ export function ResultModal({
   const contentRef = useRef(null);
   const panelRef = useRef(null);
   const closeButtonRef = useRef(null);
+  const [showParaphrase, setShowParaphrase] = useState(false);
   const [readingMode, setReadingMode] = useState('original');
   const [pronunciationMode, setPronunciationMode] = useState('none');
   const [pronunciations, setPronunciations] = useState({});
@@ -240,6 +241,7 @@ export function ResultModal({
   }, [isOpen, onClose]);
 
   useEffect(() => {
+    setShowParaphrase(false);
     setReadingMode('original');
     setPronunciationMode('none');
   }, [selectedItemKey]);
@@ -297,7 +299,7 @@ export function ResultModal({
             background: '#fff',
             padding: '30px',
             borderRadius: '12px',
-            maxWidth: selectedItem.type === 'novel-book' || selectedItem.type === 'novel-chapter' ? '760px' : '500px',
+            maxWidth: ['novel-book', 'novel-chapter', 'classic-book', 'classic-chapter'].includes(selectedItem.type) ? '760px' : '500px',
             width: 'calc(100% - 40px)',
             maxHeight: '80vh',
             overflow: 'auto',
@@ -358,7 +360,7 @@ export function ResultModal({
                 </div>
               )}
 
-              {selectedItem.type === 'novel-book' && (
+              {['novel-book', 'classic-book'].includes(selectedItem.type) && (
                 <div className="result-modal-section novel-detail">
                   <h2 style={{ color: '#8a5a2b', marginBottom: '8px' }}>{convertText(selectedItem.title)}</h2>
                   <p style={{ color: '#7f8c8d' }}>{[selectedItem.dynasty, selectedItem.author, selectedItem.category].filter(Boolean).map(convertText).join(' · ')}</p>
@@ -381,7 +383,7 @@ export function ResultModal({
                 </div>
               )}
 
-              {selectedItem.type === 'novel-chapter' && (
+              {['novel-chapter', 'classic-chapter'].includes(selectedItem.type) && (
                 <div className="result-modal-section novel-detail novel-reader">
                   <button className="novel-reader-back" type="button" onClick={onBack}>
                     <span aria-hidden="true">←</span> {t('entry.back')}
@@ -390,8 +392,15 @@ export function ResultModal({
                   <h2 style={{ color: '#5f4528', marginBottom: '8px' }}>{convertText(selectedItem.title)}</h2>
                   <p style={{ color: '#7f8c8d' }}>{[selectedItem.dynasty, selectedItem.author, selectedItem.category].filter(Boolean).map(convertText).join(' · ')}</p>
                   <ReadingFormatTabs mode={readingMode} onChange={setReadingMode} t={t} />
+                  {selectedItem.sentences && <div className="reading-format-tabs" role="group" aria-label={t('classics.scope')}>
+                    <button type="button" className={!showParaphrase ? 'active' : ''} aria-pressed={!showParaphrase} onClick={() => setShowParaphrase(false)}>{t('classics.original')}</button>
+                    <button type="button" className={showParaphrase ? 'active' : ''} aria-pressed={showParaphrase} onClick={() => setShowParaphrase(true)}>{t('classics.allText')}</button>
+                  </div>}
                   <article className="novel-reading-paper" style={{ background: '#fffaf2', padding: '22px', borderRadius: '8px', lineHeight: 2, fontSize: '17px', color: '#332a20', whiteSpace: 'pre-wrap', textAlign: 'left' }}>
-                    <ReadingText content={selectedItem.content} kind="prose" mode={readingMode} convertText={convertText} />
+                    {showParaphrase && selectedItem.sentences ? selectedItem.sentences.map(row => <div className="classic-parallel-sentence" key={row.id}>
+                      <ReadingText content={row.original} kind="prose" mode={readingMode} convertText={convertText} />
+                      <p className="classic-paraphrase">{row.translation ? convertText(row.translation) : t('classics.pending')}</p>
+                    </div>) : <ReadingText content={selectedItem.content} kind="prose" mode={readingMode} convertText={convertText} />}
                   </article>
                 </div>
               )}

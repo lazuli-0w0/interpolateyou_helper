@@ -823,6 +823,36 @@ const ITALIAN_OVERLINES = {
 
 Object.values(MESSAGES).forEach(messages => Object.assign(messages, ITALIAN_OVERLINES));
 
+const ELTON_MESSAGES = {
+  'product.elton.mark': '我',
+  'product.elton.label': '與我對話',
+  'product.elton.menuDescription': '和 Elton 的 AI 分身聊聊',
+  'elton.subtitle': '與 AI 模擬的 Elton 聊聊。',
+  'elton.disclosure': '這是 AI 模擬的 Elton，並非 Elton 本人。所有回覆均由 AI 生成，不代表 Elton 本人的發言、立場或承諾。',
+  'elton.assistantLabel': 'Elton（AI 模擬）',
+  'elton.replyNotice': 'AI 生成 · 非本人發言',
+  'elton.placeholder': '有甚麼想和我說？',
+  'elton.send': '傳送',
+  'elton.new': '新對話',
+  'elton.you': '你',
+  'elton.wait': '正在思考…',
+  'elton.online': '可以對話',
+  'elton.offline': '暫時未連線',
+  'elton.checking': '正在連線',
+  'elton.retry': '重新連線',
+  'elton.error': '暫時無法回答，請稍後再試。',
+  'elton.busy': '目前正在回答另一個問題，請稍後再試。',
+  'elton.empty': '今天想聊甚麼？',
+  'elton.note': 'AI 回覆不代表 Elton 本人發言，內容可能有誤。',
+  'elton.promptOne': '最近在想甚麼？',
+  'elton.promptTwo': '陪我想一個寫作題目',
+  'elton.promptThree': '一起聊聊生活'
+};
+Object.assign(MESSAGES['zh-Hant'], ELTON_MESSAGES);
+Object.assign(MESSAGES['zh-Hans'], Object.fromEntries(Object.entries(ELTON_MESSAGES).map(([k,v]) => [k,chineseConverter.convertText(v,'simplified')])));
+Object.assign(MESSAGES.en, { ...ELTON_MESSAGES, 'product.elton.label':'Talk with me', 'product.elton.menuDescription':"Talk with Elton's AI persona", 'elton.subtitle':"Talk with an AI simulation of Elton.", 'elton.disclosure':"This is an AI simulation of Elton, not Elton himself. All replies are AI-generated and do not represent Elton's own words, views, or commitments.", 'elton.assistantLabel':'Elton (AI simulation)', 'elton.replyNotice':"AI-generated · Not Elton's own words", 'elton.placeholder':'What would you like to talk about?', 'elton.send':'Send', 'elton.new':'New conversation', 'elton.you':'You', 'elton.wait':'Thinking…', 'elton.online':'Ready to talk', 'elton.offline':'Currently offline', 'elton.checking':'Connecting', 'elton.retry':'Reconnect', 'elton.error':'Unable to answer right now. Please try again later.', 'elton.busy':'Answering another question. Please try again shortly.', 'elton.empty':'What is on your mind?', 'elton.note':"AI replies are not Elton's own words and may contain errors.", 'elton.promptOne':'What are you thinking about?', 'elton.promptTwo':'Help me find a writing idea', 'elton.promptThree':"Let's talk about life" });
+Object.assign(MESSAGES.it, { ...Object.fromEntries(Object.keys(ELTON_MESSAGES).map(k=>[k,MESSAGES.en[k]])), 'product.elton.label':'Parla con me', 'product.elton.menuDescription':'Parla con il personaggio AI di Elton', 'elton.subtitle':'Parla con una simulazione AI di Elton.', 'elton.disclosure':'Questa è una simulazione AI di Elton, non Elton in persona. Tutte le risposte sono generate da AI e non rappresentano le parole, le opinioni o gli impegni di Elton.', 'elton.assistantLabel':'Elton (simulazione AI)', 'elton.replyNotice':'Generato da AI · Non sono parole di Elton', 'elton.placeholder':'Di cosa vuoi parlare?', 'elton.send':'Invia', 'elton.new':'Nuova conversazione', 'elton.you':'Tu', 'elton.wait':'Sto pensando…', 'elton.online':'Pronto a parlare', 'elton.offline':'Al momento offline', 'elton.checking':'Connessione', 'elton.retry':'Riconnetti', 'elton.empty':'A cosa stai pensando?', 'elton.note':'Le risposte AI non sono parole di Elton e possono contenere errori.' });
+
 export function normalizeLocale(value) {
   if (value === 'simplified') return 'zh-Hans';
   if (value === 'traditional') return 'zh-Hant';

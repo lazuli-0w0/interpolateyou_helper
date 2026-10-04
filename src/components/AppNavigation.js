@@ -25,6 +25,7 @@ const NAV_TABS = [
     titleKey: 'nav.products.title',
     descriptionKey: 'nav.products.description',
     features: [
+      { view: 'product-elton', markKey: 'product.elton.mark', labelKey: 'product.elton.label', descriptionKey: 'product.elton.menuDescription' },
       { view: 'product-bookmark', markKey: 'product.bookmark.mark', labelKey: 'product.bookmark.label', descriptionKey: 'product.bookmark.menuDescription' },
       { view: 'product-cards', markKey: 'product.cards.mark', labelKey: 'product.cards.label', descriptionKey: 'product.cards.menuDescription' },
       { view: 'product-reading-notes', markKey: 'product.readingNotes.mark', labelKey: 'product.readingNotes.label', descriptionKey: 'product.readingNotes.menuDescription' }

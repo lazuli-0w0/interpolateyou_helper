@@ -15,7 +15,6 @@ const MENU_ITEMS = [
   { type: 'words', iconKey: 'tool.words.mark', titleKey: 'tool.words.title', descriptionKey: 'tool.words.menuDescription', accent: 'jade' },
   { type: 'poetry', iconKey: 'tool.poetry.mark', titleKey: 'tool.poetry.title', descriptionKey: 'tool.poetry.menuDescription', accent: 'blue' },
   { type: 'novels', iconKey: 'tool.novels.mark', titleKey: 'tool.novels.title', descriptionKey: 'tool.novels.menuDescription', accent: 'amber' },
-  { type: 'classics', iconKey: 'classics.mark', titleKey: 'classics.title', descriptionKey: 'classics.menuDescription', accent: 'jade' },
   { type: 'cipou', iconKey: 'tool.cipou.mark', titleKey: 'tool.cipou.title', descriptionKey: 'tool.cipou.menuDescription', accent: 'rose' }
 ];
 

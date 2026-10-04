@@ -72,6 +72,7 @@ const VIEW_CONFIG = {
 };
 
 const PRODUCT_VIEW_BY_ROUTE = {
+  'product-elton': 'elton',
   'product-bookmark': 'bookmark',
   'product-cards': 'cards',
   'product-reading-notes': 'reading-notes'

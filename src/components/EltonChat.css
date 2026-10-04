@@ -1,0 +1,56 @@
+.elton-page { padding: 40px 24px; }
+.elton-shell { max-width: 980px; margin: auto; background: #f8f3e7; color: #26342e; border: 1px solid #d8cdbb; border-radius: 4px 28px 4px 4px; display: flex; flex-direction: column; height: calc(100dvh - 160px); min-height: 550px; overflow: hidden; }
+.elton-header { padding: 30px 36px 24px; display: flex; justify-content: space-between; align-items: center; gap: 18px; border-bottom: 1px solid #d8cdbb; }
+.elton-header .product-page-eyebrow { color: #916459; margin-bottom: 14px; }
+.elton-header h1 { font: 500 clamp(32px, 4vw, 48px)/1.2 'Noto Serif TC', 'Songti TC', serif; margin: 0; }
+.elton-header h1 span { color: #916459; }
+.elton-header p:last-child { color: #64796d; margin: 12px 0 0; }
+.elton-shell button { border: 1px solid #c9c4b5; border-radius: 24px; padding: 12px 18px; background: transparent; color: inherit; cursor: pointer; font: inherit; }
+.elton-shell button:disabled { opacity: .55; cursor: default; }
+.elton-shell button:focus-visible, .elton-shell textarea:focus-visible { outline: 2px solid #467d6a; outline-offset: 3px; }
+.elton-connection { padding: 10px 36px; font-size: 13px; color: #65736a; display: flex; align-items: center; gap: 8px; }
+.elton-connection button { margin-left: auto; padding: 6px 12px; }
+.elton-dot { width: 8px; height: 8px; border-radius: 50%; background: #aaa899; }
+.elton-dot.online { background: #46745a; }.elton-dot.offline { background: #ad7062; }
+.elton-messages { min-height: 0; flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 14px 36px 28px; }
+.elton-empty { min-height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 24px; text-align: center; }
+.elton-empty > span { border: 1px solid #c9b99e; border-radius: 50%; padding: 16px 22px; font: 32px 'Songti TC', serif; color: #916459; }
+.elton-empty h2 { font: 400 28px 'Songti TC', serif; margin: 0; }
+.elton-prompts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.elton-prompts button { padding: 8px 14px; font-size: 13px; }
+.elton-message { margin: 16px 0; padding: 20px 24px; border-left: 2px solid #ab7e6f; }
+.elton-message.user { border: 1px solid #c4d5c3; background: #e0e7db; border-radius: 18px 18px 4px 18px; margin-left: 12%; }
+.elton-message small { color: #8b6f64; letter-spacing: .05em; font-weight: 600; }
+.elton-message p { white-space: pre-wrap; overflow-wrap: anywhere; margin: 12px 0 0; line-height: 1.8; }
+.elton-thinking { color: #64796d; }
+.elton-composer { flex-shrink: 0; margin: 0 28px; border: 1px solid #cecabb; border-radius: 20px; padding: 18px 20px 12px; background: #fffdf7; }
+.elton-input-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.elton-composer textarea { display: block; box-sizing: border-box; width: 100%; max-height: 140px; resize: vertical; border: 0; background: transparent; color: inherit; font: 16px/1.7 inherit; font-family: inherit; font-size: 16px; line-height: 1.7; }
+.elton-send-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; color: #64796d; font-size: 13px; }
+.elton-send-row button { background: #385947; color: #fffdf7; border-color: #385947; min-height: 44px; }
+.elton-error { color: #8b3d31; margin: 0 0 12px; }
+.elton-note { flex-shrink: 0; font-size: 12px; text-align: center; color: #64796d; margin: 12px 16px 18px; }
+.theme-dark .elton-shell { background: #17211e; color: #eee7d7; border-color: #3c4944; }
+.theme-dark .elton-header { border-color: #3c4944; }
+.theme-dark .elton-message.user { background: #253b30; border-color: #45584b; }
+.theme-dark .elton-composer { background: #111b18; border-color: #45584b; }
+.theme-dark .elton-note,.theme-dark .elton-connection,.theme-dark .elton-header p:last-child,.theme-dark .elton-send-row { color: #b0bdb4; }
+@media (max-width: 620px) {
+  .elton-page { padding: 0; }
+  .elton-shell { min-height: 0; height: calc(100dvh - 74px); border-radius: 0; border: 0; }
+  .elton-header { padding: 22px 18px 18px; align-items: flex-start; }
+  .elton-header .product-page-eyebrow { font-size: 10px; margin-bottom: 10px; }
+  .elton-header p:last-child { font-size: 13px; }
+  .elton-header > button { padding: 10px 12px; font-size: 12px; white-space: nowrap; }
+  .elton-connection { padding: 10px 18px; }
+  .elton-messages { padding: 4px 18px 20px; }
+  .elton-composer { margin: 0 12px; padding: 14px 16px 10px; }
+  .elton-message { padding: 16px 18px; }
+  .elton-note { margin-bottom: max(12px, env(safe-area-inset-bottom)); font-size: 11px; }
+}
+
+.elton-disclosure { flex-shrink: 0; margin: 0; padding: 14px 36px; border-bottom: 1px solid #d8cdbb; background: #ede8da; color: #26342e; font-size: 14px; line-height: 1.65; }
+.elton-reply-notice { display: block; margin-top: 12px; color: #64796d; font-size: 12px; line-height: 1.5; }
+.theme-dark .elton-disclosure { background: #25332c; color: #eee7d7; border-color: #3c4944; }
+.theme-dark .elton-reply-notice { color: #b0bdb4; }
+@media (max-width: 620px) { .elton-disclosure { padding: 12px 18px; font-size: 13px; } }

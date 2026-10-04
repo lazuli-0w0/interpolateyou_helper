@@ -1,4 +1,5 @@
 import React from 'react';
+import { EltonChat } from './EltonChat.js';
 import { siteLinkUrl } from '../data/references.js';
 import './ProductPage.css';
 
@@ -66,6 +67,7 @@ function ReadingNotesProduct({ t }) {
 }
 
 export function ProductPage({ product, t }) {
+  if (product === 'elton') return <EltonChat t={t} />;
   if (product === 'cards') return <PlayingCardsProduct t={t} />;
   if (product === 'reading-notes') return <ReadingNotesProduct t={t} />;
 

@@ -14,6 +14,7 @@ export const VIEW_PATHS = Object.freeze({
   'settings-appearance': '/impostazioni/aspetto',
   'settings-references': '/impostazioni/riferimenti',
   'founders-why': '/fondatore',
+  'product-elton': '/prodotti/conversa-con-me',
   'product-bookmark': '/prodotti/segnalibro-meiyuan',
   'product-cards': '/prodotti/carte-shijing',
   'product-reading-notes': '/prodotti/note-di-testi-leggeri'

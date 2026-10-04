@@ -1,17 +1,58 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    { "source": "/strumenti/:path*", "destination": "/index.html" },
-    { "source": "/strumento/:path*", "destination": "/index.html" },
-    { "source": "/letture/:path*", "destination": "/index.html" },
-    { "source": "/impostazioni/:path*", "destination": "/index.html" },
-    { "source": "/prodotti/:path*", "destination": "/index.html" },
-    { "source": "/tools/:path*", "destination": "/index.html" },
-    { "source": "/tool/:path*", "destination": "/index.html" },
-    { "source": "/records/:path*", "destination": "/index.html" },
-    { "source": "/settings/:path*", "destination": "/index.html" },
-    { "source": "/products/:path*", "destination": "/index.html" },
-    { "source": "/forum", "destination": "/index.html" },
-    { "source": "/fondatore", "destination": "/index.html" }
-  ]
+    {
+      "source": "/strumenti/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/strumento/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/letture/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/impostazioni/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/prodotti/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/tools/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/tool/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/records/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/settings/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/products/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/forum",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/fondatore",
+      "destination": "/index.html"
+    }
+  ],
+  "functions": {
+    "api/elton.js": {
+      "maxDuration": 120
+    }
+  }
 }
